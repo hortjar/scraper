@@ -1,0 +1,50 @@
+{
+  "name": "scraper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.1",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "docker compose -f deploy/docker-compose.dev.yml up -d && pnpm --parallel --filter \"./apps/*\" dev",
+    "dev:infra": "docker compose -f deploy/docker-compose.dev.yml up -d",
+    "dev:down": "docker compose -f deploy/docker-compose.dev.yml down",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "pnpm -r test",
+    "test:int": "pnpm --filter @scraper/db test:int",
+    "test:e2e": "pnpm --filter @scraper/web test:e2e",
+    "db:generate": "pnpm --filter @scraper/db generate",
+    "db:migrate": "pnpm --filter @scraper/db migrate",
+    "db:reset": "pnpm --filter @scraper/db reset",
+    "db:seed": "pnpm --filter @scraper/db seed",
+    "gen:openapi": "pnpm --filter @scraper/api gen:openapi",
+    "gen:api": "openapi-ts",
+    "gen:env": "pnpm --filter @scraper/core gen:env",
+    "i18n:check": "pnpm --filter @scraper/core i18n:check",
+    "i18n:types": "pnpm --filter @scraper/web i18n:types",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@hey-api/openapi-ts": "^0.62.3",
+    "@scraper/tooling": "workspace:*",
+    "eslint": "^9.18.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yaml,yml,css}": ["prettier --write"]
+  }
+}
