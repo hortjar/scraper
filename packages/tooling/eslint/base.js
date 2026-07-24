@@ -87,8 +87,13 @@ export const base = tseslint.config(
     },
   },
   {
-    files: ["**/*.config.{ts,js,mjs}", "**/*.d.ts", "**/vitest.setup.ts"],
-    rules: { "import-x/no-default-export": "off", "max-lines": "off" },
+    files: ["**/*.config.{ts,js,mjs}", "**/*.d.ts", "**/vitest.setup.ts", "**/scripts/**"],
+    rules: {
+      "import-x/no-default-export": "off",
+      "max-lines": "off",
+      "no-console": "off",
+      "no-restricted-globals": "off",
+    },
   },
   {
     files: ["**/*.test.{ts,tsx}", "**/test/**"],
