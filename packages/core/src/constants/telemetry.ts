@@ -1,0 +1,96 @@
+export const SPAN = {
+  monitors: {
+    create: "Monitors.create",
+    update: "Monitors.update",
+    remove: "Monitors.remove",
+    findById: "Monitors.findById",
+    list: "Monitors.list",
+    preview: "Monitors.preview",
+    runNow: "Monitors.runNow",
+  },
+  auth: {
+    register: "Auth.register",
+    login: "Auth.login",
+    logout: "Auth.logout",
+    authenticate: "Auth.authenticate",
+    resetPassword: "Auth.resetPassword",
+    verifyEmail: "Auth.verifyEmail",
+  },
+  scraping: {
+    fetch: "Scraping.fetch",
+    extract: "Scraping.extract",
+    normalize: "Scraping.normalize",
+    transform: "Scraping.transform",
+    robots: "Scraping.robots",
+  },
+  runs: {
+    execute: "Runs.execute",
+    diff: "Runs.diff",
+    evaluateRules: "Runs.evaluateRules",
+    persist: "Runs.persist",
+  },
+  notifications: {
+    dispatch: "Notifications.dispatch",
+    render: "Notifications.render",
+    send: "Notifications.send",
+    verify: "Notifications.verify",
+  },
+  jobs: {
+    scrape: "job.scrape",
+    notify: "job.notify",
+    digest: "job.digest",
+    maintenance: "job.maintenance",
+    upsertSchedule: "JobProducer.upsertSchedule",
+  },
+  db: {
+    query: "Database.query",
+    transaction: "Database.transaction",
+  },
+} as const
+
+export const METRIC = {
+  jobsProcessed: "jobs_processed_total",
+  jobDuration: "job_duration_seconds",
+  queueDepth: "queue_depth",
+  scrapeBytes: "scrape_bytes_total",
+  scrapeDuration: "scrape_duration_seconds",
+  changesDetected: "changes_detected_total",
+  notificationsSent: "notifications_sent_total",
+  notificationsSuppressed: "notifications_suppressed_total",
+  rateLimitDeferred: "rate_limit_deferred_total",
+  schedulerLastFireAge: "scheduler_last_fire_age_seconds",
+  httpRequests: "http_requests_total",
+  httpDuration: "http_request_duration_seconds",
+} as const
+
+export const LOG_FIELD = {
+  requestId: "requestId",
+  userId: "userId",
+  monitorId: "monitorId",
+  runId: "runId",
+  ruleId: "ruleId",
+  channelId: "channelId",
+  deliveryId: "deliveryId",
+  jobId: "jobId",
+  queue: "queue",
+  strategy: "strategy",
+  host: "host",
+  durationMs: "durationMs",
+  errorTag: "errorTag",
+} as const
+
+export const REDACTED_KEYS = [
+  "password",
+  "passwordHash",
+  "token",
+  "tokenHash",
+  "secret",
+  "apiKey",
+  "authorization",
+  "cookie",
+  "sessionToken",
+  "encryptionKey",
+  "smtpPassword",
+  "botToken",
+  "webhookUrl",
+] as const

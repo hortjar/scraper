@@ -1,0 +1,34 @@
+{
+  "name": "@scraper/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./constants": "./src/constants/index.ts",
+    "./errors": "./src/errors/index.ts",
+    "./domain": "./src/domain/index.ts",
+    "./config": "./src/config/index.ts",
+    "./i18n": "./src/i18n/index.ts",
+    "./observability": "./src/observability/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "gen:env": "bun run scripts/gen-env.ts",
+    "i18n:check": "bun run scripts/i18n-check.ts"
+  },
+  "dependencies": {
+    "effect": "^3.22.0",
+    "intl-messageformat": "^10.7.11",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "@effect/vitest": "^0.17.0",
+    "@scraper/tooling": "workspace:*",
+    "@types/bun": "^1.1.16",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.2"
+  }
+}
