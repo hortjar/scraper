@@ -17,7 +17,7 @@ import {
 } from "./pulse-strip.geometry"
 import { PulseTickMark } from "./PulseTickMark"
 
-export interface PulseStripProps {
+export interface PulseStripProperties {
   readonly ticks: readonly PulseTick[]
   readonly size?: PulseSize
   readonly selectedTickId?: string
@@ -35,7 +35,7 @@ export const PulseStrip = ({
   onSelectTick,
   animateLatest,
   className,
-}: PulseStripProps) => {
+}: PulseStripProperties) => {
   const { t } = useTranslation("common")
   const format = useFormat()
 
@@ -45,7 +45,7 @@ export const PulseStrip = ({
   const counts = countTicks(shown)
   const width = stripWidth(geometry, shown.length)
 
-  const interactive = geometry.interactive && onSelectTick !== undefined
+  const isInteractive = geometry.interactive && onSelectTick !== undefined
   const label = isIdle
     ? t("pulse.idle")
     : t("pulse.summary", {
@@ -59,9 +59,7 @@ export const PulseStrip = ({
     if (tick.outcome === PULSE_OUTCOME.paused) return t("pulse.paused")
     if (tick.direction === "flat") return t("pulse.changeFlat")
     const value = tick.value ?? format.percent(tick.magnitude)
-    return tick.direction === "up"
-      ? t("pulse.changeUp", { value })
-      : t("pulse.changeDown", { value })
+    return t(tick.direction === "up" ? "pulse.changeUp" : "pulse.changeDown", { value })
   }
 
   return (
@@ -70,7 +68,7 @@ export const PulseStrip = ({
       width={size === PULSE_SIZE.row ? width : undefined}
       height={size === PULSE_SIZE.row ? geometry.height : undefined}
       preserveAspectRatio="none"
-      role={interactive ? "group" : "img"}
+      role={isInteractive ? "group" : "img"}
       aria-label={label}
       className={cn(
         "block overflow-visible",
@@ -90,7 +88,7 @@ export const PulseStrip = ({
           />
         )
 
-        if (!interactive) return <g key={tick.id}>{mark}</g>
+        if (!isInteractive) return <g key={tick.id}>{mark}</g>
 
         return (
           <g
@@ -100,11 +98,13 @@ export const PulseStrip = ({
             aria-label={t("pulse.tick", { time: format.dateTime(tick.at), change: describe(tick) })}
             aria-pressed={tick.id === selectedTickId}
             className="cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-brand"
-            onClick={() => onSelectTick?.(tick)}
+            onClick={() => {
+              onSelectTick(tick)
+            }}
             onKeyDown={(event) => {
               if (!SELECT_KEYS.has(event.key)) return
               event.preventDefault()
-              onSelectTick?.(tick)
+              onSelectTick(tick)
             }}
           >
             <rect

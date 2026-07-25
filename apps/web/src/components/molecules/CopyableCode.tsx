@@ -5,13 +5,13 @@ import { useTranslation } from "react-i18next"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/Button"
 
-export interface CopyableCodeProps {
+export interface CopyableCodeProperties {
   readonly value: string
   readonly truncate?: boolean
   readonly className?: string
 }
 
-export const CopyableCode = ({ value, truncate, className }: CopyableCodeProps) => {
+export const CopyableCode = ({ value, truncate, className }: CopyableCodeProperties) => {
   const { t } = useTranslation("common")
   const [copied, setCopied] = useState(false)
 
@@ -38,7 +38,7 @@ export const CopyableCode = ({ value, truncate, className }: CopyableCodeProps) 
         variant="ghost"
         size="sm"
         className="size-6 min-h-0 shrink-0 p-0"
-        aria-label={copied ? t("actions.copied") : t("actions.copy")}
+        aria-label={t(copied ? "actions.copied" : "actions.copy")}
         onClick={copy}
         onBlur={() => {
           setCopied(false)

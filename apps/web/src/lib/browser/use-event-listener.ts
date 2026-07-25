@@ -15,11 +15,15 @@ export const useEventListener = <K extends keyof EventMap>(
   })
 
   useEffect(() => {
-    const node = target === undefined ? window : target
-    if (node === null) return undefined
+    const node = target === undefined ? globalThis : target
+    if (node === null) return
 
-    const listener = (event: Event) => latest.current(event as EventMap[K])
+    const listener = (event: Event) => {
+      latest.current(event as EventMap[K])
+    }
     node.addEventListener(type, listener, options)
-    return () => node.removeEventListener(type, listener, options)
+    return () => {
+      node.removeEventListener(type, listener, options)
+    }
   }, [type, target, options])
 }

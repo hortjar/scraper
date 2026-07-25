@@ -3,14 +3,14 @@ import type { ComponentProps } from "react"
 
 import { cn } from "../../lib/utils"
 
-export type SeparatorProps = ComponentProps<typeof SeparatorPrimitive.Root>
+export type SeparatorProperties = ComponentProps<typeof SeparatorPrimitive.Root>
 
 export const Separator = ({
   className,
   orientation = "horizontal",
   decorative = true,
-  ...props
-}: SeparatorProps) => (
+  ...properties
+}: SeparatorProperties) => (
   <SeparatorPrimitive.Root
     data-slot="separator"
     orientation={orientation}
@@ -20,6 +20,6 @@ export const Separator = ({
       orientation === "horizontal" ? "h-px w-full" : "h-full w-px",
       className,
     )}
-    {...props}
+    {...properties}
   />
 )

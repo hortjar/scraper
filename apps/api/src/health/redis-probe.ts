@@ -12,13 +12,18 @@ export const makeRedisProbe = (redisConfig: RootConfig["redis"]): HealthProbe =>
     lazyConnect: true,
     enableOfflineQueue: false,
   })
-  client.on("error", () => undefined)
+  const connection = { hasFaulted: false }
+
+  client.on("error", () => {
+    connection.hasFaulted = true
+  })
 
   const check = Effect.tryPromise({
     try: async () => {
+      connection.hasFaulted = false
       if (client.status === "wait" || client.status === "end") await client.connect()
-      const reply = await client.ping()
-      return reply === "PONG"
+      await client.ping()
+      return !connection.hasFaulted
     },
     catch: () => "redis_probe_failed" as const,
   }).pipe(Effect.orElseSucceed(() => false))

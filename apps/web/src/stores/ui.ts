@@ -35,13 +35,11 @@ const isUiState = (value: unknown): value is UiState => {
   )
 }
 
-export const uiStore = new Store<UiState>(hydrate(NAME, defaults, isUiState))
-
-persist(uiStore, NAME)
+export const uiStore = persist(new Store<UiState>(hydrate(NAME, defaults, isUiState)), NAME)
 
 export const useUi = <T>(selector: (state: UiState) => T): T => useSelector(uiStore, selector)
 
-export const useSidebarCollapsed = (): boolean => useUi((state) => state.sidebarCollapsed)
+export const useIsSidebarCollapsed = (): boolean => useUi((state) => state.sidebarCollapsed)
 
 export const useDensity = (): Density => useUi((state) => state.density)
 

@@ -11,7 +11,7 @@ export const SelectValue = SelectPrimitive.Value
 export const SelectTrigger = ({
   className,
   children,
-  ...props
+  ...properties
 }: ComponentProps<typeof SelectPrimitive.Trigger>) => (
   <SelectPrimitive.Trigger
     data-slot="select-trigger"
@@ -22,7 +22,7 @@ export const SelectTrigger = ({
       "focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50",
       className,
     )}
-    {...props}
+    {...properties}
   >
     {children}
     <SelectPrimitive.Icon asChild>
@@ -35,7 +35,7 @@ export const SelectContent = ({
   className,
   children,
   position = "popper",
-  ...props
+  ...properties
 }: ComponentProps<typeof SelectPrimitive.Content>) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
@@ -46,7 +46,7 @@ export const SelectContent = ({
         "border border-line bg-raised shadow-popover data-[state=open]:animate-pop-in",
         className,
       )}
-      {...props}
+      {...properties}
     >
       <SelectPrimitive.Viewport className="p-1">{children}</SelectPrimitive.Viewport>
     </SelectPrimitive.Content>
@@ -56,7 +56,7 @@ export const SelectContent = ({
 export const SelectItem = ({
   className,
   children,
-  ...props
+  ...properties
 }: ComponentProps<typeof SelectPrimitive.Item>) => (
   <SelectPrimitive.Item
     data-slot="select-item"
@@ -66,7 +66,7 @@ export const SelectItem = ({
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className,
     )}
-    {...props}
+    {...properties}
   >
     <span className="absolute left-2 flex size-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
@@ -79,11 +79,11 @@ export const SelectItem = ({
 
 export const SelectLabel = ({
   className,
-  ...props
+  ...properties
 }: ComponentProps<typeof SelectPrimitive.Label>) => (
   <SelectPrimitive.Label
     data-slot="select-label"
     className={cn("px-2 py-1.5 eyebrow text-ink-subtle", className)}
-    {...props}
+    {...properties}
   />
 )

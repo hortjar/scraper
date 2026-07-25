@@ -15,18 +15,20 @@ import {
 
 const PREFERENCE_DETECTOR = "preferences"
 
-const detector = new LanguageDetector()
-
-detector.addDetector({
-  name: PREFERENCE_DETECTOR,
-  lookup: () => preferencesStore.state.locale,
-})
+const makePreferenceDetector = (): LanguageDetector => {
+  const detector = new LanguageDetector()
+  detector.addDetector({
+    name: PREFERENCE_DETECTOR,
+    lookup: () => preferencesStore.state.locale,
+  })
+  return detector
+}
 
 export const createI18n = (): I18nInstance => {
   const instance = i18next.createInstance()
 
   void instance
-    .use(detector)
+    .use(makePreferenceDetector())
     .use(initReactI18next)
     .init({
       resources,

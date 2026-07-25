@@ -26,8 +26,8 @@ export const LIMITS = {
   transformsPerExtractor: 12,
   ignoreRulesPerMonitor: 50,
   tagsPerMonitor: 20,
-  templateBytes: 8_192,
-  messagePreviewChars: 2_000,
+  templateBytes: 8192,
+  messagePreviewChars: 2000,
   diffHunkContextLines: 2,
   passwordMin: 12,
   passwordMax: 200,
@@ -47,7 +47,7 @@ export const CACHE_TTL = {
 } as const
 
 export const AUTO_ESCALATE = {
-  minBytes: 4_096,
+  minBytes: 4096,
   cooldownHours: 24,
   spaMarkers: ["__NEXT_DATA__", 'id="root"', 'id="app"', "ng-app", "data-reactroot"],
 } as const
@@ -55,6 +55,6 @@ export const AUTO_ESCALATE = {
 export const STALE_TIME_MS = {
   list: 30_000,
   detail: 15_000,
-  activeRun: 5_000,
+  activeRun: 5000,
   meta: 300_000,
 } as const

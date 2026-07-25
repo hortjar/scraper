@@ -70,7 +70,7 @@ Rules:
 - Dependencies are `yield*`-ed at construction, not inside methods.
 - A service method never touches `process.env`, `Date.now()`, `Math.random()`, or
   `console`. Use `AppConfig`, `Clock`, `Random`, and `Effect.log*`.
-- The error channel is **explicit and narrow**. `Effect<Monitor, MonitorNotFound | DbError>`
+- The error channel is **explicit and narrow**. `Effect<Monitor, MonitorNotFound | DatabaseError>`
   is the documentation.
 
 ## 3. Constants — no magic strings
@@ -141,16 +141,16 @@ locale. No English string is ever hardcoded in a service.
 
 HTTP mapping lives in exactly one exhaustive matcher:
 
-| Tag                         | Status | `code`                                     | Message key                |
-| --------------------------- | ------ | ------------------------------------------ | -------------------------- |
-| `ValidationFailed`          | 422    | `ERROR_CODE.validationFailed`              | `errors.validationFailed`  |
-| `Unauthenticated`           | 401    | `ERROR_CODE.unauthenticated`               | `errors.unauthenticated`   |
-| `NotAuthorized`             | 403    | `ERROR_CODE.forbidden`                     | `errors.forbidden`         |
-| `*NotFound`                 | 404    | `ERROR_CODE.notFound`                      | `errors.monitorNotFound`   |
-| `Conflict`, `DuplicateName` | 409    | `ERROR_CODE.conflict`                      | `errors.conflict`          |
-| `PlanLimitExceeded`         | 402    | `ERROR_CODE.planLimitExceeded`             | `errors.planLimitExceeded` |
-| `RateLimited`               | 429    | `ERROR_CODE.rateLimited` (+ `Retry-After`) | `errors.rateLimited`       |
-| `DbError`, unmatched defect | 500    | `ERROR_CODE.internalError`                 | `errors.internalError`     |
+| Tag                               | Status | `code`                                     | Message key                |
+| --------------------------------- | ------ | ------------------------------------------ | -------------------------- |
+| `ValidationFailed`                | 422    | `ERROR_CODE.validationFailed`              | `errors.validationFailed`  |
+| `Unauthenticated`                 | 401    | `ERROR_CODE.unauthenticated`               | `errors.unauthenticated`   |
+| `NotAuthorized`                   | 403    | `ERROR_CODE.forbidden`                     | `errors.forbidden`         |
+| `*NotFound`                       | 404    | `ERROR_CODE.notFound`                      | `errors.monitorNotFound`   |
+| `Conflict`, `DuplicateName`       | 409    | `ERROR_CODE.conflict`                      | `errors.conflict`          |
+| `PlanLimitExceeded`               | 402    | `ERROR_CODE.planLimitExceeded`             | `errors.planLimitExceeded` |
+| `RateLimited`                     | 429    | `ERROR_CODE.rateLimited` (+ `Retry-After`) | `errors.rateLimited`       |
+| `DatabaseError`, unmatched defect | 500    | `ERROR_CODE.internalError`                 | `errors.internalError`     |
 
 ```ts
 const toHttpError = Match.type<AppError>().pipe(

@@ -4,7 +4,7 @@ import {
   CONNECTION_STATE,
   type ConnectionState,
 } from "../../components/molecules/ConnectionIndicator.constants"
-import { useOnlineStatus } from "../../lib/browser"
+import { useIsOnline } from "../../lib/browser"
 import { appConfig } from "../../lib/config"
 
 import { healthQueryOptions } from "./api"
@@ -36,7 +36,7 @@ export interface AppStatusSnapshot {
 }
 
 export const useAppStatus = (): AppStatusSnapshot => {
-  const online = useOnlineStatus()
+  const isOnline = useIsOnline()
   const health = useQuery(healthQueryOptions())
 
   return {
@@ -44,7 +44,7 @@ export const useAppStatus = (): AppStatusSnapshot => {
     commit: appConfig.commit,
     serverVersion: health.data?.version,
     connection: deriveConnection({
-      online,
+      online: isOnline,
       hasError: health.isError,
       serverStatus: health.data?.status,
     }),

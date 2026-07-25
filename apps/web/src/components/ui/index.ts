@@ -1,5 +1,5 @@
-export { Badge, type BadgeProps, badgeVariants } from "./Badge"
-export { Button, type ButtonProps, buttonVariants } from "./Button"
+export { Badge, type BadgeProperties, badgeVariants } from "./Badge"
+export { Button, type ButtonProperties, buttonVariants } from "./Button"
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./Card"
 export {
   Dialog,
@@ -24,8 +24,8 @@ export {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./DropdownMenu"
-export { Input, type InputProps } from "./Input"
-export { Label, type LabelProps } from "./Label"
+export { Input, type InputProperties } from "./Input"
+export { Label, type LabelProperties } from "./Label"
 export {
   Select,
   SelectContent,
@@ -35,16 +35,16 @@ export {
   SelectTrigger,
   SelectValue,
 } from "./Select"
-export { Separator, type SeparatorProps } from "./Separator"
+export { Separator, type SeparatorProperties } from "./Separator"
 export { Skeleton } from "./Skeleton"
-export { Switch, type SwitchProps } from "./Switch"
+export { Switch, type SwitchProperties } from "./Switch"
 export {
   Toast,
   ToastAction,
   ToastClose,
   ToastDescription,
   ToastProvider,
-  type ToastProps,
+  type ToastProperties,
   ToastTitle,
   ToastViewport,
   toastVariants,

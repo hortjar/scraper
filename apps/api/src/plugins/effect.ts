@@ -34,8 +34,8 @@ export const effectPlugin = (runtime: AppRuntime) =>
                 messageKey: failure.messageKey,
                 messageParams: failure.messageParams,
                 message: translator.render(failure.messageKey, failure.messageParams, locale),
-                requestId: String(set.headers[HEADER.requestId] ?? ""),
-                ...(failure.issues ? { issues: failure.issues } : {}),
+                requestId: set.headers[HEADER.requestId] ?? "",
+                ...(failure.issues && { issues: failure.issues }),
               }
               return body
             }),

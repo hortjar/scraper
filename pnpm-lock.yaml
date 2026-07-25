@@ -18,8 +18,8 @@ importers:
         specifier: ^0.99.0
         version: 0.99.0(typescript@6.0.3)
       '@hortjar/eslint-config':
-        specifier: ^0.2.0
-        version: 0.2.0(@typescript-eslint/utils@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)
+        specifier: ^0.3.0
+        version: 0.3.0(@typescript-eslint/utils@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)
       '@scraper/tooling':
         specifier: workspace:*
         version: link:packages/tooling
@@ -1104,8 +1104,8 @@ packages:
   '@hey-api/types@0.1.4':
     resolution: {integrity: sha512-thWfawrDIP7wSI9ioT13I5soaaqB5vAPIiZmgD8PbeEVKNrkonc0N/Sjj97ezl7oQgusZmaNphGdMKipPO6IBg==}
 
-  '@hortjar/eslint-config@0.2.0':
-    resolution: {integrity: sha512-0lP0akZyHR85OQ3wMC+lEIcim6F3vwN4OcPOe3VyUH/q985jNt6yZZuHlEIs5Xo2O3uLCniZNBBhJdSFmoKiOg==}
+  '@hortjar/eslint-config@0.3.0':
+    resolution: {integrity: sha512-/0hKxBwsYOVYxpGryLSKbtuMoU4lq2DhfQO1RXm8j+3yflbbDX7yRYzztZlV6K0poA4bbbYgSahlHQdP7Yn1Og==}
     engines: {node: '>=22.22'}
     peerDependencies:
       eslint: ^9.20.0 || ^10.0.0
@@ -5019,7 +5019,7 @@ snapshots:
 
   '@hey-api/types@0.1.4': {}
 
-  '@hortjar/eslint-config@0.2.0(@typescript-eslint/utils@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)':
+  '@hortjar/eslint-config@0.3.0(@typescript-eslint/utils@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)':
     dependencies:
       '@eslint/js': 10.0.1(eslint@10.8.0(jiti@2.7.0))
       eslint: 10.8.0(jiti@2.7.0)

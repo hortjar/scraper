@@ -1,10 +1,10 @@
 import postgres from "postgres"
 
-const url = process.env.DATABASE_URL ?? "postgres://scraper:scraper@localhost:9302/scraper"
-
 if (process.env.APP_ENV === "production") {
   throw new Error("refusing to reset a production database")
 }
+
+const url = process.env.DATABASE_URL ?? "postgres://scraper:scraper@localhost:9302/scraper"
 
 const sql = postgres(url, { max: 1 })
 

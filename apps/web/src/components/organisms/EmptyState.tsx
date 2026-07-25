@@ -4,14 +4,14 @@ import { cn } from "../../lib/utils"
 
 import { PulseStrip } from "./PulseStrip"
 
-export interface EmptyStateProps {
+export interface EmptyStateProperties {
   readonly title: string
   readonly description?: string
   readonly action?: ReactNode
   readonly className?: string
 }
 
-export const EmptyState = ({ title, description, action, className }: EmptyStateProps) => (
+export const EmptyState = ({ title, description, action, className }: EmptyStateProperties) => (
   <div
     className={cn(
       "flex flex-col items-center gap-4 rounded-lg border border-dashed border-line",

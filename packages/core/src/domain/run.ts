@@ -125,6 +125,13 @@ export const ExtractedField = Schema.Struct({
 })
 export type ExtractedField = typeof ExtractedField.Type
 
+export const PreviewWarning = Schema.Struct({
+  code: Schema.String,
+  messageKey: Schema.String,
+  params: Schema.optional(Schema.Record({ key: Schema.String, value: Schema.String })),
+})
+export type PreviewWarning = typeof PreviewWarning.Type
+
 export const PreviewResult = Schema.Struct({
   finalUrl: Schema.String,
   httpStatus: NonNegativeInt,
@@ -134,12 +141,6 @@ export const PreviewResult = Schema.Struct({
   fields: Schema.Array(ExtractedField),
   normalizedPreview: Schema.String,
   screenshotRef: Schema.NullOr(Schema.String),
-  warnings: Schema.Array(
-    Schema.Struct({
-      code: Schema.String,
-      messageKey: Schema.String,
-      params: Schema.optional(Schema.Record({ key: Schema.String, value: Schema.String })),
-    }),
-  ),
+  warnings: Schema.Array(PreviewWarning),
 })
 export type PreviewResult = typeof PreviewResult.Type

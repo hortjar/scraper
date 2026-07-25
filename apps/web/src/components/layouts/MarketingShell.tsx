@@ -5,11 +5,11 @@ import { useTranslation } from "react-i18next"
 import { AppStatus } from "../../features/system"
 import { Button } from "../ui/Button"
 
-export interface MarketingShellProps {
+export interface MarketingShellProperties {
   readonly children: ReactNode
 }
 
-export const MarketingShell = ({ children }: MarketingShellProps) => {
+export const MarketingShell = ({ children }: MarketingShellProperties) => {
   const { t } = useTranslation("common")
   const { t: tLanding } = useTranslation("landing")
 

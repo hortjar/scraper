@@ -21,8 +21,9 @@ export const badgeVariants = cva(
   },
 )
 
-export interface BadgeProps extends ComponentProps<"span">, VariantProps<typeof badgeVariants> {}
+export interface BadgeProperties
+  extends ComponentProps<"span">, VariantProps<typeof badgeVariants> {}
 
-export const Badge = ({ className, tone, ...props }: BadgeProps) => (
-  <span data-slot="badge" className={cn(badgeVariants({ tone }), className)} {...props} />
+export const Badge = ({ className, tone, ...properties }: BadgeProperties) => (
+  <span data-slot="badge" className={cn(badgeVariants({ tone }), className)} {...properties} />
 )

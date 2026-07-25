@@ -1,11 +1,15 @@
-export { AppSidebar, type AppSidebarProps, type SidebarNavItem } from "./AppSidebar"
-export { CommandPalette, type CommandPaletteItem, type CommandPaletteProps } from "./CommandPalette"
-export { DataTable, type DataTableColumn, type DataTableProps } from "./DataTable"
-export { EmptyState, type EmptyStateProps } from "./EmptyState"
-export { ErrorState, type ErrorStateProps } from "./ErrorState"
-export { LoadingState, type LoadingStateProps } from "./LoadingState"
-export { PulseStrip, type PulseStripProps } from "./PulseStrip"
-export { PulseTickMark, type PulseTickMarkProps } from "./PulseTickMark"
+export { AppSidebar, type AppSidebarProperties, type SidebarNavItem } from "./AppSidebar"
+export {
+  CommandPalette,
+  type CommandPaletteItem,
+  type CommandPaletteProperties,
+} from "./CommandPalette"
+export { DataTable, type DataTableColumn, type DataTableProperties } from "./DataTable"
+export { EmptyState, type EmptyStateProperties } from "./EmptyState"
+export { ErrorState, type ErrorStateProperties } from "./ErrorState"
+export { LoadingState, type LoadingStateProperties } from "./LoadingState"
+export { PulseStrip, type PulseStripProperties } from "./PulseStrip"
+export { PulseTickMark, type PulseTickMarkProperties } from "./PulseTickMark"
 export {
   PULSE_DIRECTION,
   PULSE_GEOMETRY,

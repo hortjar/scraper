@@ -34,7 +34,7 @@ const isEditableTarget = (target: EventTarget | null): boolean => {
   return EDITABLE_TAGS.has(target.tagName) || target.isContentEditable
 }
 
-export const comboMatches = (combo: string, event: KeyboardEvent): boolean => {
+export const isComboMatch = (combo: string, event: KeyboardEvent): boolean => {
   const { key, modifiers } = parseCombo(combo)
 
   if (modifiers.has(MODIFIER_MOD)) {
@@ -56,14 +56,14 @@ export const useHotkey = (
   options: HotkeyOptions = {},
 ): void => {
   const { enabled = true, preventDefault = true, target } = options
-  const bare = parseCombo(combo).modifiers.size === 0
+  const isBare = parseCombo(combo).modifiers.size === 0
 
   useEventListener(
     "keydown",
     (event) => {
       if (!enabled) return
-      if (bare && isEditableTarget(event.target)) return
-      if (!comboMatches(combo, event)) return
+      if (isBare && isEditableTarget(event.target)) return
+      if (!isComboMatch(combo, event)) return
       if (preventDefault) event.preventDefault()
       handler(event)
     },

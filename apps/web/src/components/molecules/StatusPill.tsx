@@ -2,11 +2,11 @@ import { CircleAlertIcon, CircleCheckIcon, CirclePauseIcon, CircleXIcon } from "
 import { useTranslation } from "react-i18next"
 
 import { cn } from "../../lib/utils"
-import { Badge, type BadgeProps } from "../ui/Badge"
+import { Badge, type BadgeProperties as BadgeProperties } from "../ui/Badge"
 
 import type { MonitorStatus } from "./StatusPill.constants"
 
-const STATUS_TONE: Readonly<Record<MonitorStatus, NonNullable<BadgeProps["tone"]>>> = {
+const STATUS_TONE: Readonly<Record<MonitorStatus, NonNullable<BadgeProperties["tone"]>>> = {
   ok: "positive",
   degraded: "warning",
   failing: "negative",
@@ -34,12 +34,12 @@ const STATUS_DOT: Readonly<Record<MonitorStatus, string>> = {
   paused: "bg-ink-subtle",
 }
 
-export interface StatusPillProps {
+export interface StatusPillProperties {
   readonly status: MonitorStatus
   readonly className?: string
 }
 
-export const StatusPill = ({ status, className }: StatusPillProps) => {
+export const StatusPill = ({ status, className }: StatusPillProperties) => {
   const { t } = useTranslation("common")
   const Icon = STATUS_ICON[status]
 

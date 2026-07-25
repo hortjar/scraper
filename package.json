@@ -36,7 +36,7 @@
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
     "@hey-api/openapi-ts": "^0.99.0",
-    "@hortjar/eslint-config": "^0.2.0",
+    "@hortjar/eslint-config": "^0.3.0",
     "@scraper/tooling": "workspace:*",
     "@types/node": "^26.1.1",
     "eslint": "^10.8.0",

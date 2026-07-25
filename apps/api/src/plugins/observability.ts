@@ -21,23 +21,23 @@ export const observabilityPlugin = (runtime: AppRuntime) =>
       return { requestId, requestStartedAt: performance.now() }
     })
     .onAfterResponse({ as: "global" }, ({ request, path, set, requestId, requestStartedAt }) => {
-      const startedAt = requestStartedAt ?? performance.now()
-      const durationMs = performance.now() - startedAt
+      const durationMs = performance.now() - requestStartedAt
       const status = resolveStatus(set.status)
+      const logRequest = Effect.logInfo("http.request").pipe(
+        Effect.annotateLogs({
+          [LOG_FIELD.requestId]: requestId,
+          method: request.method,
+          path,
+          status,
+          [LOG_FIELD.durationMs]: durationMs,
+        }),
+      )
       runtime.runFork(
         Effect.all(
           [
             Metric.increment(metrics.httpRequests),
             Metric.update(metrics.httpDuration, durationMs / 1000),
-            Effect.logInfo("http.request").pipe(
-              Effect.annotateLogs({
-                [LOG_FIELD.requestId]: requestId ?? String(set.headers[HEADER.requestId] ?? ""),
-                method: request.method,
-                path,
-                status,
-                [LOG_FIELD.durationMs]: durationMs,
-              }),
-            ),
+            logRequest,
           ],
           { discard: true },
         ),
@@ -46,16 +46,15 @@ export const observabilityPlugin = (runtime: AppRuntime) =>
     .onError({ as: "global" }, ({ request, path, error, requestId, requestStartedAt }) => {
       const durationMs = performance.now() - (requestStartedAt ?? performance.now())
       const described = describeError(error)
-      runtime.runFork(
-        Effect.logError("http.request.error").pipe(
-          Effect.annotateLogs({
-            [LOG_FIELD.requestId]: requestId ?? crypto.randomUUID(),
-            method: request.method,
-            path,
-            [LOG_FIELD.durationMs]: durationMs,
-            [LOG_FIELD.errorTag]: described.name,
-            message: described.message,
-          }),
-        ),
+      const logFailure = Effect.logError("http.request.error").pipe(
+        Effect.annotateLogs({
+          [LOG_FIELD.requestId]: requestId ?? crypto.randomUUID(),
+          method: request.method,
+          path,
+          [LOG_FIELD.durationMs]: durationMs,
+          [LOG_FIELD.errorTag]: described.name,
+          message: described.message,
+        }),
       )
+      runtime.runFork(logFailure)
     })

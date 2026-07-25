@@ -5,14 +5,14 @@ import { useErrorMessage } from "../../lib/api"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/Button"
 
-export interface ErrorStateProps {
+export interface ErrorStateProperties {
   readonly error: unknown
   readonly title?: string
   readonly onRetry?: () => void
   readonly className?: string
 }
 
-export const ErrorState = ({ error, title, onRetry, className }: ErrorStateProps) => {
+export const ErrorState = ({ error, title, onRetry, className }: ErrorStateProperties) => {
   const { t } = useTranslation("common")
   const describe = useErrorMessage()
 

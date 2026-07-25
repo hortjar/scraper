@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/Tooltip"
 
 import { hasVersionSkew } from "./AppVersion.skew"
 
-export interface AppVersionProps {
+export interface AppVersionProperties {
   readonly version: string
   readonly commit: string
   readonly serverVersion?: string | undefined
@@ -20,9 +20,9 @@ export const AppVersion = ({
   serverVersion,
   onReload,
   className,
-}: AppVersionProps) => {
+}: AppVersionProperties) => {
   const { t } = useTranslation("common")
-  const skewed = hasVersionSkew(version, serverVersion)
+  const isSkewed = hasVersionSkew(version, serverVersion)
 
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
@@ -39,7 +39,7 @@ export const AppVersion = ({
         </TooltipContent>
       </Tooltip>
 
-      {skewed ? (
+      {isSkewed ? (
         <div className="rounded-md border border-line bg-brand-soft px-2 py-1.5">
           <p className="text-small font-medium text-brand-ink">{t("version.skewTitle")}</p>
           <p className="mt-0.5 text-small text-ink-muted">

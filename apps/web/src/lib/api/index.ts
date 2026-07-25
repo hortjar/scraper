@@ -12,7 +12,7 @@ export {
 export { REFETCH_INTERVAL, STALE_TIME, createQueryClient } from "./query-client"
 export {
   type ErrorEnvelope,
-  type MessageParams,
+  type MessageParameters,
   type Page,
   type ValidationIssue,
   isErrorEnvelope,

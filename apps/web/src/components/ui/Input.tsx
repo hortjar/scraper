@@ -2,9 +2,9 @@ import type { ComponentProps } from "react"
 
 import { cn } from "../../lib/utils"
 
-export type InputProps = ComponentProps<"input">
+export type InputProperties = ComponentProps<"input">
 
-export const Input = ({ className, type = "text", ...props }: InputProps) => (
+export const Input = ({ className, type = "text", ...properties }: InputProperties) => (
   <input
     type={type}
     data-slot="input"
@@ -17,6 +17,6 @@ export const Input = ({ className, type = "text", ...props }: InputProps) => (
       "aria-invalid:border-negative",
       className,
     )}
-    {...props}
+    {...properties}
   />
 )

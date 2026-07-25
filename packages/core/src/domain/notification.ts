@@ -182,22 +182,23 @@ export const NotificationMessage = Schema.Struct({
 })
 export type NotificationMessage = typeof NotificationMessage.Type
 
+export const ChannelField = Schema.Struct({
+  name: Schema.String,
+  labelKey: Schema.String,
+  type: Schema.Literal("string", "number", "boolean", "select", "secret", "url"),
+  required: Schema.Boolean,
+  secret: Schema.Boolean,
+  options: Schema.optional(Schema.Array(Schema.String)),
+  placeholder: Schema.optional(Schema.String),
+})
+export type ChannelField = typeof ChannelField.Type
+
 export const ChannelDescriptor = Schema.Struct({
   kind: Schema.String,
   displayName: Schema.String,
   descriptionKey: Schema.String,
   icon: Schema.String,
-  fields: Schema.Array(
-    Schema.Struct({
-      name: Schema.String,
-      labelKey: Schema.String,
-      type: Schema.Literal("string", "number", "boolean", "select", "secret", "url"),
-      required: Schema.Boolean,
-      secret: Schema.Boolean,
-      options: Schema.optional(Schema.Array(Schema.String)),
-      placeholder: Schema.optional(Schema.String),
-    }),
-  ),
+  fields: Schema.Array(ChannelField),
   capabilities: Schema.Struct({
     richText: Schema.Boolean,
     attachments: Schema.Boolean,

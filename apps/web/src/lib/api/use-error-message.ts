@@ -8,7 +8,7 @@ const UNKNOWN_KEY = "unknown"
 
 export const toNamespacedKey = (messageKey: string): string => {
   const separatorIndex = messageKey.indexOf(KEY_SEPARATOR)
-  if (separatorIndex < 0) return `errors${NAMESPACE_SEPARATOR}${messageKey}`
+  if (separatorIndex === -1) return `errors${NAMESPACE_SEPARATOR}${messageKey}`
   const namespace = messageKey.slice(0, separatorIndex)
   const rest = messageKey.slice(separatorIndex + 1)
   return `${namespace}${NAMESPACE_SEPARATOR}${rest}`

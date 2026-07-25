@@ -29,11 +29,10 @@ const fallbackLocale: LocaleCode = isLocaleCode(appConfig.defaultLocale)
 
 const defaults: PreferencesState = { theme: THEME_PREFERENCE.system, locale: fallbackLocale }
 
-export const preferencesStore = new Store<PreferencesState>(
-  hydrate(NAME, defaults, isPreferencesState),
+export const preferencesStore = persist(
+  new Store<PreferencesState>(hydrate(NAME, defaults, isPreferencesState)),
+  NAME,
 )
-
-persist(preferencesStore, NAME)
 
 export const usePreferences = <T>(selector: (state: PreferencesState) => T): T =>
   useSelector(preferencesStore, selector)
@@ -51,4 +50,6 @@ export const setPreferredLocale = (locale: LocaleCode): void => {
   preferencesStore.setState((state) => ({ ...state, locale }))
 }
 
-applyDocumentTheme(preferencesStore.state.theme)
+export const applyStoredTheme = (): void => {
+  applyDocumentTheme(preferencesStore.state.theme)
+}

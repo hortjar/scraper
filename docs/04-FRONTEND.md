@@ -115,7 +115,7 @@ What to use instead:
 
 **The escape hatch:** `src/lib/browser/` contains a small, reviewed, tested set of
 primitives that _are_ allowed to hold effects, because they wrap a genuine external
-system: `useMediaQuery`, `useOnlineStatus`, `useInterval`, `useEventListener`,
+system: `useIsMediaQuery`, `useIsOnline`, `useInterval`, `useEventListener`,
 `useDocumentTitle`, `useHotkey`. Feature code imports these. Adding a new one
 requires justification in the PR and a test.
 
@@ -230,7 +230,7 @@ in the sidebar footer (console) and the page footer (landing).
   `APP_VERSION`, compared against the API's version from `/health`. **On mismatch,
   a non-blocking banner offers "Reload to update"** — the classic stale-SPA-after-deploy
   problem, solved cheaply.
-- **Connection**: derived, not polled by hand — `useOnlineStatus` (browser events)
+- **Connection**: derived, not polled by hand — `useIsOnline` (browser events)
   combined with the Query client's error/fetching state and a low-frequency
   `/health` query. Three states: connected, reconnecting (retries in flight or
   health degraded), offline. Announced via `aria-live`.

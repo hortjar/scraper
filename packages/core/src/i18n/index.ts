@@ -11,13 +11,14 @@ export * from "./keys.js"
 
 export type SupportedLocale = (typeof LOCALE)[keyof typeof LOCALE]
 
-export type MessageParams = Readonly<Record<string, string | number | Date>>
+export type MessageParameters = Readonly<Record<string, string | number | Date>>
 
 const CATALOGS: Record<SupportedLocale, Catalog> = { en, cs }
 
 const FALLBACK_LOCALE: SupportedLocale = LOCALE.en
 
-export const isSupportedLocale = (value: string): value is SupportedLocale => value in CATALOGS
+export const isSupportedLocale = (value: string): value is SupportedLocale =>
+  Object.hasOwn(CATALOGS, value)
 
 export const resolveLocale = (
   preferred: string | null | undefined,
@@ -25,8 +26,9 @@ export const resolveLocale = (
   fallback: string,
 ): SupportedLocale => {
   if (preferred && isSupportedLocale(preferred)) return preferred
-  for (const part of (acceptLanguage ?? "").split(",")) {
-    const tag = part.split(";")[0]?.trim().split("-")[0]
+  const accepted = (acceptLanguage ?? "").split(",")
+  for (const part of accepted) {
+    const tag = part.split(";", 1)[0]?.trim().split("-", 1)[0]
     if (tag && isSupportedLocale(tag)) return tag
   }
   return isSupportedLocale(fallback) ? fallback : FALLBACK_LOCALE
@@ -34,9 +36,14 @@ export const resolveLocale = (
 
 const formatterCache = new Map<string, IntlMessageFormat>()
 
-const formatWith = (locale: SupportedLocale, key: string, params: MessageParams): string => {
-  const catalog = CATALOGS[locale]
-  const template = catalog[key as keyof Catalog] ?? en[key as keyof Catalog]
+const lookup = (catalog: Readonly<Record<string, string | undefined>>, key: string) => catalog[key]
+
+const formatWith = (
+  locale: SupportedLocale,
+  key: string,
+  parameters: MessageParameters,
+): string => {
+  const template = lookup(CATALOGS[locale], key) ?? lookup(en, key)
   if (!template) return key
 
   const cacheKey = `${locale}:${key}`
@@ -45,15 +52,18 @@ const formatWith = (locale: SupportedLocale, key: string, params: MessageParams)
     formatter = new IntlMessageFormat(template, locale)
     formatterCache.set(cacheKey, formatter)
   }
-  const output = formatter.format(params)
+  const output = formatter.format(parameters)
   return Array.isArray(output) ? output.join("") : String(output)
 }
 
 export class Translator extends Effect.Service<Translator>()(SERVICE_TAG.Translator, {
   succeed: {
-    render: (key: string, params: MessageParams = {}, locale: SupportedLocale = FALLBACK_LOCALE) =>
-      formatWith(locale, key, params),
-    has: (key: string, locale: SupportedLocale) => key in CATALOGS[locale],
+    render: (
+      key: string,
+      parameters: MessageParameters = {},
+      locale: SupportedLocale = FALLBACK_LOCALE,
+    ) => formatWith(locale, key, parameters),
+    has: (key: string, locale: SupportedLocale) => Object.hasOwn(CATALOGS[locale], key),
     locales: () => Object.keys(CATALOGS) as readonly SupportedLocale[],
   },
 }) {}

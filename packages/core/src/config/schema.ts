@@ -3,6 +3,8 @@ import { Config, Redacted } from "effect"
 import { RETRY, TIMEOUT } from "../constants/defaults.js"
 import { APP_ENV, MAIL_DRIVER, STORAGE_DRIVER } from "../constants/domain-values.js"
 
+const NO_SECRET = Redacted.make("")
+
 const csv = (name: string, fallback: readonly string[]) =>
   Config.string(name).pipe(
     Config.map((value) =>
@@ -110,10 +112,8 @@ export const storageConfig = Config.all({
   s3Endpoint: Config.string("S3_ENDPOINT").pipe(Config.withDefault("")),
   s3Bucket: Config.string("S3_BUCKET").pipe(Config.withDefault("")),
   s3Region: Config.string("S3_REGION").pipe(Config.withDefault("")),
-  s3AccessKeyId: Config.redacted("S3_ACCESS_KEY_ID").pipe(Config.withDefault(Redacted.make(""))),
-  s3SecretAccessKey: Config.redacted("S3_SECRET_ACCESS_KEY").pipe(
-    Config.withDefault(Redacted.make("")),
-  ),
+  s3AccessKeyId: Config.redacted("S3_ACCESS_KEY_ID").pipe(Config.withDefault(NO_SECRET)),
+  s3SecretAccessKey: Config.redacted("S3_SECRET_ACCESS_KEY").pipe(Config.withDefault(NO_SECRET)),
   runRetentionDays: Config.integer("RUN_RETENTION_DAYS").pipe(Config.withDefault(90)),
   snapshotRetentionDays: Config.integer("SNAPSHOT_RETENTION_DAYS").pipe(Config.withDefault(30)),
   screenshotRetentionDays: Config.integer("SCREENSHOT_RETENTION_DAYS").pipe(Config.withDefault(14)),
@@ -129,9 +129,9 @@ export const mailConfig = Config.all({
   smtpHost: Config.string("SMTP_HOST").pipe(Config.withDefault("")),
   smtpPort: Config.integer("SMTP_PORT").pipe(Config.withDefault(587)),
   smtpUser: Config.string("SMTP_USER").pipe(Config.withDefault("")),
-  smtpPassword: Config.redacted("SMTP_PASSWORD").pipe(Config.withDefault(Redacted.make(""))),
+  smtpPassword: Config.redacted("SMTP_PASSWORD").pipe(Config.withDefault(NO_SECRET)),
   smtpSecure: Config.boolean("SMTP_SECURE").pipe(Config.withDefault(true)),
-  resendApiKey: Config.redacted("RESEND_API_KEY").pipe(Config.withDefault(Redacted.make(""))),
+  resendApiKey: Config.redacted("RESEND_API_KEY").pipe(Config.withDefault(NO_SECRET)),
   channelFailureLimit: Config.integer("CHANNEL_FAILURE_LIMIT").pipe(Config.withDefault(10)),
 })
 
@@ -139,7 +139,7 @@ export const observabilityConfig = Config.all({
   otelEndpoint: Config.string("OTEL_EXPORTER_OTLP_ENDPOINT").pipe(Config.withDefault("")),
   otelServiceName: Config.string("OTEL_SERVICE_NAME").pipe(Config.withDefault("scraper-api")),
   metricsEnabled: Config.boolean("METRICS_ENABLED").pipe(Config.withDefault(true)),
-  sentryDsn: Config.redacted("SENTRY_DSN").pipe(Config.withDefault(Redacted.make(""))),
+  sentryDsn: Config.redacted("SENTRY_DSN").pipe(Config.withDefault(NO_SECRET)),
 })
 
 export const rootConfig = Config.all({

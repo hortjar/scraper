@@ -5,9 +5,9 @@ import { cn } from "../../lib/utils"
 
 export const TooltipProvider = ({
   delayDuration = 200,
-  ...props
+  ...properties
 }: ComponentProps<typeof TooltipPrimitive.Provider>) => (
-  <TooltipPrimitive.Provider delayDuration={delayDuration} {...props} />
+  <TooltipPrimitive.Provider delayDuration={delayDuration} {...properties} />
 )
 
 export const Tooltip = TooltipPrimitive.Root
@@ -17,7 +17,7 @@ export const TooltipContent = ({
   className,
   sideOffset = 6,
   children,
-  ...props
+  ...properties
 }: ComponentProps<typeof TooltipPrimitive.Content>) => (
   <TooltipPrimitive.Portal>
     <TooltipPrimitive.Content
@@ -28,7 +28,7 @@ export const TooltipContent = ({
         "text-small text-ink shadow-popover data-[state=delayed-open]:animate-fade-in",
         className,
       )}
-      {...props}
+      {...properties}
     >
       {children}
       <TooltipPrimitive.Arrow className="fill-[var(--surface-raised)]" />

@@ -1,4 +1,4 @@
-import { type MessageParams, type ValidationIssue, isErrorEnvelope } from "./types"
+import { type MessageParameters, type ValidationIssue, isErrorEnvelope } from "./types"
 
 export const CLIENT_ERROR_CODE = {
   network: "network",
@@ -14,7 +14,7 @@ export interface ApiErrorInit {
   readonly status: number
   readonly code: string
   readonly messageKey: string
-  readonly messageParams?: MessageParams
+  readonly messageParams?: MessageParameters
   readonly message?: string
   readonly requestId?: string | null
   readonly issues?: readonly ValidationIssue[]
@@ -24,7 +24,7 @@ export class ApiError extends Error {
   readonly status: number
   readonly code: string
   readonly messageKey: string
-  readonly messageParams: MessageParams
+  readonly messageParams: MessageParameters
   readonly issues: readonly ValidationIssue[]
   readonly requestId: string | null
 

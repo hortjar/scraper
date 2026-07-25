@@ -10,7 +10,7 @@ import { getHealth } from "./index"
 const BASE_URL = "https://api.test"
 
 const jsonResponse = (status: number, body: unknown) =>
-  new Response(JSON.stringify(body), {
+  Response.json(body, {
     status,
     headers: { "content-type": "application/json" },
   })
@@ -56,7 +56,12 @@ describe("generated client", () => {
       ),
     )
 
-    const error = await getHealth({ baseUrl: BASE_URL }).catch((cause: unknown) => cause)
+    let error: unknown
+    try {
+      await getHealth({ baseUrl: BASE_URL })
+    } catch (error_: unknown) {
+      error = error_
+    }
 
     expect(error).toBeInstanceOf(ApiError)
     expect(error).toMatchObject({

@@ -12,7 +12,7 @@ export interface SidebarNavItem {
   readonly icon: ComponentType<{ className?: string }>
 }
 
-export interface AppSidebarProps {
+export interface AppSidebarProperties {
   readonly items: readonly SidebarNavItem[]
   readonly collapsed: boolean
   readonly onToggle: () => void
@@ -20,7 +20,13 @@ export interface AppSidebarProps {
   readonly className?: string
 }
 
-export const AppSidebar = ({ items, collapsed, onToggle, footer, className }: AppSidebarProps) => {
+export const AppSidebar = ({
+  items,
+  collapsed,
+  onToggle,
+  footer,
+  className,
+}: AppSidebarProperties) => {
   const { t } = useTranslation("common")
 
   return (

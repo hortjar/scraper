@@ -11,7 +11,7 @@ export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 export const DropdownMenuContent = ({
   className,
   sideOffset = 6,
-  ...props
+  ...properties
 }: ComponentProps<typeof DropdownMenuPrimitive.Content>) => (
   <DropdownMenuPrimitive.Portal>
     <DropdownMenuPrimitive.Content
@@ -22,7 +22,7 @@ export const DropdownMenuContent = ({
         "shadow-popover data-[state=open]:animate-pop-in",
         className,
       )}
-      {...props}
+      {...properties}
     />
   </DropdownMenuPrimitive.Portal>
 )
@@ -35,24 +35,24 @@ const itemClass = [
 
 export const DropdownMenuItem = ({
   className,
-  ...props
+  ...properties
 }: ComponentProps<typeof DropdownMenuPrimitive.Item>) => (
   <DropdownMenuPrimitive.Item
     data-slot="dropdown-menu-item"
     className={cn(itemClass, className)}
-    {...props}
+    {...properties}
   />
 )
 
 export const DropdownMenuRadioItem = ({
   className,
   children,
-  ...props
+  ...properties
 }: ComponentProps<typeof DropdownMenuPrimitive.RadioItem>) => (
   <DropdownMenuPrimitive.RadioItem
     data-slot="dropdown-menu-radio-item"
     className={cn(itemClass, "pl-7", className)}
-    {...props}
+    {...properties}
   >
     <span className="absolute left-2 flex size-3 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
@@ -65,22 +65,22 @@ export const DropdownMenuRadioItem = ({
 
 export const DropdownMenuLabel = ({
   className,
-  ...props
+  ...properties
 }: ComponentProps<typeof DropdownMenuPrimitive.Label>) => (
   <DropdownMenuPrimitive.Label
     data-slot="dropdown-menu-label"
     className={cn("px-2 py-1.5 eyebrow text-ink-subtle", className)}
-    {...props}
+    {...properties}
   />
 )
 
 export const DropdownMenuSeparator = ({
   className,
-  ...props
+  ...properties
 }: ComponentProps<typeof DropdownMenuPrimitive.Separator>) => (
   <DropdownMenuPrimitive.Separator
     data-slot="dropdown-menu-separator"
     className={cn("-mx-1 my-1 h-px bg-line", className)}
-    {...props}
+    {...properties}
   />
 )

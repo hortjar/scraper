@@ -28,7 +28,7 @@ export const toastVariants = cva(
 
 export const ToastViewport = ({
   className,
-  ...props
+  ...properties
 }: ComponentProps<typeof ToastPrimitive.Viewport>) => (
   <ToastPrimitive.Viewport
     data-slot="toast-viewport"
@@ -37,39 +37,39 @@ export const ToastViewport = ({
       "flex-col gap-2 p-4 outline-none",
       className,
     )}
-    {...props}
+    {...properties}
   />
 )
 
-export interface ToastProps
+export interface ToastProperties
   extends ComponentProps<typeof ToastPrimitive.Root>, VariantProps<typeof toastVariants> {}
 
-export const Toast = ({ className, tone, ...props }: ToastProps) => (
+export const Toast = ({ className, tone, ...properties }: ToastProperties) => (
   <ToastPrimitive.Root
     data-slot="toast"
     className={cn(toastVariants({ tone }), className)}
-    {...props}
+    {...properties}
   />
 )
 
 export const ToastTitle = ({
   className,
-  ...props
+  ...properties
 }: ComponentProps<typeof ToastPrimitive.Title>) => (
   <ToastPrimitive.Title
     data-slot="toast-title"
     className={cn("text-body font-medium text-ink", className)}
-    {...props}
+    {...properties}
   />
 )
 
 export const ToastDescription = ({
   className,
-  ...props
+  ...properties
 }: ComponentProps<typeof ToastPrimitive.Description>) => (
   <ToastPrimitive.Description
     data-slot="toast-description"
     className={cn("text-small text-ink-muted", className)}
-    {...props}
+    {...properties}
   />
 )

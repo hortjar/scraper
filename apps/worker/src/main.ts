@@ -1,3 +1,5 @@
+import process from "node:process"
+
 import { AppConfig } from "@scraper/core/config"
 import { Effect } from "effect"
 
@@ -15,7 +17,7 @@ const config = await runtime.runPromise(AppConfig)
 
 const connection = makeConnection(config.redis)
 
-const workerId = globalThis.crypto.randomUUID()
+const workerId = crypto.randomUUID()
 
 const workers = [
   createScrapeWorker(runtime, connection, config.redis),
@@ -32,23 +34,23 @@ runtime.runFork(
   ),
 )
 
-let shuttingDown = false
+const shutdownState = { hasStarted: false }
 
 const shutdown = async (): Promise<void> => {
-  if (shuttingDown) return
-  shuttingDown = true
+  if (shutdownState.hasStarted) return
+  shutdownState.hasStarted = true
   await runtime.runPromise(Effect.logInfo("worker.shutdown.start"))
   stopHeartbeat(heartbeat)
   await Promise.all(workers.map((worker) => worker.close()))
   connection.disconnect()
   await runtime.runPromise(Effect.logInfo("worker.shutdown.drained"))
   await runtime.dispose()
-  globalThis.process.exit(0)
+  process.exit(0)
 }
 
-globalThis.process.on("SIGTERM", () => {
+process.on("SIGTERM", () => {
   void shutdown()
 })
-globalThis.process.on("SIGINT", () => {
+process.on("SIGINT", () => {
   void shutdown()
 })

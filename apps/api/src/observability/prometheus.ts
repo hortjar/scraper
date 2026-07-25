@@ -3,7 +3,10 @@ import { Effect, Metric, type MetricPair, MetricState, Option } from "effect"
 const LINE_BREAK = "\n"
 
 const escapeLabelValue = (value: string): string =>
-  value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n")
+  value
+    .replaceAll("\\", "\\\\")
+    .replaceAll('"', String.raw`\"`)
+    .replaceAll("\n", String.raw`\n`)
 
 const renderLabels = (tags: MetricPair.MetricPair.Untyped["metricKey"]["tags"]): string => {
   if (tags.length === 0) return ""
@@ -15,7 +18,7 @@ const withExtraLabel = (labels: string, extra: string): string =>
   labels.length === 0 ? `{${extra}}` : `${labels.slice(0, -1)},${extra}}`
 
 const renderSample = (name: string, labels: string, value: number | bigint): string =>
-  `${name}${labels} ${typeof value === "bigint" ? value.toString() : value}${LINE_BREAK}`
+  `${name}${labels} ${value.toString()}${LINE_BREAK}`
 
 const renderCounter = (
   name: string,
@@ -36,7 +39,7 @@ const renderHistogram = (
 ): string => {
   const buckets = state.buckets
     .map(([boundary, count]) =>
-      renderSample(`${name}_bucket`, withExtraLabel(labels, `le="${boundary}"`), count),
+      renderSample(`${name}_bucket`, withExtraLabel(labels, `le="${String(boundary)}"`), count),
     )
     .join("")
   return (
@@ -56,7 +59,7 @@ const renderSummary = (
     .map(([quantile, value]) =>
       renderSample(
         name,
-        withExtraLabel(labels, `quantile="${quantile}"`),
+        withExtraLabel(labels, `quantile="${String(quantile)}"`),
         Option.getOrThrow(value),
       ),
     )
@@ -73,7 +76,7 @@ const renderFrequency = (
   labels: string,
   state: MetricState.MetricState.Frequency,
 ): string => {
-  const occurrences = Array.from(state.occurrences.entries())
+  const occurrences = [...state.occurrences]
     .map(([bucket, count]) =>
       renderSample(name, withExtraLabel(labels, `bucket="${escapeLabelValue(bucket)}"`), count),
     )
@@ -95,5 +98,5 @@ const renderPair = (pair: MetricPair.MetricPair.Untyped): string => {
 }
 
 export const renderPrometheusText: Effect.Effect<string> = Metric.snapshot.pipe(
-  Effect.map((pairs) => pairs.map(renderPair).join("")),
+  Effect.map((pairs) => pairs.map((pair) => renderPair(pair)).join("")),
 )

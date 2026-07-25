@@ -10,9 +10,9 @@ const email = process.env.SEED_EMAIL ?? "dev@example.com"
 const UNUSABLE_PASSWORD = "!"
 
 const sql = postgres(url, { max: 1 })
-const db = drizzle(sql)
+const database = drizzle(sql)
 
-const [user] = await db
+const [user] = await database
   .insert(users)
   .values({
     email,
@@ -25,13 +25,9 @@ const [user] = await db
   .onConflictDoNothing()
   .returning({ id: users.id })
 
-const userId =
-  user?.id ??
-  (await db
-    .select({ id: users.id })
-    .from(users)
-    .limit(1)
-    .then((rows) => rows[0]?.id))
+const existing = await database.select({ id: users.id }).from(users).limit(1)
+
+const userId = user?.id ?? existing[0]?.id
 
 if (!userId) throw new Error("could not resolve a seed user")
 
@@ -70,7 +66,7 @@ const demos = [
 ]
 
 for (const demo of demos) {
-  const [monitor] = await db
+  const [monitor] = await database
     .insert(monitors)
     .values({
       userId,
@@ -86,7 +82,7 @@ for (const demo of demos) {
 
   if (!monitor) continue
 
-  await db.insert(extractors).values({
+  await database.insert(extractors).values({
     monitorId: monitor.id,
     key: demo.field.key,
     label: demo.field.label,
@@ -99,5 +95,5 @@ for (const demo of demos) {
 
 await sql.end()
 
-console.log(`seeded ${email} with ${demos.length} demo monitors`)
+console.log(`seeded ${email} with ${String(demos.length)} demo monitors`)
 console.log("the seed password hash is unusable on purpose: register through the API instead")

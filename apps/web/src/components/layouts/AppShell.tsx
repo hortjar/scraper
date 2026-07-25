@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next"
 
 import { AppStatus } from "../../features/system"
 import { useHotkey } from "../../lib/browser"
-import { useSidebarCollapsed, toggleSidebar } from "../../stores/ui"
+import { useIsSidebarCollapsed, toggleSidebar } from "../../stores/ui"
 import { AppSidebar, type SidebarNavItem } from "../organisms/AppSidebar"
 import { CommandPalette } from "../organisms/CommandPalette"
 import { Button } from "../ui/Button"
@@ -12,16 +12,16 @@ import { Button } from "../ui/Button"
 const PALETTE_HOTKEY = "mod+k"
 const PALETTE_HINT = "⌘K"
 
-export interface AppShellProps {
+export interface AppShellProperties {
   readonly title: string
   readonly description?: string
   readonly actions?: ReactNode
   readonly children: ReactNode
 }
 
-export const AppShell = ({ title, description, actions, children }: AppShellProps) => {
+export const AppShell = ({ title, description, actions, children }: AppShellProperties) => {
   const { t } = useTranslation("common")
-  const collapsed = useSidebarCollapsed()
+  const isCollapsed = useIsSidebarCollapsed()
   const [paletteOpen, setPaletteOpen] = useState(false)
 
   useHotkey(PALETTE_HOTKEY, () => {
@@ -40,9 +40,9 @@ export const AppShell = ({ title, description, actions, children }: AppShellProp
     <div className="flex min-h-dvh bg-canvas">
       <AppSidebar
         items={items}
-        collapsed={collapsed}
+        collapsed={isCollapsed}
         onToggle={toggleSidebar}
-        footer={collapsed ? null : <AppStatus />}
+        footer={isCollapsed ? null : <AppStatus />}
       />
 
       <div className="flex min-w-0 flex-1 flex-col">

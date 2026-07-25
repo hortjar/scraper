@@ -16,12 +16,12 @@ const STATE_KEY = {
   offline: "connection.offline",
 } as const
 
-export interface ConnectionIndicatorProps {
+export interface ConnectionIndicatorProperties {
   readonly state: ConnectionState
   readonly className?: string
 }
 
-export const ConnectionIndicator = ({ state, className }: ConnectionIndicatorProps) => {
+export const ConnectionIndicator = ({ state, className }: ConnectionIndicatorProperties) => {
   const { t } = useTranslation("common")
 
   return (

@@ -10,29 +10,35 @@ const JSON_CONTENT_TYPE = "application/json"
 type SessionRefresh = () => Promise<boolean>
 
 const probeSession: SessionRefresh = async () => {
-  const response = await globalThis.fetch(`${appConfig.apiUrl}${SESSION_PROBE_PATH}`, {
+  const response = await fetch(`${appConfig.apiUrl}${SESSION_PROBE_PATH}`, {
     credentials: "include",
     headers: { accept: JSON_CONTENT_TYPE },
   })
   return response.ok
 }
 
-let refreshSession: SessionRefresh = probeSession
-
-let inFlight: Promise<boolean> | null = null
+const session: { refresh: SessionRefresh; inFlight: Promise<boolean> | null } = {
+  refresh: probeSession,
+  inFlight: null,
+}
 
 export const configureSessionRefresh = (refresh: SessionRefresh): void => {
-  refreshSession = refresh
+  session.refresh = refresh
+}
+
+const runRefresh = async (): Promise<boolean> => {
+  try {
+    return await session.refresh()
+  } catch {
+    return false
+  } finally {
+    session.inFlight = null
+  }
 }
 
 export const refreshSessionOnce = (): Promise<boolean> => {
-  if (inFlight === null) {
-    inFlight = refreshSession().catch(() => false)
-    void inFlight.finally(() => {
-      inFlight = null
-    })
-  }
-  return inFlight
+  session.inFlight ??= runRefresh()
+  return session.inFlight
 }
 
 const urlOf = (input: RequestInfo | URL): string =>
@@ -40,9 +46,9 @@ const urlOf = (input: RequestInfo | URL): string =>
 
 const send = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   try {
-    return await globalThis.fetch(input, init)
-  } catch (cause) {
-    throw networkError(cause)
+    return await fetch(input, init)
+  } catch (error) {
+    throw networkError(error)
   }
 }
 
@@ -55,8 +61,8 @@ export const sessionFetch = async (
   if (response.status !== STATUS_UNAUTHORIZED) return response
   if (urlOf(input).includes(SESSION_PROBE_PATH)) return response
 
-  const recovered = await refreshSessionOnce()
-  if (!recovered) return response
+  const isRecovered = await refreshSessionOnce()
+  if (!isRecovered) return response
 
   return send(input, init)
 }

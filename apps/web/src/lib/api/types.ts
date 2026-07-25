@@ -1,4 +1,4 @@
-export type MessageParams = Readonly<Record<string, string | number>>
+export type MessageParameters = Readonly<Record<string, string | number>>
 
 export interface ValidationIssue {
   readonly path: readonly string[]
@@ -9,7 +9,7 @@ export interface ValidationIssue {
 export interface ErrorEnvelope {
   readonly code: string
   readonly messageKey: string
-  readonly messageParams?: MessageParams
+  readonly messageParams?: MessageParameters
   readonly message?: string
   readonly requestId?: string
   readonly issues?: readonly ValidationIssue[]

@@ -6,7 +6,7 @@ const storageKey = (name: string): string => `${NAMESPACE}:${name}`
 
 const storage = (): Storage | null => {
   try {
-    return globalThis.window?.localStorage ?? null
+    return localStorage
   } catch {
     return null
   }
@@ -29,7 +29,7 @@ export const readPersisted = <T>(
 export const hydrate = <T>(name: string, fallback: T, isValid: (value: unknown) => value is T): T =>
   readPersisted(name, isValid) ?? fallback
 
-export const persist = <T>(store: Store<T>, name: string): void => {
+export const persist = <T>(store: Store<T>, name: string): Store<T> => {
   store.subscribe((value) => {
     try {
       storage()?.setItem(storageKey(name), JSON.stringify(value))
@@ -37,4 +37,5 @@ export const persist = <T>(store: Store<T>, name: string): void => {
       return
     }
   })
+  return store
 }

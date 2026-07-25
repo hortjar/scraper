@@ -6,7 +6,7 @@ import { cn } from "../../lib/utils"
 
 const DEFAULT_REFRESH_MS = 30_000
 
-export interface RelativeTimeProps {
+export interface RelativeTimeProperties {
   readonly value: string
   readonly live?: boolean
   readonly refreshMs?: number
@@ -18,7 +18,7 @@ export const RelativeTime = ({
   live,
   refreshMs = DEFAULT_REFRESH_MS,
   className,
-}: RelativeTimeProps) => {
+}: RelativeTimeProperties) => {
   const format = useFormat()
   const [revision, setRevision] = useState(0)
 

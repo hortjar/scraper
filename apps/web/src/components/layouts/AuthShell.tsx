@@ -3,14 +3,14 @@ import { useTranslation } from "react-i18next"
 
 import { PulseStrip } from "../organisms/PulseStrip"
 
-export interface AuthShellProps {
+export interface AuthShellProperties {
   readonly title: string
   readonly description: string
   readonly children: ReactNode
   readonly footer?: ReactNode
 }
 
-export const AuthShell = ({ title, description, children, footer }: AuthShellProps) => {
+export const AuthShell = ({ title, description, children, footer }: AuthShellProperties) => {
   const { t } = useTranslation("common")
 
   return (

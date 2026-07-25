@@ -1,24 +1,24 @@
 import { readFileSync } from "node:fs"
-import { dirname, resolve } from "node:path"
+import path from "node:path"
 import { fileURLToPath } from "node:url"
 
 import { describe, expect, it } from "vitest"
 
-import { ENV_SPEC } from "./env-spec.js"
+import { ENV_SPEC } from "./environment-spec.js"
 
-const schemaSource = readFileSync(
-  resolve(dirname(fileURLToPath(import.meta.url)), "schema.ts"),
-  "utf8",
-)
+const here = path.dirname(fileURLToPath(import.meta.url))
+const schemaSource = readFileSync(path.resolve(here, "schema.ts"), "utf8")
 
 const referencedNames = new Set(
-  [...schemaSource.matchAll(/"([A-Z][A-Z0-9_]{2,})"/g)].map((match) => match[1]!),
+  Array.from(schemaSource.matchAll(/"([A-Z][A-Z0-9_]{2,})"/g), (match) => match[1]).filter(
+    (name) => name !== undefined,
+  ),
 )
 
-describe("env spec", () => {
+describe("environment spec", () => {
   it("declares every variable the config schema reads", () => {
-    const undeclared = [...referencedNames].filter(
-      (name) => !ENV_SPEC.some((entry) => entry.name === name),
+    const undeclared = [...referencedNames].filter((name) =>
+      ENV_SPEC.every((entry) => entry.name !== name),
     )
     expect(undeclared).toEqual([])
   })
@@ -32,13 +32,13 @@ describe("env spec", () => {
 
   it("gives every non-secret optional variable a default", () => {
     const missing = ENV_SPEC.filter(
-      (entry) => !entry.required && !entry.secret && entry.defaultValue === null,
+      (entry) => !entry.isRequired && !entry.isSecret && entry.defaultValue === null,
     ).map((entry) => entry.name)
     expect(missing).toEqual([])
   })
 
   it("never ships a default value for a secret", () => {
-    const leaked = ENV_SPEC.filter((entry) => entry.secret && Boolean(entry.defaultValue)).map(
+    const leaked = ENV_SPEC.filter((entry) => entry.isSecret && Boolean(entry.defaultValue)).map(
       (entry) => entry.name,
     )
     expect(leaked).toEqual([])

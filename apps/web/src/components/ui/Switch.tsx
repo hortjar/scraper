@@ -3,9 +3,9 @@ import type { ComponentProps } from "react"
 
 import { cn } from "../../lib/utils"
 
-export type SwitchProps = ComponentProps<typeof SwitchPrimitive.Root>
+export type SwitchProperties = ComponentProps<typeof SwitchPrimitive.Root>
 
-export const Switch = ({ className, ...props }: SwitchProps) => (
+export const Switch = ({ className, ...properties }: SwitchProperties) => (
   <SwitchPrimitive.Root
     data-slot="switch"
     className={cn(
@@ -17,7 +17,7 @@ export const Switch = ({ className, ...props }: SwitchProps) => (
       "disabled:cursor-not-allowed disabled:opacity-50",
       className,
     )}
-    {...props}
+    {...properties}
   >
     <SwitchPrimitive.Thumb
       className={cn(

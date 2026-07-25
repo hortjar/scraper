@@ -1,4 +1,4 @@
-export { AppStatus, type AppStatusProps } from "./AppStatus"
+export { AppStatus, type AppStatusProperties } from "./AppStatus"
 export { healthQueryKey, healthQueryOptions } from "./api"
 export {
   type AppStatusSnapshot,

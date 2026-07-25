@@ -12,7 +12,7 @@ export interface DataTableColumn<T> {
   readonly width?: string
 }
 
-export interface DataTableProps<T> {
+export interface DataTableProperties<T> {
   readonly columns: readonly DataTableColumn<T>[]
   readonly rows: readonly T[]
   readonly getRowId: (row: T) => string
@@ -35,7 +35,7 @@ export const DataTable = <T,>({
   density = "comfortable",
   onRowClick,
   className,
-}: DataTableProps<T>) => (
+}: DataTableProperties<T>) => (
   <div className={cn("overflow-x-auto rounded-lg border border-line bg-surface", className)}>
     <table className="w-full border-collapse text-left">
       <caption className="sr-only">{caption}</caption>
@@ -60,7 +60,13 @@ export const DataTable = <T,>({
         {rows.map((row) => (
           <tr
             key={getRowId(row)}
-            onClick={onRowClick === undefined ? undefined : () => onRowClick(row)}
+            onClick={
+              onRowClick === undefined
+                ? undefined
+                : () => {
+                    onRowClick(row)
+                  }
+            }
             className={cn(
               "border-b border-line last:border-0",
               ROW_HEIGHT[density],

@@ -2,7 +2,7 @@ const FALLBACK_API_URL = "/api/v1"
 const FALLBACK_APP_TITLE = "Scraper"
 const FALLBACK_LOCALE = "en"
 
-const runtime: AppRuntimeConfig = globalThis.window?.__APP_CONFIG__ ?? {}
+const runtime: AppRuntimeConfig = globalThis.__APP_CONFIG__ ?? {}
 
 export const appConfig = {
   apiUrl: runtime.apiUrl ?? FALLBACK_API_URL,

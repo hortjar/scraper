@@ -7,6 +7,8 @@ interface AppRuntimeConfig {
   readonly defaultLocale?: string
 }
 
+declare var __APP_CONFIG__: AppRuntimeConfig | undefined
+
 interface Window {
   __APP_CONFIG__?: AppRuntimeConfig
 }

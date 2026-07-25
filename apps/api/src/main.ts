@@ -1,3 +1,5 @@
+import process from "node:process"
+
 import { AppConfig } from "@scraper/core/config"
 import { TIMEOUT } from "@scraper/core/constants"
 import { Effect } from "effect"
@@ -35,19 +37,19 @@ const shutdownEffect = Effect.gen(function* () {
   yield* Effect.logInfo("api.shutdown.drained")
 })
 
-let shuttingDown = false
+const shutdownState = { hasStarted: false }
 
 const shutdown = async () => {
-  if (shuttingDown) return
-  shuttingDown = true
+  if (shutdownState.hasStarted) return
+  shutdownState.hasStarted = true
   await runtime.runPromise(shutdownEffect)
   await runtime.dispose()
-  globalThis.process.exit(0)
+  process.exit(0)
 }
 
-globalThis.process.on("SIGTERM", () => {
+process.on("SIGTERM", () => {
   void shutdown()
 })
-globalThis.process.on("SIGINT", () => {
+process.on("SIGINT", () => {
   void shutdown()
 })

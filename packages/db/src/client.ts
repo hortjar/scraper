@@ -1,22 +1,28 @@
 import { AppConfig } from "@scraper/core/config"
 import { SERVICE_TAG, SPAN } from "@scraper/core/constants"
-import { DbError } from "@scraper/core/errors"
+import { DatabaseError } from "@scraper/core/errors"
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js"
 import { type Cause, Effect, Exit, FiberRef, Layer, Redacted, Runtime } from "effect"
 import postgres from "postgres"
 
 import * as schema from "./schema/index.js"
 
-export type Db = PostgresJsDatabase<typeof schema>
-export type DbTransaction = Parameters<Parameters<Db["transaction"]>[0]>[0]
-export type DbExecutor = Db | DbTransaction
+export type DrizzleDatabase = PostgresJsDatabase<typeof schema>
+export type DatabaseTransaction = Parameters<Parameters<DrizzleDatabase["transaction"]>[0]>[0]
+export type DatabaseExecutor = DrizzleDatabase | DatabaseTransaction
 
-export const currentTransaction = FiberRef.unsafeMake<DbTransaction | null>(null)
+export const currentTransaction = FiberRef.unsafeMake<DatabaseTransaction | null>(null)
 
 class TransactionAborted<E> extends Error {
   constructor(readonly failure: Cause.Cause<E>) {
     super("transaction aborted")
   }
+}
+
+const logNotice = (notice: postgres.Notice): void => {
+  Effect.runSync(
+    Effect.logDebug("db.notice").pipe(Effect.annotateLogs({ message: notice.message ?? "" })),
+  )
 }
 
 const openPool = Effect.gen(function* () {
@@ -28,7 +34,7 @@ const openPool = Effect.gen(function* () {
         max: config.database.poolMax,
         idle_timeout: config.database.poolIdleTimeout,
         ssl: config.database.ssl ? "require" : false,
-        onnotice: () => undefined,
+        onnotice: logNotice,
       }),
     ),
     (client) => Effect.promise(() => client.end({ timeout: 5 })),
@@ -41,12 +47,12 @@ export class Database extends Effect.Service<Database>()(SERVICE_TAG.Database, {
   scoped: Effect.gen(function* () {
     const { sql, db } = yield* openPool
 
-    const query = <A>(run: (executor: DbExecutor) => Promise<A>) =>
+    const query = <A>(run: (executor: DatabaseExecutor) => Promise<A>) =>
       FiberRef.get(currentTransaction).pipe(
         Effect.flatMap((active) =>
           Effect.tryPromise({
             try: () => run(active ?? db),
-            catch: (cause) => new DbError({ operation: SPAN.db.query, cause }),
+            catch: (cause) => new DatabaseError({ operation: SPAN.db.query, cause }),
           }),
         ),
         Effect.withSpan(SPAN.db.query),
@@ -54,11 +60,11 @@ export class Database extends Effect.Service<Database>()(SERVICE_TAG.Database, {
 
     const runInTransaction = <A, E, R>(
       body: Effect.Effect<A, E, R>,
-    ): Effect.Effect<A, E | DbError, R> =>
+    ): Effect.Effect<A, E | DatabaseError, R> =>
       Effect.runtime<R>().pipe(
         Effect.flatMap((runtime) => {
           const run = Runtime.runPromiseExit(runtime)
-          return Effect.tryPromise<A, TransactionAborted<E> | DbError>({
+          return Effect.tryPromise<A, TransactionAborted<E> | DatabaseError>({
             try: () =>
               db.transaction(async (tx) => {
                 const exit = await run(Effect.locally(body, currentTransaction, tx))
@@ -68,27 +74,32 @@ export class Database extends Effect.Service<Database>()(SERVICE_TAG.Database, {
             catch: (cause) =>
               cause instanceof TransactionAborted
                 ? (cause as TransactionAborted<E>)
-                : new DbError({ operation: SPAN.db.transaction, cause }),
+                : new DatabaseError({ operation: SPAN.db.transaction, cause }),
           })
         }),
-        Effect.catchAll((error): Effect.Effect<never, E | DbError> =>
+        Effect.catchAll((error): Effect.Effect<never, E | DatabaseError> =>
           error instanceof TransactionAborted
             ? Effect.failCause(error.failure)
             : Effect.fail(error),
         ),
       )
 
-    const transaction = <A, E, R>(body: Effect.Effect<A, E, R>): Effect.Effect<A, E | DbError, R> =>
+    const transaction = <A, E, R>(
+      body: Effect.Effect<A, E, R>,
+    ): Effect.Effect<A, E | DatabaseError, R> =>
       FiberRef.get(currentTransaction).pipe(
-        Effect.flatMap((active): Effect.Effect<A, E | DbError, R> =>
+        Effect.flatMap((active): Effect.Effect<A, E | DatabaseError, R> =>
           active ? body : runInTransaction(body),
         ),
         Effect.withSpan(SPAN.db.transaction),
       )
 
     const health = Effect.tryPromise({
-      try: () => sql`select 1`.then(() => true as const),
-      catch: (cause) => new DbError({ operation: "health", cause }),
+      try: async () => {
+        await sql`select 1`
+        return true as const
+      },
+      catch: (cause) => new DatabaseError({ operation: "health", cause }),
     })
 
     return { query, transaction, health, client: sql } as const
@@ -98,17 +109,17 @@ export class Database extends Effect.Service<Database>()(SERVICE_TAG.Database, {
 
 export const DatabaseLive = Database.Default
 
-export const databaseFrom = (db: Db): Layer.Layer<Database> =>
+export const databaseFrom = (database: DrizzleDatabase): Layer.Layer<Database> =>
   Layer.succeed(
     Database,
     Database.make({
-      query: <A>(run: (executor: DbExecutor) => Promise<A>) =>
+      query: <A>(run: (executor: DatabaseExecutor) => Promise<A>) =>
         Effect.tryPromise({
-          try: () => run(db),
-          catch: (cause) => new DbError({ operation: SPAN.db.query, cause }),
+          try: () => run(database),
+          catch: (cause) => new DatabaseError({ operation: SPAN.db.query, cause }),
         }),
       transaction: <A, E, R>(body: Effect.Effect<A, E, R>) =>
-        body as Effect.Effect<A, E | DbError, R>,
+        body as Effect.Effect<A, E | DatabaseError, R>,
       health: Effect.succeed(true as const),
       client: undefined as never,
     }),

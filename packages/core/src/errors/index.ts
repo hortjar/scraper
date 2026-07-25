@@ -133,7 +133,7 @@ export class EncryptionFailed extends Data.TaggedError("EncryptionFailed")<{
   readonly operation: "encrypt" | "decrypt"
 }> {}
 
-export class DbError extends Data.TaggedError("DbError")<{
+export class DatabaseError extends Data.TaggedError("DatabaseError")<{
   readonly operation: string
   readonly cause: unknown
 }> {}
@@ -183,7 +183,7 @@ export type AppError =
   | DeliveryFailed
   | TemplateInvalid
   | EncryptionFailed
-  | DbError
+  | DatabaseError
   | DataCorruption
   | QueueUnavailable
   | InvalidJobPayload

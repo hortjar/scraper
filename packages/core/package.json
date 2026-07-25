@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "gen:env": "bun run scripts/gen-env.ts",
+    "gen:env": "bun run scripts/gen-environment.ts",
     "i18n:check": "bun run scripts/i18n-check.ts"
   },
   "dependencies": {

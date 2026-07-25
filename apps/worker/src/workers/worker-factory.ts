@@ -6,13 +6,13 @@ import type { WorkerRuntime } from "../runtime.js"
 
 export interface QueueWorkerOptions<A, I> {
   readonly queue: string
-  readonly schema: Schema.Schema<A, I, never>
+  readonly schema: Schema.Schema<A, I>
   readonly connection: ConnectionOptions
   readonly concurrency: number
   readonly runtime: WorkerRuntime
   readonly span: string
   readonly annotate: (payload: A) => Readonly<Record<string, string>>
-  readonly handle: (payload: A) => Effect.Effect<void, never, never>
+  readonly handle: (payload: A) => Effect.Effect<void>
 }
 
 export const createQueueWorker = <A, I>(options: QueueWorkerOptions<A, I>): Worker<I, void> =>
@@ -25,15 +25,15 @@ export const createQueueWorker = <A, I>(options: QueueWorkerOptions<A, I>): Work
       }
 
       const payload = decoded.right
+      const annotations = {
+        [LOG_FIELD.jobId]: job.id ?? "",
+        [LOG_FIELD.queue]: options.queue,
+        ...options.annotate(payload),
+      }
       await options.runtime.runPromise(
-        options.handle(payload).pipe(
-          Effect.annotateLogs({
-            [LOG_FIELD.jobId]: job.id ?? "",
-            [LOG_FIELD.queue]: options.queue,
-            ...options.annotate(payload),
-          }),
-          Effect.withSpan(options.span),
-        ),
+        options
+          .handle(payload)
+          .pipe(Effect.annotateLogs(annotations), Effect.withSpan(options.span)),
       )
     },
     { connection: options.connection, concurrency: options.concurrency },

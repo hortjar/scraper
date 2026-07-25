@@ -1,5 +1,5 @@
 import { PAGINATION } from "@scraper/core/constants"
-import { Conflict, DataCorruption, type DbError } from "@scraper/core/errors"
+import { Conflict, DataCorruption, type DatabaseError } from "@scraper/core/errors"
 import { Effect, Schema } from "effect"
 
 export const PG_ERROR = {
@@ -20,27 +20,30 @@ const asPostgresError = (cause: unknown): PostgresError | null =>
   typeof cause === "object" && cause !== null && "code" in cause ? (cause as PostgresError) : null
 
 export const constraintFailure = (
-  error: DbError,
+  error: DatabaseError,
   resource: string,
-): Conflict | DataCorruption | DbError => {
+): Conflict | DataCorruption | DatabaseError => {
   const pg = asPostgresError(error.cause)
   if (!pg?.code) return error
 
   switch (pg.code) {
-    case PG_ERROR.uniqueViolation:
+    case PG_ERROR.uniqueViolation: {
       return new Conflict({ resource, field: pg.constraint_name ?? "unknown" })
+    }
     case PG_ERROR.checkViolation:
-    case PG_ERROR.notNullViolation:
+    case PG_ERROR.notNullViolation: {
       return new DataCorruption({
         entity: resource,
         detail: pg.constraint_name ?? pg.column_name ?? pg.code,
       })
-    default:
+    }
+    default: {
       return error
+    }
   }
 }
 
-export const isUniqueViolation = (error: DbError): boolean =>
+export const isUniqueViolation = (error: DatabaseError): boolean =>
   asPostgresError(error.cause)?.code === PG_ERROR.uniqueViolation
 
 export const decodeRow = <A, I>(schema: Schema.Schema<A, I>, entity: string) => {
@@ -85,7 +88,7 @@ export const takePage = <A>(
 ): { readonly items: readonly A[]; readonly nextCursor: string | null } => {
   if (rows.length <= limit) return { items: rows, nextCursor: null }
   const items = rows.slice(0, limit)
-  const last = items[items.length - 1]
+  const last = items.at(-1)
   return {
     items,
     nextCursor: last ? encodeCursor(toCursor(last)) : null,

@@ -5,12 +5,12 @@ import { Skeleton } from "../ui/Skeleton"
 
 const DEFAULT_ROWS = 5
 
-export interface LoadingStateProps {
+export interface LoadingStateProperties {
   readonly rows?: number
   readonly className?: string
 }
 
-export const LoadingState = ({ rows = DEFAULT_ROWS, className }: LoadingStateProps) => {
+export const LoadingState = ({ rows = DEFAULT_ROWS, className }: LoadingStateProperties) => {
   const { t } = useTranslation("common")
 
   return (

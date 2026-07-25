@@ -1,43 +1,45 @@
 import { act, renderHook } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
-import { comboMatches, parseCombo, useHotkey } from "./use-hotkey"
+import { isComboMatch, parseCombo, useHotkey } from "./use-hotkey"
 
 const press = (init: KeyboardEventInit) => {
-  window.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, ...init }))
+  dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, ...init }))
 }
 
 describe("parseCombo", () => {
   it("splits modifiers from the key", () => {
     const parsed = parseCombo("Mod+Shift+K")
     expect(parsed.key).toBe("k")
-    expect([...parsed.modifiers].sort()).toEqual(["mod", "shift"])
+    expect([...parsed.modifiers].toSorted((a, b) => a.localeCompare(b))).toEqual(["mod", "shift"])
   })
 })
 
-describe("comboMatches", () => {
+describe("isComboMatch", () => {
   it("treats mod as meta or ctrl", () => {
-    expect(comboMatches("mod+k", new KeyboardEvent("keydown", { key: "k", metaKey: true }))).toBe(
+    expect(isComboMatch("mod+k", new KeyboardEvent("keydown", { key: "k", metaKey: true }))).toBe(
       true,
     )
-    expect(comboMatches("mod+k", new KeyboardEvent("keydown", { key: "k", ctrlKey: true }))).toBe(
+    expect(isComboMatch("mod+k", new KeyboardEvent("keydown", { key: "k", ctrlKey: true }))).toBe(
       true,
     )
-    expect(comboMatches("mod+k", new KeyboardEvent("keydown", { key: "k" }))).toBe(false)
+    expect(isComboMatch("mod+k", new KeyboardEvent("keydown", { key: "k" }))).toBe(false)
   })
 
   it("requires exact alt and shift state", () => {
-    expect(comboMatches("k", new KeyboardEvent("keydown", { key: "k", shiftKey: true }))).toBe(
+    expect(isComboMatch("k", new KeyboardEvent("keydown", { key: "k", shiftKey: true }))).toBe(
       false,
     )
-    expect(comboMatches("k", new KeyboardEvent("keydown", { key: "k" }))).toBe(true)
+    expect(isComboMatch("k", new KeyboardEvent("keydown", { key: "k" }))).toBe(true)
   })
 })
 
 describe("useHotkey", () => {
   it("fires on a matching combo", () => {
     const spy = vi.fn()
-    renderHook(() => useHotkey("mod+k", spy))
+    renderHook(() => {
+      useHotkey("mod+k", spy)
+    })
 
     act(() => {
       press({ key: "k", metaKey: true })
@@ -47,7 +49,9 @@ describe("useHotkey", () => {
 
   it("does not fire when disabled", () => {
     const spy = vi.fn()
-    renderHook(() => useHotkey("mod+k", spy, { enabled: false }))
+    renderHook(() => {
+      useHotkey("mod+k", spy, { enabled: false })
+    })
 
     act(() => {
       press({ key: "k", metaKey: true })
@@ -59,7 +63,9 @@ describe("useHotkey", () => {
     const spy = vi.fn()
     const input = document.createElement("input")
     document.body.append(input)
-    renderHook(() => useHotkey("j", spy))
+    renderHook(() => {
+      useHotkey("j", spy)
+    })
 
     act(() => {
       input.dispatchEvent(new KeyboardEvent("keydown", { key: "j", bubbles: true }))

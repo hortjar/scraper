@@ -4,15 +4,15 @@ import { cn } from "../../lib/utils"
 
 import { useAppStatus } from "./use-app-status"
 
-export interface AppStatusProps {
+export interface AppStatusProperties {
   readonly className?: string
 }
 
 const reload = () => {
-  window.location.reload()
+  location.reload()
 }
 
-export const AppStatus = ({ className }: AppStatusProps) => {
+export const AppStatus = ({ className }: AppStatusProperties) => {
   const status = useAppStatus()
 
   return (

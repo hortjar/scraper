@@ -8,7 +8,7 @@ const RELATIVE_UNITS: readonly (readonly [Intl.RelativeTimeFormatUnit, number])[
   ["month", 2_592_000],
   ["week", 604_800],
   ["day", 86_400],
-  ["hour", 3_600],
+  ["hour", 3600],
   ["minute", 60],
   ["second", 1],
 ]
@@ -16,10 +16,15 @@ const RELATIVE_UNITS: readonly (readonly [Intl.RelativeTimeFormatUnit, number])[
 const BYTE_UNITS = ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"] as const
 const BYTE_STEP = 1000
 
+const safe = (value: DateInput, render: (date: Date) => string): string => {
+  const date = toDate(value)
+  return isValidDate(date) ? render(date) : ""
+}
+
 const DURATION_UNITS: readonly (readonly [string, number])[] = [
   ["hour", 3_600_000],
   ["minute", 60_000],
-  ["second", 1_000],
+  ["second", 1000],
   ["millisecond", 1],
 ]
 
@@ -45,11 +50,6 @@ export const createFormat = (locale: string, timeZone: string): Format => {
   })
   const timeFormat = new Intl.DateTimeFormat(locale, { timeStyle: "medium", timeZone })
   const relativeFormat = new Intl.RelativeTimeFormat(locale, { numeric: "auto" })
-
-  const safe = (value: DateInput, render: (date: Date) => string): string => {
-    const date = toDate(value)
-    return isValidDate(date) ? render(date) : ""
-  }
 
   const relative: Format["relative"] = (value, from) =>
     safe(value, (date) => {

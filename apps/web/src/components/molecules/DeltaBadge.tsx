@@ -20,13 +20,17 @@ const DIRECTION_KEY = {
   flat: "delta.unchanged",
 } as const
 
-export interface DeltaBadgeProps {
+export interface DeltaBadgeProperties {
   readonly value: number
   readonly kind?: DeltaKind
   readonly className?: string
 }
 
-export const DeltaBadge = ({ value, kind = DELTA_KIND.absolute, className }: DeltaBadgeProps) => {
+export const DeltaBadge = ({
+  value,
+  kind = DELTA_KIND.absolute,
+  className,
+}: DeltaBadgeProperties) => {
   const { t } = useTranslation("common")
   const format = useFormat()
 

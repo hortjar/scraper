@@ -1,25 +1,31 @@
 import { act, renderHook } from "@testing-library/react"
 import { afterEach, describe, expect, it } from "vitest"
 
-import { setOnline } from "../../test/setup"
+import { setOnline } from "../../test/browser-stubs"
 
-import { useOnlineStatus } from "./use-online-status"
+import { useIsOnline } from "./use-online-status"
 
-afterEach(() => setOnline(true))
+afterEach(() => {
+  setOnline(true)
+})
 
-describe("useOnlineStatus", () => {
+describe("useIsOnline", () => {
   it("starts from navigator.onLine", () => {
-    const { result } = renderHook(() => useOnlineStatus())
+    const { result } = renderHook(() => useIsOnline())
     expect(result.current).toBe(true)
   })
 
   it("follows offline and online events", () => {
-    const { result } = renderHook(() => useOnlineStatus())
+    const { result } = renderHook(() => useIsOnline())
 
-    act(() => setOnline(false))
+    act(() => {
+      setOnline(false)
+    })
     expect(result.current).toBe(false)
 
-    act(() => setOnline(true))
+    act(() => {
+      setOnline(true)
+    })
     expect(result.current).toBe(true)
   })
 })

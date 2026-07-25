@@ -31,17 +31,18 @@ export const buttonVariants = cva(
   },
 )
 
-export interface ButtonProps extends ComponentProps<"button">, VariantProps<typeof buttonVariants> {
+export interface ButtonProperties
+  extends ComponentProps<"button">, VariantProps<typeof buttonVariants> {
   readonly asChild?: boolean
 }
 
-export const Button = ({ className, variant, size, asChild, ...props }: ButtonProps) => {
+export const Button = ({ className, variant, size, asChild, ...properties }: ButtonProperties) => {
   const Component = asChild === true ? Slot : "button"
   return (
     <Component
       data-slot="button"
       className={cn(buttonVariants({ variant, size }), className)}
-      {...props}
+      {...properties}
     />
   )
 }

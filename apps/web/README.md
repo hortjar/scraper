@@ -106,7 +106,7 @@ indicator, satisfying [docs/04-FRONTEND.md §8](../../docs/04-FRONTEND.md).
 
 ## Connection status
 
-`useAppStatus` polls `/health` and combines it with `useOnlineStatus`:
+`useAppStatus` polls `/health` and combines it with `useIsOnline`:
 
 - browser offline → `offline`
 - query erroring, or `status !== "ok"` → `reconnecting`

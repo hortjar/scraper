@@ -18,22 +18,23 @@ const failure = (
   status: HttpStatus,
   code: ErrorCode,
   messageKey: string,
-  messageParams: Readonly<Record<string, string | number>> = {},
-): HttpFailure => ({ status, code, messageKey, messageParams })
+  parameters: Readonly<Record<string, string | number>> = {},
+): HttpFailure => ({ status, code, messageKey, messageParams: parameters })
 
 const notFound = (messageKey: string, id?: string): HttpFailure =>
   failure(HTTP_STATUS.notFound, ERROR_CODE.notFound, messageKey, id ? { id } : {})
 
 const unprocessable = (
   messageKey: string,
-  params: Readonly<Record<string, string | number>> = {},
-): HttpFailure => failure(HTTP_STATUS.unprocessable, ERROR_CODE.unprocessable, messageKey, params)
+  parameters: Readonly<Record<string, string | number>> = {},
+): HttpFailure =>
+  failure(HTTP_STATUS.unprocessable, ERROR_CODE.unprocessable, messageKey, parameters)
 
 const invalid = (
   messageKey: string,
-  params: Readonly<Record<string, string | number>> = {},
+  parameters: Readonly<Record<string, string | number>> = {},
 ): HttpFailure =>
-  failure(HTTP_STATUS.unprocessable, ERROR_CODE.validationFailed, messageKey, params)
+  failure(HTTP_STATUS.unprocessable, ERROR_CODE.validationFailed, messageKey, parameters)
 
 const internal = (): HttpFailure =>
   failure(HTTP_STATUS.internalError, ERROR_CODE.internalError, MSG.errors.internalError)
@@ -108,7 +109,7 @@ export const toHttpFailure: (error: AppError) => HttpFailure = Match.type<AppErr
         MSG.errors.serviceUnavailable,
       ),
     EncryptionFailed: internal,
-    DbError: internal,
+    DatabaseError: internal,
     DataCorruption: internal,
     InvalidJobPayload: internal,
     ConfigInvalid: internal,

@@ -8,8 +8,12 @@ export const useInterval = (callback: () => void, delayMs: number | null): void 
   })
 
   useEffect(() => {
-    if (delayMs === null) return undefined
-    const id = window.setInterval(() => latest.current(), delayMs)
-    return () => window.clearInterval(id)
+    if (delayMs === null) return
+    const id = setInterval(() => {
+      latest.current()
+    }, delayMs)
+    return () => {
+      clearInterval(id)
+    }
   }, [delayMs])
 }

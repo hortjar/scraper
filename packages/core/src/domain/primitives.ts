@@ -62,8 +62,10 @@ export const NonNegativeInt = Schema.Int.pipe(Schema.nonNegative())
 export const Cursor = Schema.String.pipe(Schema.brand("Cursor"))
 export type Cursor = typeof Cursor.Type
 
+const PageLimit = Schema.Int.pipe(Schema.between(1, PAGINATION.maxLimit))
+
 export const PageQuery = Schema.Struct({
-  limit: Schema.optionalWith(Schema.Int.pipe(Schema.between(1, PAGINATION.maxLimit)), {
+  limit: Schema.optionalWith(PageLimit, {
     default: () => PAGINATION.defaultLimit,
   }),
   cursor: Schema.optional(Cursor),

@@ -1,8 +1,10 @@
 import { writeFile } from "node:fs/promises"
 import path from "node:path"
+import process from "node:process"
 
 import { AppConfig } from "@scraper/core/config"
 import { ROUTE } from "@scraper/core/constants"
+import { Effect } from "effect"
 
 import { createApp } from "../src/app.js"
 import { makeRedisProbe } from "../src/health/redis-probe.js"
@@ -22,9 +24,9 @@ for (const [name, value] of PLACEHOLDERS) {
 }
 
 const sortKeysDeep = (value: unknown): unknown => {
-  if (Array.isArray(value)) return value.map(sortKeysDeep)
+  if (Array.isArray(value)) return value.map((item) => sortKeysDeep(item))
   if (value !== null && typeof value === "object") {
-    const entries = Object.entries(value as Record<string, unknown>).sort(([a], [b]) =>
+    const entries = Object.entries(value as Record<string, unknown>).toSorted(([a], [b]) =>
       a.localeCompare(b),
     )
     return Object.fromEntries(entries.map(([key, entryValue]) => [key, sortKeysDeep(entryValue)]))
@@ -43,9 +45,10 @@ const app = createApp({ runtime, redisProbe, corsOrigins: config.http.corsOrigin
 const response = await app.handle(new Request(`http://localhost${ROUTE.docs}/json`))
 
 if (!response.ok) {
-  console.error(`Failed to generate OpenAPI document: ${response.status} ${response.statusText}`)
   await runtime.dispose()
-  process.exit(1)
+  throw new Error(
+    `openapi document request failed: ${String(response.status)} ${response.statusText}`,
+  )
 }
 
 const spec: unknown = await response.json()
@@ -54,7 +57,9 @@ const outputPath = path.join(process.cwd(), "openapi.json")
 
 await writeFile(outputPath, `${JSON.stringify(sortKeysDeep(spec), null, 2)}\n`, "utf8")
 
-console.log(`Wrote ${outputPath}`)
+await runtime.runPromise(
+  Effect.logInfo("openapi.written").pipe(Effect.annotateLogs({ path: outputPath })),
+)
 
 await runtime.dispose()
 process.exit(0)

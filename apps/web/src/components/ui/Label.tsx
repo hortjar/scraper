@@ -3,9 +3,9 @@ import type { ComponentProps } from "react"
 
 import { cn } from "../../lib/utils"
 
-export type LabelProps = ComponentProps<typeof LabelPrimitive.Root>
+export type LabelProperties = ComponentProps<typeof LabelPrimitive.Root>
 
-export const Label = ({ className, ...props }: LabelProps) => (
+export const Label = ({ className, ...properties }: LabelProperties) => (
   <LabelPrimitive.Root
     data-slot="label"
     className={cn(
@@ -13,6 +13,6 @@ export const Label = ({ className, ...props }: LabelProps) => (
       "peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
       className,
     )}
-    {...props}
+    {...properties}
   />
 )

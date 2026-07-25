@@ -190,7 +190,7 @@ Banned in feature code, enforced by ESLint. Instead:
 | Focus / measure / animate | `ref` callback, CSS, View Transitions |
 
 The only place effects may live is `src/lib/browser/` — a small, reviewed, tested
-set of primitives (`useMediaQuery`, `useOnlineStatus`, `useInterval`,
+set of primitives (`useIsMediaQuery`, `useIsOnline`, `useInterval`,
 `useEventListener`, `useDocumentTitle`, `useHotkey`). Adding one needs justification
 and a test.
 

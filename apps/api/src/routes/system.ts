@@ -39,16 +39,16 @@ const healthEffect = Effect.gen(function* () {
 
 const readinessEffect = (redisProbe: HealthProbe) =>
   Effect.gen(function* () {
-    const db = yield* Database
+    const database = yield* Database
     const millis = yield* Clock.currentTimeMillis
     const results = yield* runHealthProbes([
-      { name: PROBE_NAME.database, check: db.health.pipe(Effect.orElseSucceed(() => false)) },
+      { name: PROBE_NAME.database, check: database.health.pipe(Effect.orElseSucceed(() => false)) },
       redisProbe,
     ])
     const checks = toChecks(results)
-    const healthy = checks.database && checks.redis
+    const isHealthy = checks.database && checks.redis
     return {
-      status: healthy ? READY_STATUS.ok : READY_STATUS.unhealthy,
+      status: isHealthy ? READY_STATUS.ok : READY_STATUS.unhealthy,
       checks,
       time: new Date(millis).toISOString(),
     }

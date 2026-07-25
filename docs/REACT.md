@@ -57,7 +57,7 @@ react-project/
 
 ```tsx
 // Example: Button Component
-interface ButtonProps {
+interface ButtonProperties {
   variant: "primary" | "secondary" | "danger"
   size?: "small" | "medium" | "large"
   disabled?: boolean
@@ -65,7 +65,7 @@ interface ButtonProps {
   children: React.ReactNode
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<ButtonProperties> = ({
   variant,
   size = "medium",
   disabled = false,

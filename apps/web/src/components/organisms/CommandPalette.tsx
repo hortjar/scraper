@@ -11,21 +11,26 @@ export interface CommandPaletteItem {
   readonly hint?: string
 }
 
-export interface CommandPaletteProps {
+export interface CommandPaletteProperties {
   readonly open: boolean
-  readonly onOpenChange: (open: boolean) => void
+  readonly onOpenChange: (isOpen: boolean) => void
   readonly items: readonly CommandPaletteItem[]
   readonly onSelect: (item: CommandPaletteItem) => void
 }
 
-const matches = (item: CommandPaletteItem, query: string): boolean =>
+const isMatch = (item: CommandPaletteItem, query: string): boolean =>
   item.label.toLocaleLowerCase().includes(query.toLocaleLowerCase())
 
-export const CommandPalette = ({ open, onOpenChange, items, onSelect }: CommandPaletteProps) => {
+export const CommandPalette = ({
+  open,
+  onOpenChange,
+  items,
+  onSelect,
+}: CommandPaletteProperties) => {
   const { t } = useTranslation("common")
   const [query, setQuery] = useState("")
 
-  const visible = query.length === 0 ? items : items.filter((item) => matches(item, query))
+  const visible = query.length === 0 ? items : items.filter((item) => isMatch(item, query))
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

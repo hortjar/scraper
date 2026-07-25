@@ -1,23 +1,25 @@
 import { useCallback, useSyncExternalStore } from "react"
 
-const noMatch = () => false
+const isMatchedOnServer = () => false
 
-export const useMediaQuery = (query: string): boolean => {
+export const useIsMediaQuery = (query: string): boolean => {
   const subscribe = useCallback(
     (onStoreChange: () => void) => {
-      const list = window.matchMedia(query)
+      const list = matchMedia(query)
       list.addEventListener("change", onStoreChange)
-      return () => list.removeEventListener("change", onStoreChange)
+      return () => {
+        list.removeEventListener("change", onStoreChange)
+      }
     },
     [query],
   )
 
-  const getSnapshot = useCallback(() => window.matchMedia(query).matches, [query])
+  const isMatched = useCallback(() => matchMedia(query).matches, [query])
 
-  return useSyncExternalStore(subscribe, getSnapshot, noMatch)
+  return useSyncExternalStore(subscribe, isMatched, isMatchedOnServer)
 }
 
 export const PREFERS_REDUCED_MOTION = "(prefers-reduced-motion: reduce)"
 export const PREFERS_DARK = "(prefers-color-scheme: dark)"
 
-export const usePrefersReducedMotion = (): boolean => useMediaQuery(PREFERS_REDUCED_MOTION)
+export const useIsReducedMotion = (): boolean => useIsMediaQuery(PREFERS_REDUCED_MOTION)

@@ -4,7 +4,7 @@ import { MSG } from "../src/i18n/keys.js"
 const flatten = (node: unknown): string[] =>
   typeof node === "string"
     ? [node]
-    : Object.values(node as Record<string, unknown>).flatMap(flatten)
+    : Object.values(node as Record<string, unknown>).flatMap((child) => flatten(child))
 
 const declaredKeys = new Set(flatten(MSG))
 const source = catalogs[fallbackLocale]
@@ -23,7 +23,7 @@ for (const key of sourceKeys) {
 for (const [locale, catalog] of Object.entries(catalogs)) {
   if (locale === fallbackLocale) continue
   for (const key of sourceKeys) {
-    if (!(key in catalog)) problems.push(`missing in ${locale}: ${key}`)
+    if (!Object.hasOwn(catalog, key)) problems.push(`missing in ${locale}: ${key}`)
   }
   for (const key of Object.keys(catalog)) {
     if (!sourceKeys.has(key)) problems.push(`orphaned in ${locale}: ${key}`)
@@ -32,10 +32,10 @@ for (const [locale, catalog] of Object.entries(catalogs)) {
 
 if (problems.length > 0) {
   for (const problem of problems) globalThis.console.error(problem)
-  globalThis.console.error(`\n${problems.length} i18n problems`)
+  globalThis.console.error(`\n${String(problems.length)} i18n problems`)
   process.exit(1)
 }
 
 globalThis.console.log(
-  `i18n ok: ${sourceKeys.size} keys across ${Object.keys(catalogs).length} locales`,
+  `i18n ok: ${String(sourceKeys.size)} keys across ${String(Object.keys(catalogs).length)} locales`,
 )

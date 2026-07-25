@@ -6,7 +6,7 @@ import {
   tickHeight,
 } from "./pulse-strip.geometry"
 
-export interface PulseTickMarkProps {
+export interface PulseTickMarkProperties {
   readonly tick: PulseTick
   readonly geometry: PulseGeometry
   readonly x: number
@@ -15,7 +15,7 @@ export interface PulseTickMarkProps {
 
 const FAILED_MARK_SCALE = 0.34
 
-export const PulseTickMark = ({ tick, geometry, x, animate }: PulseTickMarkProps) => {
+export const PulseTickMark = ({ tick, geometry, x, animate }: PulseTickMarkProperties) => {
   if (tick.outcome === PULSE_OUTCOME.paused) return null
 
   const centerX = x + geometry.tickWidth / 2

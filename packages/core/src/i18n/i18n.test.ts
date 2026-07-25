@@ -10,7 +10,15 @@ import { catalogs, fallbackLocale, resolveLocale, Translator } from "./index.js"
 const flatten = (node: unknown): string[] =>
   typeof node === "string"
     ? [node]
-    : Object.values(node as Record<string, unknown>).flatMap(flatten)
+    : Object.values(node as Record<string, unknown>).flatMap((child) => flatten(child))
+
+const render = (key: string, parameters: Record<string, string | number>, locale: "en" | "cs") =>
+  Effect.runSync(
+    Effect.gen(function* () {
+      const translator = yield* Translator
+      return translator.render(key, parameters, locale)
+    }).pipe(Effect.provide(Translator.Default)),
+  )
 
 describe("catalogs", () => {
   const sourceKeys = Object.keys(catalogs[fallbackLocale])
@@ -22,7 +30,7 @@ describe("catalogs", () => {
 
   it("translates every source key in every locale", () => {
     for (const [locale, catalog] of Object.entries(catalogs)) {
-      const missing = sourceKeys.filter((key) => !(key in catalog))
+      const missing = sourceKeys.filter((key) => !Object.hasOwn(catalog, key))
       expect(missing, `locale ${locale}`).toEqual([])
     }
   })
@@ -47,14 +55,6 @@ describe("resolveLocale", () => {
 })
 
 describe("Translator", () => {
-  const render = (key: string, params: Record<string, string | number>, locale: "en" | "cs") =>
-    Effect.runSync(
-      Effect.gen(function* () {
-        const translator = yield* Translator
-        return translator.render(key, params, locale)
-      }).pipe(Effect.provide(Translator.Default)),
-    )
-
   it("renders the requested locale", () => {
     expect(render(MSG.notifications.viewRun, {}, LOCALE.cs)).toBe("Zobrazit změnu")
     expect(render(MSG.notifications.viewRun, {}, LOCALE.en)).toBe("See what changed")

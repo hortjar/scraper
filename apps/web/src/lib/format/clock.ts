@@ -6,4 +6,4 @@ export const toDate = (value: DateInput): Date => (value instanceof Date ? value
 
 export const isValidDate = (value: Date): boolean => !Number.isNaN(value.getTime())
 
-export const resolveTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
+export const resolveTimeZone = (): string => new Intl.DateTimeFormat().resolvedOptions().timeZone

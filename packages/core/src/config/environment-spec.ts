@@ -1,31 +1,33 @@
-export interface EnvVar {
+export interface EnvironmentVariable {
   readonly name: string
   readonly group: string
-  readonly required: boolean
-  readonly secret: boolean
+  readonly isRequired: boolean
+  readonly isSecret: boolean
   readonly defaultValue: string | null
   readonly description: string
 }
 
-const group = (name: string, vars: readonly Omit<EnvVar, "group">[]): readonly EnvVar[] =>
-  vars.map((entry) => ({ ...entry, group: name }))
+type SpecEntry = Omit<EnvironmentVariable, "group">
+
+const group = (name: string, variables: readonly SpecEntry[]): readonly EnvironmentVariable[] =>
+  variables.map((entry) => ({ ...entry, group: name }))
 
 const optional = (
   name: string,
   defaultValue: string,
   description: string,
-  secret = false,
-): Omit<EnvVar, "group"> => ({ name, required: false, secret, defaultValue, description })
+  isSecret = false,
+): SpecEntry => ({ name, isRequired: false, isSecret, defaultValue, description })
 
-const required = (name: string, description: string, secret = false): Omit<EnvVar, "group"> => ({
+const required = (name: string, description: string, isSecret = false): SpecEntry => ({
   name,
-  required: true,
-  secret,
+  isRequired: true,
+  isSecret,
   defaultValue: null,
   description,
 })
 
-export const ENV_SPEC: readonly EnvVar[] = [
+export const ENV_SPEC: readonly EnvironmentVariable[] = [
   ...group("Core", [
     optional("APP_ENV", "production", "development | test | production"),
     required("APP_URL", "Public URL, used in emails, links and origin checks"),
@@ -123,4 +125,6 @@ export const ENV_SPEC: readonly EnvVar[] = [
   ]),
 ]
 
-export const envGroups = (): readonly string[] => [...new Set(ENV_SPEC.map((entry) => entry.group))]
+export const environmentGroups = (): readonly string[] => [
+  ...new Set(ENV_SPEC.map((entry) => entry.group)),
+]
