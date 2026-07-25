@@ -1,0 +1,36 @@
+{
+  "name": "@scraper/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./client": "./src/client.ts",
+    "./repository": "./src/repository.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:int": "vitest run --config vitest.int.config.ts",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate",
+    "reset": "bun run scripts/reset.ts",
+    "seed": "bun run scripts/seed.ts"
+  },
+  "dependencies": {
+    "@scraper/core": "workspace:*",
+    "drizzle-orm": "^0.45.2",
+    "effect": "^3.22.0",
+    "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "@effect/vitest": "^0.17.0",
+    "@scraper/tooling": "workspace:*",
+    "@types/bun": "^1.1.16",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.2"
+  }
+}

@@ -1,9 +1,19 @@
 # Data Model
 
-Postgres 17. All tables use `uuid` v7 primary keys (`id uuid primary key default
-uuidv7()`), `created_at`/`updated_at timestamptz not null default now()`, and
-soft-delete only where noted. Drizzle schema files live at
-`packages/db/src/schema/<feature>.ts`, barrel-exported from `index.ts`.
+Postgres 17. All tables use `uuid` primary keys, `created_at`/`updated_at
+timestamptz not null default now()`, and soft-delete only where noted. Drizzle
+schema files live at `packages/db/src/schema/<feature>.ts`, barrel-exported from
+`index.ts`.
+
+**IDs are UUIDv7, generated in the application** via `newId()` from
+`@scraper/core/domain`. The column default is `gen_random_uuid()` (pgcrypto) as a
+fallback only. An earlier draft of this doc specified `default uuidv7()` — that
+function is Postgres **18**, and we target 17, so it would not have applied.
+Generating v7 app-side keeps the time-ordered insert locality we wanted and works
+on any supported Postgres.
+
+Required extensions, created by migration `0000_init`: `citext` (for
+case-insensitive `users.email`) and `pgcrypto`.
 
 > **Phase-0 rule:** the *entire* v1 schema below is written and migrated in Phase 0
 > by a single agent. Feature agents in Phase 1 never edit schema files — this is
@@ -251,12 +261,30 @@ Written for auth events, monitor create/update/delete, channel changes.
 
 ## 4. Derived / operational
 
-- **`monitor_stats`** (materialized view, refreshed every 5 min): per-monitor
-  run count, success rate, avg duration, change count over 24h/7d/30d. The
-  dashboard reads this, never aggregates `runs` live.
-- **Partitioning**: `runs`, `field_values`, and `snapshots` are declared
-  `PARTITION BY RANGE (created_at)` monthly from day one. Adding partitioning
-  later to a hot table is painful; doing it up front costs one migration.
+- **`monitor_stats`** (materialized view, migration `0001`, refreshed every 5 min):
+  per-monitor run counts, success/failure counts, avg duration, and change counts
+  over 24h/7d/30d. It carries a unique index on `monitor_id` so the refresh can run
+  `CONCURRENTLY` without blocking readers. The dashboard reads this view and never
+  aggregates `runs` live.
+
+- **Partitioning is deferred, deliberately.** An earlier draft declared `runs`,
+  `snapshots`, and `field_values` as `PARTITION BY RANGE (created_at)` from day one,
+  on the reasoning that retrofitting is painful. Implementation showed that claim was
+  too cheap:
+  - A partitioned table's primary key must include the partition key, so `runs` would
+    need `PRIMARY KEY (id, created_at)`.
+  - Every foreign key pointing at `runs` would then need to carry `created_at` too,
+    which spreads the partition key into `snapshots`, `field_values`, and `changes`
+    purely as FK ballast.
+  - Drizzle cannot express declarative partitioning, so the SQL would have to be
+    hand-maintained while `drizzle-kit` kept generating conflicting diffs against its
+    own snapshot.
+
+  The cost is real and the benefit does not arrive until these tables are large. The
+  retention sweeper (`sweep-runs`) bounds them by `RUN_RETENTION_DAYS` in the
+  meantime. **Migration path when it is needed:** create the partitioned table
+  alongside, copy in batches, swap names in one transaction — the standard online
+  approach, and no harder then than now.
 
 ## 5. Invariants enforced in the DB
 
