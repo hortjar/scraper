@@ -1,0 +1,19 @@
+{
+  "title": "Channels",
+  "subtitle": "Where alerts go when a change is worth sending.",
+  "list": {
+    "emptyTitle": "No channels yet",
+    "emptyDescription": "Add an email address, a webhook, or a chat channel so a change can reach you.",
+    "errorTitle": "Channels did not load"
+  },
+  "columns": {
+    "name": "Channel",
+    "kind": "Kind",
+    "status": "Status",
+    "lastDelivery": "Last delivery"
+  },
+  "actions": {
+    "create": "New channel",
+    "test": "Send test"
+  }
+}

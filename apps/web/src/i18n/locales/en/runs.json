@@ -1,0 +1,24 @@
+{
+  "title": "Runs",
+  "subtitle": "Every check, what it saw, and what it changed.",
+  "list": {
+    "emptyTitle": "No runs yet",
+    "emptyDescription": "The first check will appear here the moment a monitor is due.",
+    "errorTitle": "Runs did not load"
+  },
+  "columns": {
+    "startedAt": "Started",
+    "monitor": "Monitor",
+    "duration": "Duration",
+    "size": "Payload",
+    "status": "Status",
+    "changed": "Changed"
+  },
+  "diff": {
+    "title": "What changed",
+    "added": "Added",
+    "removed": "Removed",
+    "unchanged": "No change",
+    "changedOnly": "Changed only"
+  }
+}

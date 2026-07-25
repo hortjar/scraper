@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "eyebrow": "Change monitoring",
+    "title": "Know what changed",
+    "body": "Watch any page. Get told the moment it moves — with the diff, not a guess.",
+    "primaryCta": "Start watching",
+    "secondaryCta": "See a demo",
+    "pulseLabel": "A monitor's last thirty checks"
+  },
+  "howItWorks": {
+    "eyebrow": "How it works",
+    "pointTitle": "Point",
+    "pointBody": "Give it a URL. It resolves the page the way a browser would.",
+    "extractTitle": "Extract",
+    "extractBody": "Pick the fields that matter with a selector, and see them immediately.",
+    "decideTitle": "Decide",
+    "decideBody": "Thresholds, ignore rules, and quiet hours decide when a change is news.",
+    "tellTitle": "Tell",
+    "tellBody": "Email, webhook, Slack, Discord, Telegram — or your own endpoint."
+  },
+  "restraint": {
+    "eyebrow": "Not every change is news",
+    "title": "The honest part: knowing when not to send",
+    "body": "Every competitor promises alerts. This one suppresses the ones you would have deleted."
+  },
+  "selfHost": {
+    "eyebrow": "Self-host",
+    "title": "One compose file, your data",
+    "body": "Configured entirely through environment variables. Nothing phones home."
+  },
+  "footer": {
+    "docs": "Docs",
+    "api": "API",
+    "github": "GitHub",
+    "rights": "Self-hostable change monitoring."
+  },
+  "placeholder": {
+    "notice": "This is the shell of the landing page. The full page is a later workstream."
+  }
+}

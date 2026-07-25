@@ -1,0 +1,16 @@
+{
+  "title": "Nastavení",
+  "subtitle": "Jak konzole vypadá a jak s vámi mluví.",
+  "appearance": {
+    "title": "Vzhled",
+    "description": "Motiv a hustota tabulek platí pro tento prohlížeč."
+  },
+  "language": {
+    "title": "Jazyk",
+    "description": "Upozornění se řídí jazykem ve vašem profilu, ne tímto prohlížečem."
+  },
+  "account": {
+    "title": "Účet",
+    "description": "E-mail, heslo a aktivní relace."
+  }
+}

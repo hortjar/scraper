@@ -1,0 +1,21 @@
+{
+  "extends": "@scraper/tooling/tsconfig/react.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "scripts/**/*.mjs",
+    "public/config.js"
+  ],
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "types": ["vite/client", "node"],
+    "allowJs": true,
+    "checkJs": false,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

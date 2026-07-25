@@ -1,0 +1,28 @@
+{
+  "title": "Monitory",
+  "subtitle": "Všechny stránky, které sledujete, a jak se chovaly.",
+  "list": {
+    "emptyTitle": "Zatím žádné monitory",
+    "emptyDescription": "Namiřte monitor na stránku, vyberte, co se má vytáhnout, a určete, kdy má změna stát za zprávu.",
+    "errorTitle": "Monitory se nenačetly",
+    "count_one": "{{count}} monitor",
+    "count_few": "{{count}} monitory",
+    "count_many": "{{count}} monitoru",
+    "count_other": "{{count}} monitorů"
+  },
+  "columns": {
+    "name": "Monitor",
+    "pulse": "Historie",
+    "value": "Aktuální hodnota",
+    "delta": "Změna",
+    "status": "Stav",
+    "nextRun": "Příští kontrola",
+    "tags": "Štítky"
+  },
+  "actions": {
+    "create": "Nový monitor",
+    "runNow": "Spustit teď",
+    "pause": "Pozastavit",
+    "resume": "Obnovit"
+  }
+}

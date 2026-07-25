@@ -1,0 +1,126 @@
+{
+  "app": {
+    "name": "Scraper",
+    "tagline": "Vězte, co se změnilo."
+  },
+  "actions": {
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "create": "Vytvořit",
+    "delete": "Smazat",
+    "edit": "Upravit",
+    "close": "Zavřít",
+    "retry": "Zkusit znovu",
+    "reload": "Načíst znovu",
+    "copy": "Kopírovat",
+    "copied": "Zkopírováno",
+    "search": "Hledat",
+    "clear": "Vymazat",
+    "confirm": "Potvrdit",
+    "back": "Zpět",
+    "refresh": "Obnovit",
+    "openMenu": "Otevřít nabídku",
+    "toggleSidebar": "Přepnout postranní panel",
+    "openCommandPalette": "Otevřít paletu příkazů",
+    "signIn": "Přihlásit se",
+    "signOut": "Odhlásit se",
+    "signUp": "Začít sledovat",
+    "seeDemo": "Zobrazit ukázku"
+  },
+  "nav": {
+    "label": "Hlavní",
+    "dashboard": "Přehled",
+    "monitors": "Monitory",
+    "runs": "Kontroly",
+    "channels": "Kanály",
+    "settings": "Nastavení",
+    "docs": "Dokumentace",
+    "product": "Produkt",
+    "pricing": "Ceník",
+    "github": "GitHub"
+  },
+  "status": {
+    "label": "Stav",
+    "ok": "V pořádku",
+    "degraded": "Zhoršený",
+    "failing": "Selhává",
+    "paused": "Pozastaveno"
+  },
+  "connection": {
+    "label": "Připojení",
+    "connected": "Připojeno",
+    "reconnecting": "Obnovuje se spojení",
+    "offline": "Offline"
+  },
+  "version": {
+    "label": "Verze",
+    "client": "Tato aplikace: {{version}} · {{commit}}",
+    "api": "Server: {{version}}",
+    "apiUnknown": "Verze serveru není známa",
+    "skewTitle": "Je dostupná novější verze",
+    "skewDescription": "Tento panel běží na {{client}}, server má {{server}}.",
+    "skewAction": "Načíst znovu a aktualizovat"
+  },
+  "theme": {
+    "label": "Motiv",
+    "system": "Podle systému",
+    "light": "Světlý",
+    "dark": "Tmavý"
+  },
+  "locale": {
+    "label": "Jazyk",
+    "en": "English",
+    "cs": "Čeština"
+  },
+  "density": {
+    "label": "Hustota",
+    "comfortable": "Pohodlná",
+    "compact": "Kompaktní"
+  },
+  "diffView": {
+    "label": "Zobrazení rozdílů",
+    "inline": "V řádku",
+    "split": "Vedle sebe"
+  },
+  "table": {
+    "caption": "{{count}} řádků",
+    "sortAscending": "Seřadit vzestupně",
+    "sortDescending": "Seřadit sestupně",
+    "selectRow": "Vybrat řádek",
+    "selectAll": "Vybrat všechny řádky"
+  },
+  "palette": {
+    "title": "Paleta příkazů",
+    "placeholder": "Hledat monitory, kontroly a akce",
+    "empty": "Nic tomu neodpovídá.",
+    "hint": "Otevřete pomocí {{shortcut}}"
+  },
+  "state": {
+    "loading": "Načítání",
+    "errorTitle": "Načtení se nezdařilo",
+    "errorDescription": "Požadavek selhal. Zkuste to znovu nebo zkontrolujte ukazatel připojení.",
+    "emptyTitle": "Zatím tu nic není",
+    "emptyDescription": "Jakmile bude co zobrazit, objeví se to tady."
+  },
+  "pulse": {
+    "label": "Historie kontrol",
+    "summary": "{{total}} kontrol, {{changed}} se změnou, {{failed}} selhalo",
+    "tick": "{{time}} — {{change}}",
+    "changeUp": "vzrostlo o {{value}}",
+    "changeDown": "kleslo o {{value}}",
+    "changeFlat": "beze změny",
+    "failed": "kontrola selhala",
+    "paused": "pozastaveno",
+    "idle": "Zatím žádné kontroly"
+  },
+  "delta": {
+    "increase": "Vzrostlo",
+    "decrease": "Kleslo",
+    "unchanged": "Beze změny"
+  },
+  "time": {
+    "never": "Nikdy",
+    "nextRun": "Příští kontrola {{when}}",
+    "lastRun": "Poslední kontrola {{when}}"
+  }
+}

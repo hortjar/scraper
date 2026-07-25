@@ -1,0 +1,126 @@
+{
+  "app": {
+    "name": "Scraper",
+    "tagline": "Know what changed."
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "retry": "Try again",
+    "reload": "Reload",
+    "copy": "Copy",
+    "copied": "Copied",
+    "search": "Search",
+    "clear": "Clear",
+    "confirm": "Confirm",
+    "back": "Back",
+    "refresh": "Refresh",
+    "openMenu": "Open menu",
+    "toggleSidebar": "Toggle sidebar",
+    "openCommandPalette": "Open command palette",
+    "signIn": "Log in",
+    "signOut": "Log out",
+    "signUp": "Start watching",
+    "seeDemo": "See a demo"
+  },
+  "nav": {
+    "label": "Main",
+    "dashboard": "Dashboard",
+    "monitors": "Monitors",
+    "runs": "Runs",
+    "channels": "Channels",
+    "settings": "Settings",
+    "docs": "Docs",
+    "product": "Product",
+    "pricing": "Pricing",
+    "github": "GitHub"
+  },
+  "status": {
+    "label": "Status",
+    "ok": "Healthy",
+    "degraded": "Degraded",
+    "failing": "Failing",
+    "paused": "Paused"
+  },
+  "connection": {
+    "label": "Connection",
+    "connected": "Connected",
+    "reconnecting": "Reconnecting",
+    "offline": "Offline"
+  },
+  "version": {
+    "label": "Version",
+    "client": "This app: {{version}} · {{commit}}",
+    "api": "Server: {{version}}",
+    "apiUnknown": "Server version unknown",
+    "skewTitle": "A newer version is available",
+    "skewDescription": "This tab is running {{client}}; the server is on {{server}}.",
+    "skewAction": "Reload to update"
+  },
+  "theme": {
+    "label": "Theme",
+    "system": "Match system",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "locale": {
+    "label": "Language",
+    "en": "English",
+    "cs": "Čeština"
+  },
+  "density": {
+    "label": "Density",
+    "comfortable": "Comfortable",
+    "compact": "Compact"
+  },
+  "diffView": {
+    "label": "Diff layout",
+    "inline": "Inline",
+    "split": "Split"
+  },
+  "table": {
+    "caption": "{{count}} rows",
+    "sortAscending": "Sort ascending",
+    "sortDescending": "Sort descending",
+    "selectRow": "Select row",
+    "selectAll": "Select all rows"
+  },
+  "palette": {
+    "title": "Command palette",
+    "placeholder": "Search monitors, runs and actions",
+    "empty": "Nothing matches that.",
+    "hint": "Press {{shortcut}} to open"
+  },
+  "state": {
+    "loading": "Loading",
+    "errorTitle": "That did not load",
+    "errorDescription": "The request failed. Try again, or check the connection indicator.",
+    "emptyTitle": "Nothing here yet",
+    "emptyDescription": "Once there is something to show, it appears here."
+  },
+  "pulse": {
+    "label": "Run history",
+    "summary": "{{total}} runs, {{changed}} with changes, {{failed}} failed",
+    "tick": "{{time}} — {{change}}",
+    "changeUp": "increased by {{value}}",
+    "changeDown": "decreased by {{value}}",
+    "changeFlat": "unchanged",
+    "failed": "run failed",
+    "paused": "paused",
+    "idle": "No runs yet"
+  },
+  "delta": {
+    "increase": "Increased",
+    "decrease": "Decreased",
+    "unchanged": "Unchanged"
+  },
+  "time": {
+    "never": "Never",
+    "nextRun": "Next run {{when}}",
+    "lastRun": "Last run {{when}}"
+  }
+}

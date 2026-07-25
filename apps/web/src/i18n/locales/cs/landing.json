@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "eyebrow": "Sledování změn",
+    "title": "Vězte, co se změnilo",
+    "body": "Sledujte libovolnou stránku. Dozvíte se to ve chvíli, kdy se pohne — i s rozdílem, ne jen s dohadem.",
+    "primaryCta": "Začít sledovat",
+    "secondaryCta": "Zobrazit ukázku",
+    "pulseLabel": "Posledních třicet kontrol jednoho monitoru"
+  },
+  "howItWorks": {
+    "eyebrow": "Jak to funguje",
+    "pointTitle": "Zaměřte",
+    "pointBody": "Zadejte URL. Stránka se načte tak, jak by ji viděl prohlížeč.",
+    "extractTitle": "Vytáhněte",
+    "extractBody": "Selektorem vyberte pole, na kterých záleží, a hned je uvidíte.",
+    "decideTitle": "Rozhodněte",
+    "decideBody": "Prahy, pravidla ignorování a tiché hodiny určí, kdy je změna zpráva.",
+    "tellTitle": "Dejte vědět",
+    "tellBody": "E-mail, webhook, Slack, Discord, Telegram — nebo váš vlastní endpoint."
+  },
+  "restraint": {
+    "eyebrow": "Ne každá změna je zpráva",
+    "title": "Poctivá část: vědět, kdy neposílat",
+    "body": "Upozornění slibuje každá konkurence. Tahle aplikace potlačí ta, která byste stejně smazali."
+  },
+  "selfHost": {
+    "eyebrow": "Vlastní hosting",
+    "title": "Jeden compose soubor, vaše data",
+    "body": "Celé se to nastavuje proměnnými prostředí. Nic nikam neodesílá."
+  },
+  "footer": {
+    "docs": "Dokumentace",
+    "api": "API",
+    "github": "GitHub",
+    "rights": "Sledování změn, které si můžete hostovat sami."
+  },
+  "placeholder": {
+    "notice": "Toto je kostra úvodní stránky. Kompletní stránka je součástí pozdější etapy."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "title": "Settings",
+  "subtitle": "How the console looks and speaks to you.",
+  "appearance": {
+    "title": "Appearance",
+    "description": "Theme and table density follow this browser."
+  },
+  "language": {
+    "title": "Language",
+    "description": "Alerts follow the language on your profile, not this browser."
+  },
+  "account": {
+    "title": "Account",
+    "description": "Email, password, and active sessions."
+  }
+}

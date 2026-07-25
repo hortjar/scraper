@@ -1,0 +1,24 @@
+{
+  "title": "Kontroly",
+  "subtitle": "Každá kontrola, co viděla a co změnila.",
+  "list": {
+    "emptyTitle": "Zatím žádné kontroly",
+    "emptyDescription": "První kontrola se tu objeví, jakmile bude některý monitor na řadě.",
+    "errorTitle": "Kontroly se nenačetly"
+  },
+  "columns": {
+    "startedAt": "Začátek",
+    "monitor": "Monitor",
+    "duration": "Trvání",
+    "size": "Objem dat",
+    "status": "Stav",
+    "changed": "Změněno"
+  },
+  "diff": {
+    "title": "Co se změnilo",
+    "added": "Přidáno",
+    "removed": "Odebráno",
+    "unchanged": "Beze změny",
+    "changedOnly": "Jen změny"
+  }
+}

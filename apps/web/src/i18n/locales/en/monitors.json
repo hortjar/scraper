@@ -1,0 +1,26 @@
+{
+  "title": "Monitors",
+  "subtitle": "Every page you are watching, and how it has behaved.",
+  "list": {
+    "emptyTitle": "No monitors yet",
+    "emptyDescription": "Point one at a page, choose what to extract, and decide when a change is worth telling you about.",
+    "errorTitle": "Monitors did not load",
+    "count_one": "{{count}} monitor",
+    "count_other": "{{count}} monitors"
+  },
+  "columns": {
+    "name": "Monitor",
+    "pulse": "History",
+    "value": "Current value",
+    "delta": "Change",
+    "status": "Status",
+    "nextRun": "Next run",
+    "tags": "Tags"
+  },
+  "actions": {
+    "create": "New monitor",
+    "runNow": "Run now",
+    "pause": "Pause",
+    "resume": "Resume"
+  }
+}

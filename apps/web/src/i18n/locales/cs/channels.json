@@ -1,0 +1,19 @@
+{
+  "title": "Kanály",
+  "subtitle": "Kam mají upozornění dorazit, když změna stojí za odeslání.",
+  "list": {
+    "emptyTitle": "Zatím žádné kanály",
+    "emptyDescription": "Přidejte e-mailovou adresu, webhook nebo chatovací kanál, aby se k vám změna dostala.",
+    "errorTitle": "Kanály se nenačetly"
+  },
+  "columns": {
+    "name": "Kanál",
+    "kind": "Typ",
+    "status": "Stav",
+    "lastDelivery": "Poslední doručení"
+  },
+  "actions": {
+    "create": "Nový kanál",
+    "test": "Odeslat test"
+  }
+}
