@@ -47,12 +47,18 @@ importers:
       '@scraper/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@scraper/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       effect:
         specifier: ^3.22.0
         version: 3.22.0
       elysia:
         specifier: ^1.4.0
         version: 1.4.29(@sinclair/typebox@0.34.52)(@types/bun@1.3.14)(exact-mirror@1.2.2)(file-type@22.0.1)(openapi-types@12.1.3)(typescript@5.9.3)
+      ioredis:
+        specifier: ^5.4.2
+        version: 5.11.1
     devDependencies:
       '@scraper/tooling':
         specifier: workspace:*
@@ -190,6 +196,9 @@ importers:
       '@scraper/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@scraper/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       bullmq:
         specifier: ^5.34.0
         version: 5.81.1

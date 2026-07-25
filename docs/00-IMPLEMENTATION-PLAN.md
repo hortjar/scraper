@@ -62,9 +62,11 @@ Nothing else starts until this is merged. One agent, one branch.
 - [ ] CI: install → typecheck → lint → i18n:check → gen drift check → test → build → docker build
 
 ### 0.6 Spikes (timeboxed; results written back into these docs)
-- [ ] **S1** Effect Schema through Elysia → OpenAPI → Hey API, end to end. Confirm
-      generated names, `$ref` reuse, and Query option quality.
-      *Fallback:* declare route DTOs in TypeBox and decode to domain at the service boundary.
+- [x] **S1 — resolved, succeeded.** Effect Schema flows through Elysia into a real
+      OpenAPI 3.0.3 document, verified by booting the API and generating
+      `apps/api/openapi.json`. **Required detail:** wrap every route schema in
+      `Schema.standardSchemaV1(...)` — a bare `Schema.Struct` is silently ignored.
+      `provider` is `"swagger-ui"`, not `"swagger"`. TypeBox fallback not needed.
 - [ ] **S2** Bun + Playwright over CDP to the `browser` container.
 - [ ] **S3** BullMQ Job Schedulers under Bun: cron accuracy, timezone, `upsertJobScheduler` idempotency.
 

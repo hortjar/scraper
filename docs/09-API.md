@@ -9,7 +9,7 @@ produces the entire frontend API layer. A route with a missing `response` schema
 
 | Endpoint | Serves |
 |---|---|
-| `/docs` | **Swagger UI** (`@elysiajs/openapi` with `provider: 'swagger'`) |
+| `/docs` | **Swagger UI** (`@elysiajs/openapi` with `provider: 'swagger-ui'`) |
 | `/docs/scalar` | Scalar reference, for people who prefer it |
 | `/docs/json` | OpenAPI 3.1 JSON — the machine-readable contract |
 
@@ -162,6 +162,12 @@ export default {
   ],
 }
 ```
+
+**Spike S1 is resolved: this chain works, with one required detail.** Route schemas
+must be wrapped in `Schema.standardSchemaV1(...)`. A bare `Schema.Struct` lacks the
+`~standard` property Elysia checks for and is silently ignored — no error, just an
+unvalidated route and an empty schema in the document. The wrapper preserves `.ast`,
+so `JSONSchema.make` emits full JSON Schema. The TypeBox fallback is **not** needed.
 
 Rules this imposes on route authors — all enforced in review and by a CI schema lint:
 

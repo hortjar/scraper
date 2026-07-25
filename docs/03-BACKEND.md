@@ -193,8 +193,19 @@ export const monitorRoutes = new Elysia({ prefix: ROUTE.monitors, tags: [API_TAG
   })
 ```
 
-- **Effect Schema is the one schema language** (Elysia accepts it via Standard
-  Schema). OpenAPI gets it through `openapi({ mapJsonSchema: { effect: JSONSchema.make } })`.
+- **Effect Schema is the one schema language**, but it must be wrapped:
+
+  ```ts
+  import { Schema } from "effect"
+  const MonitorPage = Schema.standardSchemaV1(MonitorPageSchema)
+  ```
+
+  A bare `Schema.Struct(...)` does **not** carry the `~standard` property that
+  Elysia's validator looks for, so it is silently ignored. `Schema.standardSchemaV1`
+  stamps `vendor: "effect"` while preserving `.ast`, which is what
+  `mapJsonSchema: { effect: JSONSchema.make }` needs to emit real JSON Schema
+  (required fields, enums, `additionalProperties: false`). Verified end to end —
+  see [09-API §3](./09-API.md).
 - **`response` schemas and `operationId` are mandatory on every route.** They are
   not documentation niceties — the frontend's entire API layer is generated from
   this OpenAPI document by Hey API. A missing `response` schema produces an

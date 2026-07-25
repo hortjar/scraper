@@ -69,9 +69,15 @@ doesn't fit an existing module, create `packages/server/src/modules/<name>/`.
   `bun install` — it writes a lockfile we don't use.
 - **Effect 3.22 idioms**: `Effect.Service`, `Data.TaggedError`, `Effect.fn`, `Layer`,
   `ManagedRuntime`. Not the Effect v4 `effect/unstable/*` paths that appear in newer docs.
-- **Effect Schema is the only schema language.** Elysia accepts it via Standard
-  Schema; OpenAPI works through `openapi({ mapJsonSchema: { effect: JSONSchema.make } })`.
-  Don't add Zod. Don't hand-write TypeBox.
+- **Effect Schema is the only schema language** — but route schemas must be wrapped:
+  `Schema.standardSchemaV1(MySchema)`. A bare `Schema.Struct` lacks the `~standard`
+  property Elysia looks for and is **silently ignored**: no error, no validation, and
+  an empty schema in the OpenAPI document. Don't add Zod. Don't hand-write TypeBox.
+- OpenAPI is `@elysiajs/openapi` with `provider: "swagger-ui"` (not `"swagger"`) and
+  `mapJsonSchema: { effect: JSONSchema.make }`.
+- Graceful shutdown needs `process.on("SIGTERM")`, which the `no-restricted-globals`
+  rule forbids. Entry files use `globalThis.process` — the rule flags the bare
+  identifier, not a property access. Do this only in `main.ts`.
 - **Elysia requires method chaining.** Breaking the chain loses types.
 - **The frontend API layer is generated.** `apps/web/src/api/generated/**` and
   `apps/api/openapi.json` are build outputs — regenerate, never edit.

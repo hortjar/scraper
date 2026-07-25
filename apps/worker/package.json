@@ -1,0 +1,26 @@
+{
+  "name": "@scraper/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/main.ts",
+    "start": "bun src/main.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@scraper/core": "workspace:*",
+    "@scraper/db": "workspace:*",
+    "bullmq": "^5.34.0",
+    "effect": "^3.22.0",
+    "ioredis": "^5.4.2"
+  },
+  "devDependencies": {
+    "@scraper/tooling": "workspace:*",
+    "@types/bun": "^1.1.16",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.2"
+  }
+}
