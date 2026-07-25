@@ -24,7 +24,9 @@
                       "type": "string"
                     },
                     "status": {
-                      "enum": ["ok"],
+                      "enum": [
+                        "ok"
+                      ],
                       "type": "string"
                     },
                     "time": {
@@ -34,7 +36,12 @@
                       "type": "string"
                     }
                   },
-                  "required": ["status", "version", "commit", "time"],
+                  "required": [
+                    "status",
+                    "version",
+                    "commit",
+                    "time"
+                  ],
                   "type": "object"
                 }
               }
@@ -43,7 +50,9 @@
           }
         },
         "summary": "Liveness probe",
-        "tags": ["System"]
+        "tags": [
+          "System"
+        ]
       }
     },
     "/meta": {
@@ -76,7 +85,12 @@
                       "type": "boolean"
                     }
                   },
-                  "required": ["locales", "defaultLocale", "registrationOpen", "channelKinds"],
+                  "required": [
+                    "locales",
+                    "defaultLocale",
+                    "registrationOpen",
+                    "channelKinds"
+                  ],
                   "type": "object"
                 }
               }
@@ -85,7 +99,9 @@
           }
         },
         "summary": "Public runtime metadata",
-        "tags": ["System"]
+        "tags": [
+          "System"
+        ]
       }
     },
     "/metrics": {
@@ -105,7 +121,9 @@
           }
         },
         "summary": "Prometheus metrics",
-        "tags": ["System"]
+        "tags": [
+          "System"
+        ]
       }
     },
     "/ready": {
@@ -129,18 +147,28 @@
                           "type": "boolean"
                         }
                       },
-                      "required": ["database", "redis"],
+                      "required": [
+                        "database",
+                        "redis"
+                      ],
                       "type": "object"
                     },
                     "status": {
-                      "enum": ["ok", "unhealthy"],
+                      "enum": [
+                        "ok",
+                        "unhealthy"
+                      ],
                       "type": "string"
                     },
                     "time": {
                       "type": "string"
                     }
                   },
-                  "required": ["status", "checks", "time"],
+                  "required": [
+                    "status",
+                    "checks",
+                    "time"
+                  ],
                   "type": "object"
                 }
               }
@@ -164,18 +192,28 @@
                           "type": "boolean"
                         }
                       },
-                      "required": ["database", "redis"],
+                      "required": [
+                        "database",
+                        "redis"
+                      ],
                       "type": "object"
                     },
                     "status": {
-                      "enum": ["ok", "unhealthy"],
+                      "enum": [
+                        "ok",
+                        "unhealthy"
+                      ],
                       "type": "string"
                     },
                     "time": {
                       "type": "string"
                     }
                   },
-                  "required": ["status", "checks", "time"],
+                  "required": [
+                    "status",
+                    "checks",
+                    "time"
+                  ],
                   "type": "object"
                 }
               }
@@ -184,7 +222,9 @@
           }
         },
         "summary": "Readiness probe",
-        "tags": ["System"]
+        "tags": [
+          "System"
+        ]
       }
     }
   },

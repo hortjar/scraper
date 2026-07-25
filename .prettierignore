@@ -4,3 +4,5 @@ coverage
 pnpm-lock.yaml
 **/generated/**
 **/*.gen.ts
+apps/api/openapi.json
+deploy/.env.example
