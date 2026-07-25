@@ -174,7 +174,7 @@ pnpm run dev
 
 ```env
 # .env.local
-VITE_API_URL=http://localhost:3001/api
+VITE_API_URL=http://localhost:9300/api
 VITE_APP_TITLE=My React App
 VITE_ENABLE_MOCK=false
 ```
@@ -307,7 +307,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
+    port: 9301,
     open: true,
   },
 })

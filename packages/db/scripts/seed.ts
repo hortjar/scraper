@@ -4,7 +4,7 @@ import postgres from "postgres"
 
 import { extractors, monitors, users } from "../src/schema/index.js"
 
-const url = process.env.DATABASE_URL ?? "postgres://scraper:scraper@localhost:5432/scraper"
+const url = process.env.DATABASE_URL ?? "postgres://scraper:scraper@localhost:9302/scraper"
 const email = process.env.SEED_EMAIL ?? "dev@example.com"
 
 const UNUSABLE_PASSWORD = "!"

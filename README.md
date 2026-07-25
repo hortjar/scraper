@@ -56,6 +56,10 @@ cp deploy/.env.example .env      # generate secrets: openssl rand -base64 32
 pnpm dev                         # infra via docker compose + api/worker/web with reload
 ```
 
+Dev ports live in the **9300 block**: `9301` web, `9300` API, `9302` Postgres,
+`9303` Redis, `9304` browserless. Container-internal ports are untouched —
+see [docs/10-DEPLOYMENT.md §0](./docs/10-DEPLOYMENT.md).
+
 Self-hosting: [docs/10-DEPLOYMENT.md](./docs/10-DEPLOYMENT.md).
 
 ## Contributing

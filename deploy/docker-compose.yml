@@ -137,7 +137,7 @@ services:
     environment:
       APP_VERSION: ${APP_VERSION:-}
       GIT_SHA: ${GIT_SHA:-}
-      API_URL: ${API_URL:-http://api:3001}
+      API_URL: ${API_URL:-http://api:9300}
       APP_TITLE: ${APP_TITLE:-Scraper}
       DEFAULT_LOCALE: ${DEFAULT_LOCALE:-en}
     ports:

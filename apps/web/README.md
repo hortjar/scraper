@@ -144,7 +144,7 @@ licences, and the `pyftsubset` commands used to produce them.
 ## Local development
 
 ```bash
-pnpm --filter @scraper/web dev        # :3000, proxies /api to VITE_API_PROXY (default :3001)
+pnpm --filter @scraper/web dev        # :9301, proxies /api to VITE_API_PROXY (default :9300)
 pnpm --filter @scraper/web test
 pnpm --filter @scraper/web typecheck
 pnpm --filter @scraper/web build

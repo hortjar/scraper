@@ -6,6 +6,33 @@ production, or a `deploy/.env` file locally.
 Portainer's "Stacks" screen takes exactly those two things, so that's the interface
 we build for.
 
+## 0. Ports
+
+The workspace gives every project a block of 100 host ports in `9000-9999`.
+Scraper owns **9300-9399**, so several projects can have their dev stacks up at
+the same time without a single collision.
+
+| Port   | What                                | Where it is set                                         |
+| ------ | ----------------------------------- | ------------------------------------------------------- |
+| `9300` | API HTTP                            | `API_PORT` in `core/config` — the app's own listen port |
+| `9301` | Web Vite dev server                 | `server.port` in `apps/web/vite.config.ts`              |
+| `9302` | Postgres, published to the dev host | `deploy/docker-compose.dev.yml`                         |
+| `9303` | Redis, published to the dev host    | `deploy/docker-compose.dev.yml`                         |
+| `9304` | Browserless, published to the host  | `deploy/docker-compose.dev.yml`                         |
+
+**Published ports are not container ports.** Inside the compose network Postgres
+still listens on `5432`, Redis on `6379` and browserless on `3000` — those are the
+images' own ports and nothing rewrites them. Only the left-hand side of the dev
+`ports:` mapping moved, which is why `DATABASE_URL` reads `postgres:5432` in a
+container and `localhost:9302` from a shell on the dev machine.
+
+`API_PORT` is the exception: the API is ours, so it listens on `9300` in the
+container too. `nginx.conf`, `Dockerfile.web` and the production stack all proxy to
+`http://api:9300`.
+
+The production stack publishes only `web`, on `WEB_PORT` (default `8080`) — it is
+meant to sit behind your own reverse proxy, so it stays outside the dev block.
+
 ## 1. Images
 
 | Image            | Base                | Contents                                |
@@ -103,7 +130,7 @@ services:
   web:
     image: ghcr.io/${GH_ORG}/scraper-web:${IMAGE_TAG:?required}
     environment:
-      API_URL: http://api:3001
+      API_URL: http://api:9300
       APP_TITLE: ${APP_TITLE:-Scraper}
     ports: ["${WEB_PORT:-8080}:80"]
     depends_on: [api]

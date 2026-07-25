@@ -94,9 +94,9 @@ is no `prom-client` dependency; Effect's own metric state is the source of truth
 ```bash
 docker compose -f ../../deploy/docker-compose.dev.yml up -d redis
 # postgres assumed already running and migrated
-APP_URL=http://localhost:3001 \
-DATABASE_URL=postgres://scraper:scraper@localhost:5432/scraper \
-REDIS_URL=redis://localhost:6379 \
+APP_URL=http://localhost:9300 \
+DATABASE_URL=postgres://scraper:scraper@localhost:9302/scraper \
+REDIS_URL=redis://localhost:9303 \
 ENCRYPTION_KEY=dev-encryption-key \
 SESSION_SECRET=dev-session-secret \
 MAIL_FROM=noreply@example.com \

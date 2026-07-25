@@ -37,7 +37,7 @@ export const ENV_SPEC: readonly EnvVar[] = [
     optional("SUPPORTED_LOCALES", "en,cs", "Comma separated locale list"),
   ]),
   ...group("API", [
-    optional("API_PORT", "3001", "HTTP port"),
+    optional("API_PORT", "9300", "HTTP port"),
     optional("API_HOST", "0.0.0.0", "Bind address"),
     optional("CORS_ORIGINS", "", "Comma separated. Empty means same origin only"),
     optional("TRUST_PROXY", "true", "Read X-Forwarded-For for rate limiting"),

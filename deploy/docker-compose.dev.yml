@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: scraper
       POSTGRES_DB: scraper
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:9302:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -20,7 +20,7 @@ services:
     image: redis:7-alpine
     command: redis-server --appendonly yes
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:9303:6379"
     volumes:
       - redisdata:/data
     healthcheck:
@@ -37,7 +37,7 @@ services:
       TIMEOUT: 45000
       TOKEN: dev-token-do-not-use-in-production
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:9304:3000"
     shm_size: 1gb
     deploy:
       resources:

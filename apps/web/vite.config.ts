@@ -10,7 +10,7 @@ import { defineConfig } from "vite"
 const DEV_VERSION = "0.0.0-dev"
 const DEV_SHA = "local"
 
-const API_PROXY_TARGET = env.VITE_API_PROXY ?? "http://localhost:3001"
+const API_PROXY_TARGET = env.VITE_API_PROXY ?? "http://localhost:9300"
 
 const CHUNKS: readonly (readonly [string, readonly string[]])[] = [
   ["react", ["/node_modules/react/", "/node_modules/react-dom/", "/node_modules/scheduler/"]],
@@ -35,7 +35,7 @@ export default defineConfig({
     __GIT_SHA__: JSON.stringify(env.GIT_SHA ?? DEV_SHA),
   },
   server: {
-    port: 3000,
+    port: 9301,
     proxy: {
       "/api": {
         target: API_PROXY_TARGET,

@@ -9,9 +9,9 @@ import { makeRedisProbe } from "../src/health/redis-probe.js"
 import { makeRuntime } from "../src/runtime.js"
 
 const PLACEHOLDERS: readonly (readonly [string, string])[] = [
-  ["APP_URL", "http://localhost:3001"],
-  ["DATABASE_URL", "postgres://openapi:openapi@localhost:5432/openapi"],
-  ["REDIS_URL", "redis://localhost:6379/0"],
+  ["APP_URL", "http://localhost:9300"],
+  ["DATABASE_URL", "postgres://openapi:openapi@localhost:9302/openapi"],
+  ["REDIS_URL", "redis://localhost:9303/0"],
   ["ENCRYPTION_KEY", "openapi-placeholder-key-000000000"],
   ["SESSION_SECRET", "openapi-placeholder-secret-000000"],
   ["MAIL_FROM", "openapi@example.com"],

@@ -1,6 +1,6 @@
 import { defineConfig } from "drizzle-kit"
 
-const url = process.env.DATABASE_URL ?? "postgres://scraper:scraper@localhost:5432/scraper"
+const url = process.env.DATABASE_URL ?? "postgres://scraper:scraper@localhost:9302/scraper"
 
 export default defineConfig({
   dialect: "postgresql",

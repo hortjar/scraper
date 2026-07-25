@@ -196,10 +196,10 @@ Or use Portainer's volume backup feature.
 
 ### Monitoring
 
-Metrics are available at `http://api:3001/metrics` (Prometheus format) if `METRICS_ENABLED=true`.
+Metrics are available at `http://api:9300/metrics` (Prometheus format) if `METRICS_ENABLED=true`.
 
 A Prometheus/Grafana overlay is Phase-3 work (stream O) and does not exist yet.
-Scrape `api:3001/metrics` from an existing Prometheus if you have one.
+Scrape `api:9300/metrics` from an existing Prometheus if you have one.
 
 ## Troubleshooting
 

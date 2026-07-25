@@ -259,6 +259,11 @@ Full detail: [docs/14-TESTING.md](./docs/14-TESTING.md).
 
 ## 8. Commands
 
+Dev ports are the **9300 block** — `9300` API, `9301` web, `9302` Postgres,
+`9303` Redis, `9304` browserless. Those are _host_ ports; inside the compose
+network Postgres is still `5432`, Redis `6379`, browserless `3000`. Full table in
+[docs/10-DEPLOYMENT.md §0](./docs/10-DEPLOYMENT.md).
+
 ```bash
 pnpm dev            # infra via compose + api/worker/web with hot reload
 pnpm typecheck      # tsc across the workspace

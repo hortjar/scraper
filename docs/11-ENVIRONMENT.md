@@ -26,16 +26,16 @@ Legend: **R** = required (no default, boot fails without it) · secrets are mark
 
 ## API
 
-| Variable              | Default   | Notes                                     |
-| --------------------- | --------- | ----------------------------------------- |
-| `API_PORT`            | `3001`    |                                           |
-| `API_HOST`            | `0.0.0.0` |                                           |
-| `CORS_ORIGINS`        | _(empty)_ | Comma-separated. Empty = same-origin only |
-| `TRUST_PROXY`         | `true`    | Read `X-Forwarded-For` for rate limiting  |
-| `BODY_LIMIT_BYTES`    | `1048576` |                                           |
-| `ENABLE_OPENAPI`      | `true`    |                                           |
-| `ENABLE_BULL_BOARD`   | `false`   | Admin-only queue dashboard                |
-| `ENABLE_REGISTRATION` | `true`    | Turn off for a private instance           |
+| Variable              | Default   | Notes                                                         |
+| --------------------- | --------- | ------------------------------------------------------------- |
+| `API_PORT`            | `9300`    | See [10-DEPLOYMENT §0](./10-DEPLOYMENT.md) for the port block |
+| `API_HOST`            | `0.0.0.0` |                                                               |
+| `CORS_ORIGINS`        | _(empty)_ | Comma-separated. Empty = same-origin only                     |
+| `TRUST_PROXY`         | `true`    | Read `X-Forwarded-For` for rate limiting                      |
+| `BODY_LIMIT_BYTES`    | `1048576` |                                                               |
+| `ENABLE_OPENAPI`      | `true`    |                                                               |
+| `ENABLE_BULL_BOARD`   | `false`   | Admin-only queue dashboard                                    |
+| `ENABLE_REGISTRATION` | `true`    | Turn off for a private instance                               |
 
 ## Database
 
@@ -133,6 +133,11 @@ Generate secrets: `openssl rand -base64 32`.
 | `VITE_DEFAULT_LOCALE`   | `en`      | UI fallback before the profile loads |
 | `VITE_ENABLE_ANALYTICS` | `false`   |                                      |
 | `VITE_SENTRY_DSN`       | _(empty)_ |                                      |
+
+`VITE_API_PROXY` is the one that is read at **dev-server start**, not at build:
+it is where `vite.config.ts` proxies `/api`, and it defaults to
+`http://localhost:9300` — the API's port from
+[10-DEPLOYMENT §0](./10-DEPLOYMENT.md). The dev server itself listens on `9301`.
 
 `__APP_VERSION__` and `__GIT_SHA__` are Vite `define` constants sourced from
 `APP_VERSION`/`GIT_SHA` at build time. The client compares them against `/health`

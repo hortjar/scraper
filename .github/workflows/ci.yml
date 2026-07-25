@@ -151,7 +151,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 9302:5432
       redis:
         image: redis:7-alpine
         options: >-
@@ -160,7 +160,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 6379:6379
+          - 9303:6379
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -178,5 +178,5 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:int
         env:
-          DATABASE_URL: postgres://scraper:scraper@localhost:5432/scraper
-          REDIS_URL: redis://localhost:6379/0
+          DATABASE_URL: postgres://scraper:scraper@localhost:9302/scraper
+          REDIS_URL: redis://localhost:9303/0

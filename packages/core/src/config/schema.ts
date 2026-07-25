@@ -30,7 +30,7 @@ export const appConfig = Config.all({
 })
 
 export const httpConfig = Config.all({
-  port: Config.integer("API_PORT").pipe(Config.withDefault(3001)),
+  port: Config.integer("API_PORT").pipe(Config.withDefault(9300)),
   host: Config.string("API_HOST").pipe(Config.withDefault("0.0.0.0")),
   corsOrigins: csv("CORS_ORIGINS", []),
   trustProxy: Config.boolean("TRUST_PROXY").pipe(Config.withDefault(true)),
