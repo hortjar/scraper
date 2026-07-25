@@ -1,6 +1,8 @@
 # Deployment — Docker, Compose & Portainer
 
-Design goal: **one `docker-compose.yml` + one `.env` is a complete deployment.**
+Design goal: **one `docker-compose.yml` plus one set of environment variables is a
+complete deployment.** Those variables come from Portainer's stack editor in
+production, or a `deploy/.env` file locally.
 Portainer's "Stacks" screen takes exactly those two things, so that's the interface
 we build for.
 
@@ -80,7 +82,8 @@ services:
 
   api:
     image: ghcr.io/${GH_ORG}/scraper-api:${IMAGE_TAG:?required}
-    env_file: [.env]
+    env_file: [{ path: .env, required: false }]
+    environment: *app-environment          # ← required vars ${X:?required}, optional by name
     depends_on:
       postgres: { condition: service_healthy }
       redis:    { condition: service_healthy }
@@ -89,9 +92,8 @@ services:
 
   worker:
     image: ghcr.io/${GH_ORG}/scraper-worker:${IMAGE_TAG:?required}
-    env_file: [.env]
-    environment:
-      BROWSER_WS_ENDPOINT: ws://browser:3000?token=${BROWSER_TOKEN}
+    env_file: [{ path: .env, required: false }]
+    environment: *app-environment
     depends_on:
       api: { condition: service_healthy }     # migrations land first
     volumes: [snapshots:/data/snapshots]
@@ -166,8 +168,8 @@ On `SIGTERM`:
 
 1. **Stacks → Add stack → Repository** (Git URL, path `deploy/docker-compose.yml`).
    Repository mode gives you "Pull and redeploy" and, optionally, GitOps polling.
-2. Paste env vars in the stack editor, or upload `.env`. Minimum set is in
-   [11-ENVIRONMENT](./11-ENVIRONMENT.md).
+2. Paste env vars in the stack editor from `deploy/portainer/stack.env.example`.
+   Full reference in [11-ENVIRONMENT](./11-ENVIRONMENT.md).
 3. Deploy. Watch `api` logs for migration output.
 4. Register the first user, then set `ENABLE_REGISTRATION=false` and redeploy for a private instance.
 5. Scale workers: edit `WORKER_REPLICAS`, redeploy. Stateless, no coordination needed.
@@ -175,8 +177,16 @@ On `SIGTERM`:
 
 Documented gotchas (each has bitten someone):
 
-- Portainer's stack `.env` is **not** the same file as `env_file:` inside a
-  container — we use both, and STACK.md says which is which.
+- **Stack variables reach the containers only because `api`/`worker` list them in
+  the `x-app-environment` anchor.** Portainer's stack variables are the environment
+  Compose is _parsed_ in; they are not automatically container environment. A var
+  that is not in that anchor and not in a mounted `.env` will not reach the app.
+- `env_file: [.env]` is `required: false` on purpose. Portainer clones the repo and
+  `deploy/.env` is gitignored, so it is never there; a hard `env_file` made the
+  stack fail at parse time with "env file not found".
+- Optional vars are listed **by bare name** so an unset one is omitted rather than
+  set to `""`. `${VAR:-}` would set an empty string and silently defeat the app's
+  own default.
 - `shm_size` on the browser container is mandatory; without it Chromium segfaults
   under concurrency with an unhelpful error.
 - Volumes are named, not bind-mounted, so Portainer's volume browser and backup

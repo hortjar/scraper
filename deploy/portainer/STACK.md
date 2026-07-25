@@ -20,27 +20,28 @@ In Portainer:
 
 ### 2. Configure Environment Variables
 
-On the stack editor screen, scroll to **Editor** → **Environment variables**
+On the stack editor screen, scroll to **Environment variables** and load
+`deploy/portainer/stack.env.example` — either paste it with **Advanced mode** or
+add the entries one by one. Fill in every blank value first (see step 3).
 
-You have two options:
+**That is the only mechanism you need.** Portainer's stack variables become the
+environment in which Compose is parsed, and `docker-compose.yml` forwards them into
+the `api` and `worker` containers through an `x-app-environment` anchor. Required
+variables are declared `${VAR:?required}`, so a missing one fails the deploy
+immediately with the variable's name instead of starting a container that crash-loops.
 
-**Option A: Paste into the stack editor**
+Optional variables are listed in that anchor **by name only**. Compose forwards them
+if set and omits them entirely if not, so unset variables fall through to the
+application's own defaults in `packages/core/src/config`. This is deliberate: writing
+`SMTP_HOST=${SMTP_HOST:-}` would set an _empty string_ inside the container, which
+looks configured to the app and overrides its default. If you add a variable to the
+anchor, add it as a bare name unless it is genuinely required.
 
-- Copy variables from `deploy/portainer/stack.env.example` into the editor box
-- Or use `.env` file upload if available
-
-**Option B: Use `.env` file from your deployment**
-
-- Portainer's stack `.env` file is **not the same** as `env_file:` in the compose file
-- The stack `.env` sets variables **when Portainer deploys**, which it injects into services
-- Our compose uses `env_file: [.env]` **inside each container**, which reads a file mounted into the container
-
-Both work together:
-
-1. Portainer's stack vars become the environment when the compose is parsed
-2. The running container reads additional vars from `.env` via `env_file:`
-
-For production: upload a `.env` file to the volume or mount point before deployment.
+`env_file: [.env]` is still declared on both services but marked `required: false`.
+It exists for local `docker compose` runs where a `deploy/.env` file is convenient.
+Portainer clones the repository and `deploy/.env` is gitignored, so it will not exist
+there — and because it is optional, that is fine. **Do not** try to make Portainer
+supply a `.env` file; use the stack variables.
 
 ### 3. Set Required Secrets
 
@@ -54,10 +55,13 @@ These variables **must** be set or the stack will not start:
 - `BROWSER_TOKEN` — any value, but required; example: `openssl rand -base64 32`
 - `GH_ORG` — your GitHub organization or username
 - `IMAGE_TAG` — image tag to deploy (e.g., `v0.1.0` or `sha-a1b2c3d`)
-- `APP_VERSION` — semver, e.g. `0.1.0`
-- `GIT_SHA` — short commit SHA, e.g. `a1b2c3d`
+- `APP_URL` — the public URL, e.g. `https://scraper.example.com`
 - `MAIL_FROM` — e.g. `Scraper <alerts@example.com>`
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` — your mail server
+
+`APP_VERSION` and `GIT_SHA` are optional — they only feed the version indicator in
+the UI. `DATABASE_URL` must embed the same password you set in `POSTGRES_PASSWORD`;
+they are two separate variables and nothing cross-checks them.
 
 ### 4. Deploy
 
@@ -149,7 +153,6 @@ If a dependent service won't start, check the service's logs — it's waiting fo
 All services log to stdout as JSON. Portainer's **Logs** tab shows them live. For production:
 
 - Log shipper (Grafana Loki, ELK, Datadog) can consume from the Docker socket
-- See `docs/07-OBSERVABILITY.md` for setup
 
 ### Session cookies
 
@@ -169,13 +172,11 @@ If this endpoint is empty, the worker will try to launch Chromium in-process, wh
 
 ### Encryption key rotation
 
-`ENCRYPTION_KEY` encrypts notification channel secrets (e.g., webhook URLs, email passwords). Rotating it requires:
-
-1. Start a temporary container with the old and new keys
-2. Run `pnpm ops:rotate-encryption-key --old <old> --new <new>`
-3. Update the stack variable and redeploy
-
-Without rotation, channel secrets become unreadable and must be re-entered by users.
+`ENCRYPTION_KEY` encrypts notification channel secrets (e.g., webhook URLs, email passwords). **There is no rotation tooling yet** — it is Phase-3 work (stream N in
+[docs/00-IMPLEMENTATION-PLAN.md](../../docs/00-IMPLEMENTATION-PLAN.md)). Until it
+exists, changing this value makes every stored channel secret unreadable and users
+must re-enter them. Treat the key as permanent for now, and back it up somewhere you
+will not lose it.
 
 ### PostgreSQL backup
 
@@ -197,7 +198,8 @@ Or use Portainer's volume backup feature.
 
 Metrics are available at `http://api:3001/metrics` (Prometheus format) if `METRICS_ENABLED=true`.
 
-An optional `docker-compose.observability.yml` overlay adds Prometheus and Grafana. See `docs/07-OBSERVABILITY.md`.
+A Prometheus/Grafana overlay is Phase-3 work (stream O) and does not exist yet.
+Scrape `api:3001/metrics` from an existing Prometheus if you have one.
 
 ## Troubleshooting
 
