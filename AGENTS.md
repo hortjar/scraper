@@ -43,7 +43,7 @@ apps/web      Vite + React SPA — landing page + management console
 packages/core     domain · errors · constants · config · i18n · observability
 packages/db       drizzle schema · migrations · repositories
 packages/server   feature modules: auth · monitors · scraping · runs · notifications · jobs
-packages/tooling  tsconfig · eslint · prettier presets
+packages/tooling  tsconfig · prettier presets
 ```
 
 **Features are modules, not packages.** Do not create a new package. If your work

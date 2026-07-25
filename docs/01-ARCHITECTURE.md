@@ -76,11 +76,19 @@ scraper/
 │   │                                     src/modules/runs
 │   │                                     src/modules/notifications
 │   │                                     src/modules/jobs
-│   └── tooling/      @scraper/tooling  tsconfig · eslint · prettier presets
+│   └── tooling/      @scraper/tooling  tsconfig · prettier presets
 ├── deploy/           Dockerfiles, compose stacks, nginx conf, Portainer guide
 ├── docs/
 └── .github/workflows/
 ```
+
+**Where the lint rules live.** The language and framework layers — TypeScript,
+unicorn, import hygiene, React, Elysia — come from the published
+`@hortjar/eslint-config` package, shared across every project. `eslint.config.ts`
+at the repo root composes those layers and then adds the blocks that only make
+sense here: the Effect primitive bans, the module-boundary zones, the `useEffect`
+ban, and the component size budget. A rule that describes _this_ module graph
+stays in the root config; a rule that describes a stack belongs upstream.
 
 **Why four and not fourteen.** An earlier draft split every feature into its own
 package. That buys nothing here: the isolation that matters (one owner per path,

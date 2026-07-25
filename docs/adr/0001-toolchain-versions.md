@@ -135,12 +135,12 @@ Six things broke or were revealed. None were cosmetic.
 2. **`.js` config files were never actually being linted.** With
    `projectService: true`, typescript-eslint now errors
    `was not found by the project service` for every file outside a tsconfig —
-   `eslint.config.js`, `commitlint.config.js`, and all of
-   `packages/tooling/**/*.js`. They now get their own flat-config block with
+   the ESLint config itself, `commitlint.config.js`, and the presets that then
+   lived in `packages/tooling/**/*.js`. They now get their own flat-config block with
    `projectService: false` and `disableTypeChecked`, because type-aware rules on
    plain ESM config files buy nothing.
 
-3. **That immediately caught a real bug.** Once `packages/tooling/eslint/react.js`
+3. **That immediately caught a real bug.** Once the (since-extracted) React config
    was linted, `no-dupe-keys` found `react-refresh/only-export-components`
    declared twice in one rules object — `"off"` shadowing the intended
    `["warn", { allowConstantExport: true }]`. The rule had silently never run.

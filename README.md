@@ -40,7 +40,7 @@ packages/  core (domain, errors, constants, config, i18n, observability)
            db (schema, migrations, repositories)
            server (feature modules: auth, monitors, scraping, runs,
                    notifications, jobs)
-           tooling (tsconfig, eslint, prettier)
+           tooling (tsconfig, prettier)
 deploy/    Dockerfiles, compose stacks, Portainer guide
 docs/      the plan and every convention
 ```

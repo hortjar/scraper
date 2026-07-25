@@ -71,7 +71,7 @@ state container — no context-as-store, no module-level mutable singletons outs
 
 ## `useEffect` is banned, and the ban is mechanical
 
-`packages/tooling/eslint/react.js` fails the build on `useEffect` and
+The `scraper/web-effects` block in `eslint.config.ts` fails the build on `useEffect` and
 `useLayoutEffect` anywhere except `src/lib/browser/**`. That directory is the
 escape hatch: every genuine subscription to something outside React lives there,
 wrapped in a named hook with its own test.

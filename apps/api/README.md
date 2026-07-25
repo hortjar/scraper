@@ -66,7 +66,7 @@ be treated as a typo for `'swagger-ui'` when it's next touched.
 
 ## `process` in an entry file
 
-`packages/tooling/eslint/backend.js`'s `no-restricted-globals` bans the bare
+The `restrictProcessEnv` option on the `elysia` layer in `eslint.config.ts` bans the bare
 `process` identifier everywhere except `packages/core/src/config` and
 `**/scripts/**`. Graceful shutdown needs `process.on('SIGTERM', …)` /
 `process.exit(0)` in `main.ts`, which is neither. `main.ts` therefore goes
