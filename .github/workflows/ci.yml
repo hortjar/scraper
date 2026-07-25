@@ -125,11 +125,15 @@ jobs:
           key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm gen:openapi
       - run: pnpm gen:api
       - run: pnpm gen:env
       - run: git diff --exit-code
+      - run: pnpm i18n:check
 
   integration:
     needs: install

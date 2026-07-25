@@ -12,5 +12,6 @@ export const openapiPlugin = openapi({
       version: "0.1.0",
       description: "Web scraping and change-monitoring platform API.",
     },
+    servers: [{ url: ROUTE.apiBase }],
   },
 })

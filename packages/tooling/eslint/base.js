@@ -88,7 +88,7 @@ export const base = tseslint.config(
     },
   },
   {
-    files: ["**/*.js", "**/*.mjs", "**/*.cjs"],
+    files: ["**/*.js", "**/*.mjs", "**/*.cjs", "*.config.ts"],
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: {
       globals: { ...globals.es2023, ...globals.node },

@@ -26,8 +26,13 @@ src/
   features/
     system/                AppStatus — version + connection indicator
   landing/                 hero, steps, notes — landing-only composition
+  api/
+    generated/             Hey API output — never hand-edited, drift-checked in CI
+    runtime-config.ts      baseUrl, credentials, custom fetch
+    session-fetch.ts       single-flight 401 refresh, transport errors → ApiError
+    index.ts               registers the error interceptor, re-exports the SDK
   lib/
-    api/                   transport, error envelope → ApiError, QueryClient factory
+    api/                   error envelope → ApiError, QueryClient factory, error copy
     browser/               THE ONLY useEffect ZONE (see below)
     format/                locale-aware number/date formatting
     utils/                 cn, signal-hue
@@ -35,6 +40,20 @@ src/
   i18n/                    i18next instance, namespaced ICU catalogs for en + cs
   styles/                  tokens.css (design tokens), index.css (Tailwind 4 entry)
 ```
+
+## The API layer is generated
+
+`pnpm gen:api` regenerates `src/api/generated/` from `apps/api/openapi.json`. No
+request code is written by hand. Three small modules wrap it, and they are the
+reason **features must import from `@/api`, never from `@/api/generated`** — the
+barrel is what installs the error interceptor, so a deep import silently loses
+`ApiError` mapping.
+
+Generated files carry a `@ts-nocheck` header applied by
+`scripts/seal-generated.mjs`. Hey API's runtime is not written for
+`exactOptionalPropertyTypes`, which this workspace enables; sealing the vendored
+implementation preserves that strictness for our own code while every exported
+type stays checked where we use it.
 
 ## Three state homes, never a fourth
 

@@ -13,16 +13,16 @@ file gets fixed.
 
 Not a follow-up, not a ticket, not "later".
 
-| You did this | Then you update |
-|---|---|
-| Behavior differs from what a doc says | That doc |
-| Added an env var | `core/config` **and** [docs/11-ENVIRONMENT.md](./docs/11-ENVIRONMENT.md) |
-| Added a route | [docs/09-API.md](./docs/09-API.md) + regenerate OpenAPI & client |
-| Added a table or column | [docs/02-DATA-MODEL.md](./docs/02-DATA-MODEL.md) + a migration |
-| Added a notification channel | [docs/06-NOTIFICATIONS.md](./docs/06-NOTIFICATIONS.md) §4 |
-| Added a constant category or lint rule | [docs/03-BACKEND.md](./docs/03-BACKEND.md) §3 |
-| Changed a Phase-0 contract | An ADR in `docs/adr/NNN-*.md`, announced before merge |
-| Learned something non-obvious the hard way | The relevant doc's "watch out" — with the *why* |
+| You did this                               | Then you update                                                          |
+| ------------------------------------------ | ------------------------------------------------------------------------ |
+| Behavior differs from what a doc says      | That doc                                                                 |
+| Added an env var                           | `core/config` **and** [docs/11-ENVIRONMENT.md](./docs/11-ENVIRONMENT.md) |
+| Added a route                              | [docs/09-API.md](./docs/09-API.md) + regenerate OpenAPI & client         |
+| Added a table or column                    | [docs/02-DATA-MODEL.md](./docs/02-DATA-MODEL.md) + a migration           |
+| Added a notification channel               | [docs/06-NOTIFICATIONS.md](./docs/06-NOTIFICATIONS.md) §4                |
+| Added a constant category or lint rule     | [docs/03-BACKEND.md](./docs/03-BACKEND.md) §3                            |
+| Changed a Phase-0 contract                 | An ADR in `docs/adr/NNN-*.md`, announced before merge                    |
+| Learned something non-obvious the hard way | The relevant doc's "watch out" — with the _why_                          |
 
 Docs are the interface between agents who never share a context window. A stale
 doc is a broken build that nothing catches.
@@ -80,7 +80,11 @@ doesn't fit an existing module, create `packages/server/src/modules/<name>/`.
   identifier, not a property access. Do this only in `main.ts`.
 - **Elysia requires method chaining.** Breaking the chain loses types.
 - **The frontend API layer is generated.** `apps/web/src/api/generated/**` and
-  `apps/api/openapi.json` are build outputs — regenerate, never edit.
+  `apps/api/openapi.json` are build outputs — regenerate, never edit. Import from
+  `@/api`, **never** from `@/api/generated` directly: the barrel installs the error
+  interceptor that maps the server envelope to `ApiError`, and a deep import bypasses
+  it silently. Generated files carry a `@ts-nocheck` header on purpose
+  ([04 §5](./docs/04-FRONTEND.md)).
 - **shadcn components are copied in**, not imported. They're ours to theme.
 
 ---
@@ -130,20 +134,23 @@ Independent workstreams run as subagents, not serially. Before fanning out:
 Full detail: [docs/03-BACKEND.md](./docs/03-BACKEND.md).
 
 ### Module shape
+
 ```
 packages/server/src/modules/<name>/
   <name>.constants.ts  <name>.errors.ts   <name>.schema.ts
   <name>.repository.ts <name>.service.ts  <name>.routes.ts
   <name>.messages.ts   index.ts  README.md  *.test.ts
 ```
+
 `index.ts` is the contract. Importing another module's internals is a lint error.
 
 ### Non-negotiables
+
 - **No magic strings.** A literal that repeats or crosses a boundary is a constant
   in `core/constants`: `SERVICE_TAG`, `QUEUE`, `ERROR_CODE`, `CHANNEL_KIND`,
   `HEADER`, `COOKIE`, `ROUTE`, `API_TAG`, `REDIS_KEY`, `SPAN`, `METRIC`,
   `AUDIT_ACTION`. Same for magic numbers.
-- **No hardcoded prose.** Tagged errors carry *data*, never sentences. The sentence
+- **No hardcoded prose.** Tagged errors carry _data_, never sentences. The sentence
   is rendered from an i18n key at the edge, in the reader's locale.
 - **No `process.env`** outside `core/config`. **No `Date.now()`/`Math.random()`** —
   use Effect `Clock`/`Random` so `TestClock` works.
@@ -168,17 +175,18 @@ packages/server/src/modules/<name>/
 Full detail: [docs/04-FRONTEND.md](./docs/04-FRONTEND.md).
 
 ### Never use `useEffect`
+
 Banned in feature code, enforced by ESLint. Instead:
 
-| Want to… | Use |
-|---|---|
-| Fetch | `useQuery` / route loader |
-| Poll | `refetchInterval` |
-| Derive state | Compute during render |
-| Reset on prop change | `key={id}` |
-| React to an action | The event handler |
-| Read external state | `useStore(store, selector)` |
-| Persist filters/selection | Router search params |
+| Want to…                  | Use                                   |
+| ------------------------- | ------------------------------------- |
+| Fetch                     | `useQuery` / route loader             |
+| Poll                      | `refetchInterval`                     |
+| Derive state              | Compute during render                 |
+| Reset on prop change      | `key={id}`                            |
+| React to an action        | The event handler                     |
+| Read external state       | `useStore(store, selector)`           |
+| Persist filters/selection | Router search params                  |
 | Focus / measure / animate | `ref` callback, CSS, View Transitions |
 
 The only place effects may live is `src/lib/browser/` — a small, reviewed, tested
@@ -187,6 +195,7 @@ set of primitives (`useMediaQuery`, `useOnlineStatus`, `useInterval`,
 and a test.
 
 ### Atomic components
+
 - **≤ 150 lines** per component. **≤ 7 props.**
 - **A component either fetches or renders — never both.** Containers fetch;
   presentational components take props.
@@ -198,16 +207,19 @@ and a test.
   → `layouts` → `routes`.
 
 ### State has three homes, no overlap
+
 Server data → TanStack Query. Filters/sort/selection/dialog ids → **URL search params**.
 Ephemeral UI → TanStack Store.
 
 ### Strings and formatting
+
 Every visible string is an i18next key — including `placeholder`, `title`,
 `aria-label`, `alt`, toasts, empty states, validation. Dates and numbers go through
 `lib/format` (Intl, user's locale + timezone). Never `toFixed`, never inline
 `toLocaleString`, never a concatenated sentence.
 
 ### Always visible
+
 App version + commit, and connection status (connected / reconnecting / offline).
 On a version mismatch with `/health`, offer a reload. See
 [docs/04-FRONTEND.md §8](./docs/04-FRONTEND.md).
