@@ -9,7 +9,10 @@ export const useEventListener = <K extends keyof EventMap>(
   options?: AddEventListenerOptions,
 ): void => {
   const latest = useRef(handler)
-  latest.current = handler
+
+  useEffect(() => {
+    latest.current = handler
+  })
 
   useEffect(() => {
     const node = target === undefined ? window : target

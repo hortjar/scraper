@@ -1,7 +1,8 @@
 import js from "@eslint/js"
-import tseslint from "typescript-eslint"
 import importX from "eslint-plugin-import-x"
 import globals from "globals"
+import tseslint from "typescript-eslint"
+
 import local from "./rules/no-comments.js"
 
 export const ignores = {
@@ -84,6 +85,19 @@ export const base = tseslint.config(
       "max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
       "max-depth": ["error", 3],
       complexity: ["error", 12],
+    },
+  },
+  {
+    files: ["**/*.js", "**/*.mjs", "**/*.cjs"],
+    extends: [tseslint.configs.disableTypeChecked],
+    languageOptions: {
+      globals: { ...globals.es2023, ...globals.node },
+      parserOptions: { projectService: false },
+    },
+    rules: {
+      "import-x/no-default-export": "off",
+      "no-console": "off",
+      "no-restricted-globals": "off",
     },
   },
   {

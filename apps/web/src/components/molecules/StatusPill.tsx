@@ -4,14 +4,7 @@ import { useTranslation } from "react-i18next"
 import { cn } from "../../lib/utils"
 import { Badge, type BadgeProps } from "../ui/Badge"
 
-export const MONITOR_STATUS = {
-  ok: "ok",
-  degraded: "degraded",
-  failing: "failing",
-  paused: "paused",
-} as const
-
-export type MonitorStatus = (typeof MONITOR_STATUS)[keyof typeof MONITOR_STATUS]
+import type { MonitorStatus } from "./StatusPill.constants"
 
 const STATUS_TONE: Readonly<Record<MonitorStatus, NonNullable<BadgeProps["tone"]>>> = {
   ok: "positive",

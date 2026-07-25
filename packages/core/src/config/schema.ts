@@ -1,11 +1,16 @@
 import { Config, Redacted } from "effect"
 
-import { APP_ENV, MAIL_DRIVER, STORAGE_DRIVER } from "../constants/domain-values.js"
 import { RETRY, TIMEOUT } from "../constants/defaults.js"
+import { APP_ENV, MAIL_DRIVER, STORAGE_DRIVER } from "../constants/domain-values.js"
 
 const csv = (name: string, fallback: readonly string[]) =>
   Config.string(name).pipe(
-    Config.map((value) => value.split(",").map((part) => part.trim()).filter(Boolean)),
+    Config.map((value) =>
+      value
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean),
+    ),
     Config.withDefault(fallback),
   )
 
@@ -71,9 +76,7 @@ export const securityConfig = Config.all({
 })
 
 export const scrapingConfig = Config.all({
-  minIntervalSeconds: Config.integer("MIN_SCRAPE_INTERVAL_SECONDS").pipe(
-    Config.withDefault(300),
-  ),
+  minIntervalSeconds: Config.integer("MIN_SCRAPE_INTERVAL_SECONDS").pipe(Config.withDefault(300)),
   maxMonitorsPerUser: Config.integer("MAX_MONITORS_PER_USER").pipe(Config.withDefault(100)),
   maxConcurrentRunsPerUser: Config.integer("MAX_CONCURRENT_RUNS_PER_USER").pipe(
     Config.withDefault(5),
@@ -86,41 +89,34 @@ export const scrapingConfig = Config.all({
   domainRateLimitPerMinute: Config.integer("DOMAIN_RATE_LIMIT_PER_MINUTE").pipe(
     Config.withDefault(6),
   ),
-  autoPauseAfterFailures: Config.integer("AUTO_PAUSE_AFTER_FAILURES").pipe(
-    Config.withDefault(20),
-  ),
+  autoPauseAfterFailures: Config.integer("AUTO_PAUSE_AFTER_FAILURES").pipe(Config.withDefault(20)),
   blockedHostPatterns: csv("BLOCKED_HOST_PATTERNS", []),
 })
 
 export const browserConfig = Config.all({
   wsEndpoint: Config.string("BROWSER_WS_ENDPOINT").pipe(Config.withDefault("")),
-  timeoutMs: Config.integer("BROWSER_TIMEOUT_MS").pipe(
-    Config.withDefault(TIMEOUT.browserScrapeMs),
-  ),
+  timeoutMs: Config.integer("BROWSER_TIMEOUT_MS").pipe(Config.withDefault(TIMEOUT.browserScrapeMs)),
   maxContexts: Config.integer("BROWSER_MAX_CONTEXTS").pipe(Config.withDefault(4)),
   blockResources: csv("BROWSER_BLOCK_RESOURCES", ["image", "media", "font"]),
   screenshotsEnabled: Config.boolean("SCREENSHOTS_ENABLED").pipe(Config.withDefault(true)),
 })
 
 export const storageConfig = Config.all({
-  driver: Config.literal(STORAGE_DRIVER.local, STORAGE_DRIVER.s3)("STORAGE_DRIVER").pipe(
-    Config.withDefault(STORAGE_DRIVER.local),
-  ),
+  driver: Config.literal(
+    STORAGE_DRIVER.local,
+    STORAGE_DRIVER.s3,
+  )("STORAGE_DRIVER").pipe(Config.withDefault(STORAGE_DRIVER.local)),
   localPath: Config.string("STORAGE_LOCAL_PATH").pipe(Config.withDefault("/data/snapshots")),
   s3Endpoint: Config.string("S3_ENDPOINT").pipe(Config.withDefault("")),
   s3Bucket: Config.string("S3_BUCKET").pipe(Config.withDefault("")),
   s3Region: Config.string("S3_REGION").pipe(Config.withDefault("")),
-  s3AccessKeyId: Config.redacted("S3_ACCESS_KEY_ID").pipe(
-    Config.withDefault(Redacted.make("")),
-  ),
+  s3AccessKeyId: Config.redacted("S3_ACCESS_KEY_ID").pipe(Config.withDefault(Redacted.make(""))),
   s3SecretAccessKey: Config.redacted("S3_SECRET_ACCESS_KEY").pipe(
     Config.withDefault(Redacted.make("")),
   ),
   runRetentionDays: Config.integer("RUN_RETENTION_DAYS").pipe(Config.withDefault(90)),
   snapshotRetentionDays: Config.integer("SNAPSHOT_RETENTION_DAYS").pipe(Config.withDefault(30)),
-  screenshotRetentionDays: Config.integer("SCREENSHOT_RETENTION_DAYS").pipe(
-    Config.withDefault(14),
-  ),
+  screenshotRetentionDays: Config.integer("SCREENSHOT_RETENTION_DAYS").pipe(Config.withDefault(14)),
 })
 
 export const mailConfig = Config.all({

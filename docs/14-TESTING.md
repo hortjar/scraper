@@ -6,25 +6,35 @@ Those three are where bugs are expensive and where the tests are densest.
 
 ## 1. The pyramid, concretely
 
-| Layer | Tool | Runs in | What |
-|---|---|---|---|
-| Unit | Vitest + `@effect/vitest` | ms, no I/O | Transforms, extraction, diffing, rule evaluation, normalization, value objects |
-| Service | Vitest + stub layers | ms | Service logic with `Test` layers for repos and external I/O |
-| Integration | Vitest + Testcontainers | seconds | Repositories, migrations, routes with real Postgres + Redis |
-| Contract | Vitest | ms | OpenAPI snapshot; webhook envelope snapshot |
-| E2E | Playwright | minutes | Golden user paths against the composed stack |
+| Layer       | Tool                      | Runs in    | What                                                                           |
+| ----------- | ------------------------- | ---------- | ------------------------------------------------------------------------------ |
+| Unit        | Vitest + `@effect/vitest` | ms, no I/O | Transforms, extraction, diffing, rule evaluation, normalization, value objects |
+| Service     | Vitest + stub layers      | ms         | Service logic with `Test` layers for repos and external I/O                    |
+| Integration | Vitest + Testcontainers   | seconds    | Repositories, migrations, routes with real Postgres + Redis                    |
+| Contract    | Vitest                    | ms         | OpenAPI snapshot; webhook envelope snapshot                                    |
+| E2E         | Playwright                | minutes    | Golden user paths against the composed stack                                   |
+
+**Two Vitest majors, on purpose.** The backend packages run Vitest 3 because
+`@effect/vitest` requires it; `apps/web` runs Vitest 4 because Vite 8 requires it.
+Both are invoked as `vitest run`, and no test crosses the boundary, so this only
+matters when you upgrade one of them — see
+[adr/0001](./adr/0001-toolchain-versions.md).
+
+Packages with no tests yet (`db`, `api`, `worker`) pass `--passWithNoTests`;
+delete the flag when the first test lands.
 
 ## 2. Effect-specific practice
 
 ```ts
-it.effect('suppresses a second alert inside the throttle window', () =>
+it.effect("suppresses a second alert inside the throttle window", () =>
   Effect.gen(function* () {
     const rules = yield* RuleEvaluator
-    yield* rules.evaluate(change)                        // sends
-    yield* TestClock.adjust('30 seconds')
-    const second = yield* rules.evaluate(change)         // throttle = 60s
-    assert.deepStrictEqual(second, Suppressed('throttled'))
-  }).pipe(Effect.provide(TestLayer)))
+    yield* rules.evaluate(change) // sends
+    yield* TestClock.adjust("30 seconds")
+    const second = yield* rules.evaluate(change) // throttle = 60s
+    assert.deepStrictEqual(second, Suppressed("throttled"))
+  }).pipe(Effect.provide(TestLayer)),
+)
 ```
 
 - **`TestClock` everywhere time matters** — throttles, quiet hours, digest windows,
@@ -49,9 +59,10 @@ packages/scraping/test/fixtures/
 ```
 
 Adding a supported site pattern means adding a fixture pair. When a transform
-changes, the diff in the expected JSON *is* the review.
+changes, the diff in the expected JSON _is_ the review.
 
 Plus:
+
 - Property tests: `normalize(normalize(x)) === normalize(x)`; transform pipelines
   never throw on arbitrary strings.
 - A local **fixture server** (`test/server`) serving a static page and a
@@ -77,7 +88,7 @@ Testcontainers spins Postgres + Redis per suite (reused across files via a globa
 setup). Each test runs in a **transaction rolled back at teardown**, so tests are
 order-independent and parallel-safe.
 
-Covered: migrations apply cleanly to an empty DB *and* to the previous release's
+Covered: migrations apply cleanly to an empty DB _and_ to the previous release's
 schema; every repository method; ownership isolation (user A cannot read user B's
 monitor through any route — a parameterized test over every `:id` route, because
 IDOR bugs are systematic, not incidental); route validation and error mapping.
@@ -90,8 +101,8 @@ IDOR bugs are systematic, not incidental); route validation and error mapping.
 3. Mutate the fixture → run again → change detected → webhook received at a local
    sink with a **valid HMAC signature** → diff renders in the UI.
 4. Set a threshold rule that shouldn't fire → mutate below threshold → assert a
-   `suppressed` delivery with the reason shown in the UI. *(Testing that alerts
-   **don't** fire is as important as testing that they do.)*
+   `suppressed` delivery with the reason shown in the UI. _(Testing that alerts
+   **don't** fire is as important as testing that they do.)_
 5. Revoke a session in settings → the other browser context is logged out.
 
 E2E runs against `docker-compose` in CI, not against dev servers, so it exercises
@@ -118,19 +129,19 @@ the images that ship.
 
 ## 8. Gates
 
-| Gate | Threshold |
-|---|---|
-| Typecheck, lint | zero errors |
-| Lint rules that encode the plan | no `useEffect` outside `lib/browser`, no literal UI strings, no `process.env` outside `core/config`, no cross-module deep imports, no magic strings in the audited categories |
-| `pnpm i18n:check` | no missing keys in any locale |
-| `pnpm gen:openapi && pnpm gen:api` | produces no diff (client/server drift) |
-| `size-limit` | landing ≤120 kB, console ≤200 kB gzip |
-| Unit coverage: `scraping`, `runs`, `notifications` | ≥ 80% lines, ≥ 70% branches |
-| Unit coverage: everything else | ≥ 60% |
-| Integration | all green, no `.skip` without a linked issue |
-| E2E | all golden paths green |
-| OpenAPI snapshot | no unintended breaking change |
-| `pnpm audit` | no high/critical |
+| Gate                                               | Threshold                                                                                                                                                                     |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Typecheck, lint                                    | zero errors                                                                                                                                                                   |
+| Lint rules that encode the plan                    | no `useEffect` outside `lib/browser`, no literal UI strings, no `process.env` outside `core/config`, no cross-module deep imports, no magic strings in the audited categories |
+| `pnpm i18n:check`                                  | no missing keys in any locale                                                                                                                                                 |
+| `pnpm gen:openapi && pnpm gen:api`                 | produces no diff (client/server drift)                                                                                                                                        |
+| `size-limit`                                       | landing ≤120 kB, console ≤200 kB gzip                                                                                                                                         |
+| Unit coverage: `scraping`, `runs`, `notifications` | ≥ 80% lines, ≥ 70% branches                                                                                                                                                   |
+| Unit coverage: everything else                     | ≥ 60%                                                                                                                                                                         |
+| Integration                                        | all green, no `.skip` without a linked issue                                                                                                                                  |
+| E2E                                                | all golden paths green                                                                                                                                                        |
+| OpenAPI snapshot                                   | no unintended breaking change                                                                                                                                                 |
+| `pnpm audit`                                       | no high/critical                                                                                                                                                              |
 
 Flaky tests get quarantined with an issue and a deadline, never `.skip`-ed silently.
 A suite people don't trust is worse than no suite.

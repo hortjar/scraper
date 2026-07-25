@@ -1,13 +1,10 @@
 import { Schema } from "effect"
 
-import {
-  CHANGE_KIND,
-  RUN_STATUS,
-  RUN_TRIGGER,
-} from "../constants/domain-values.js"
+import { CHANGE_KIND, RUN_STATUS, RUN_TRIGGER } from "../constants/domain-values.js"
+
 import { ChangeId, MonitorId, RunId, SnapshotId } from "./ids.js"
-import { ExtractorKey, NonNegativeInt } from "./primitives.js"
 import { StrategyKind } from "./monitor.js"
+import { ExtractorKey, NonNegativeInt } from "./primitives.js"
 
 export const RunTrigger = Schema.Literal(
   RUN_TRIGGER.schedule,

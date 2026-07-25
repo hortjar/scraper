@@ -10,7 +10,6 @@
   ],
   "compilerOptions": {
     "rootDir": ".",
-    "baseUrl": ".",
     "types": ["vite/client", "node"],
     "allowJs": true,
     "checkJs": false,

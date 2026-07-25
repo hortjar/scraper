@@ -2,8 +2,10 @@ import { Effect } from "effect"
 import { describe, expect, it } from "vitest"
 
 import { LOCALE } from "../constants/domain-values.js"
-import { catalogs, fallbackLocale, resolveLocale, Translator } from "./index.js"
+
 import { MSG } from "./keys.js"
+
+import { catalogs, fallbackLocale, resolveLocale, Translator } from "./index.js"
 
 const flatten = (node: unknown): string[] =>
   typeof node === "string"

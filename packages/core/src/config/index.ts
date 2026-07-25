@@ -1,6 +1,7 @@
 import { Effect, Layer } from "effect"
 
 import { SERVICE_TAG } from "../constants/service-tags.js"
+
 import { rootConfig, type RootConfig } from "./schema.js"
 
 export * from "./schema.js"

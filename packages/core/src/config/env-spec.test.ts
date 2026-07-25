@@ -12,7 +12,7 @@ const schemaSource = readFileSync(
 )
 
 const referencedNames = new Set(
-  [...schemaSource.matchAll(/"([A-Z][A-Z0-9_]{2,})"/g)].map((match) => match[1] as string),
+  [...schemaSource.matchAll(/"([A-Z][A-Z0-9_]{2,})"/g)].map((match) => match[1]!),
 )
 
 describe("env spec", () => {

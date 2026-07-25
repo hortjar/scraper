@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import {
   CONNECTION_STATE,
   type ConnectionState,
-} from "../../components/molecules/ConnectionIndicator"
+} from "../../components/molecules/ConnectionIndicator.constants"
 import { useOnlineStatus } from "../../lib/browser"
 import { appConfig } from "../../lib/config"
 

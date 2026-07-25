@@ -1,11 +1,8 @@
 import { Schema } from "effect"
 
-import {
-  CHANNEL_KIND,
-  NOTIFICATION_EVENT,
-  SUPPRESSION_REASON,
-} from "../constants/channels.js"
+import { CHANNEL_KIND, NOTIFICATION_EVENT, SUPPRESSION_REASON } from "../constants/channels.js"
 import { DELIVERY_MODE, DELIVERY_STATUS, TRIGGER_KIND } from "../constants/domain-values.js"
+
 import { ChangeId, ChannelId, DeliveryId, MonitorId, RuleId, RunId, UserId } from "./ids.js"
 import {
   CronExpression,

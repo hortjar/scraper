@@ -1,12 +1,11 @@
-export { AppVersion, type AppVersionProps, hasVersionSkew } from "./AppVersion"
-export {
-  CONNECTION_STATE,
-  ConnectionIndicator,
-  type ConnectionIndicatorProps,
-  type ConnectionState,
-} from "./ConnectionIndicator"
+export { AppVersion, type AppVersionProps } from "./AppVersion"
+export { hasVersionSkew } from "./AppVersion.skew"
+export { ConnectionIndicator, type ConnectionIndicatorProps } from "./ConnectionIndicator"
+export { CONNECTION_STATE, type ConnectionState } from "./ConnectionIndicator.constants"
 export { CopyableCode, type CopyableCodeProps } from "./CopyableCode"
-export { DELTA_KIND, DeltaBadge, type DeltaBadgeProps, type DeltaKind } from "./DeltaBadge"
+export { DeltaBadge, type DeltaBadgeProps } from "./DeltaBadge"
+export { DELTA_KIND, type DeltaKind } from "./DeltaBadge.constants"
 export { MetricTile, type MetricTileProps } from "./MetricTile"
 export { RelativeTime, type RelativeTimeProps } from "./RelativeTime"
-export { MONITOR_STATUS, type MonitorStatus, StatusPill, type StatusPillProps } from "./StatusPill"
+export { StatusPill, type StatusPillProps } from "./StatusPill"
+export { MONITOR_STATUS, type MonitorStatus } from "./StatusPill.constants"

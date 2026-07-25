@@ -25,14 +25,11 @@ export const jsonLogger = Logger.make(({ logLevel, message, annotations, spans, 
     entry[key] = redact(value)
   }
   const spanNames = List.toArray(spans).map((span) => span.label)
-  if (spanNames.length > 0) entry["spans"] = spanNames
+  if (spanNames.length > 0) entry.spans = spanNames
   globalThis.console.log(JSON.stringify(entry))
 })
 
-export const loggerLayer = (
-  format: "json" | "pretty",
-  level: string,
-): Layer.Layer<never> =>
+export const loggerLayer = (format: "json" | "pretty", level: string): Layer.Layer<never> =>
   Layer.merge(
     format === "json" ? Logger.replace(Logger.defaultLogger, jsonLogger) : Logger.pretty,
     Logger.minimumLogLevel(parseLevel(level)),

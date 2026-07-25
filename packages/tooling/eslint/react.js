@@ -1,8 +1,8 @@
-import tseslint from "typescript-eslint"
+import i18next from "eslint-plugin-i18next"
 import reactHooks from "eslint-plugin-react-hooks"
 import reactRefresh from "eslint-plugin-react-refresh"
-import i18next from "eslint-plugin-i18next"
 import globals from "globals"
+import tseslint from "typescript-eslint"
 
 export const react = tseslint.config(
   {
@@ -50,7 +50,6 @@ export const react = tseslint.config(
       ],
 
       "max-lines": ["error", { max: 150, skipBlankLines: true, skipComments: true }],
-      "react-refresh/only-export-components": "off",
     },
   },
   {
@@ -60,6 +59,10 @@ export const react = tseslint.config(
   {
     files: ["apps/web/src/routes/**/*.tsx", "apps/web/*.config.ts", "apps/web/src/main.tsx"],
     rules: { "import-x/no-default-export": "off" },
+  },
+  {
+    files: ["apps/web/src/routes/**/*.tsx", "apps/web/src/components/ui/**/*.tsx"],
+    rules: { "react-refresh/only-export-components": "off" },
   },
   {
     files: ["apps/web/src/i18n/**/*.ts", "apps/web/**/*.test.{ts,tsx}"],

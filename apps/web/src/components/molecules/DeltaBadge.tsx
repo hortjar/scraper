@@ -4,8 +4,7 @@ import { useTranslation } from "react-i18next"
 import { useFormat } from "../../lib/format"
 import { cn } from "../../lib/utils"
 
-export const DELTA_KIND = { absolute: "absolute", percent: "percent" } as const
-export type DeltaKind = (typeof DELTA_KIND)[keyof typeof DELTA_KIND]
+import { DELTA_KIND, type DeltaKind } from "./DeltaBadge.constants"
 
 const DIRECTION_ICON = { up: ArrowUpIcon, down: ArrowDownIcon, flat: MinusIcon } as const
 

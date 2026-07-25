@@ -1,6 +1,7 @@
 import { Schema } from "effect"
 
 import { API_KEY_SCOPE, USER_ROLE, USER_STATUS } from "../constants/domain-values.js"
+
 import { ApiKeyId, SessionId, UserId } from "./ids.js"
 import { Email, Locale, NonEmptyString, NonNegativeInt, Timezone } from "./primitives.js"
 

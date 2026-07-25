@@ -4,6 +4,8 @@ import { cn } from "../../lib/utils"
 import { Button } from "../ui/Button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/Tooltip"
 
+import { hasVersionSkew } from "./AppVersion.skew"
+
 export interface AppVersionProps {
   readonly version: string
   readonly commit: string
@@ -11,9 +13,6 @@ export interface AppVersionProps {
   readonly onReload?: (() => void) | undefined
   readonly className?: string | undefined
 }
-
-export const hasVersionSkew = (version: string, serverVersion?: string): boolean =>
-  serverVersion !== undefined && serverVersion.length > 0 && serverVersion !== version
 
 export const AppVersion = ({
   version,
