@@ -21,20 +21,20 @@ export interface NotificationChannel<Config = unknown> {
   readonly secretFields: readonly string[]
 
   readonly capabilities: {
-    readonly richText: boolean      // markdown/blocks vs plain text
-    readonly attachments: boolean   // screenshots
+    readonly richText: boolean // markdown/blocks vs plain text
+    readonly attachments: boolean // screenshots
     readonly maxLength: number
     readonly supportsDigest: boolean
     readonly supportsVerification: boolean
   }
 
   /** Send a rendered message. Failure must classify itself as retryable or not. */
-  readonly send: (ctx: SendContext<Config>) =>
-    Effect.Effect<DeliveryReceipt, DeliveryFailed, ChannelDeps>
+  readonly send: (
+    ctx: SendContext<Config>,
+  ) => Effect.Effect<DeliveryReceipt, DeliveryFailed, ChannelDeps>
 
   /** Optional: prove the config works (test send / API ping). */
-  readonly verify?: (config: Config) =>
-    Effect.Effect<void, DeliveryFailed, ChannelDeps>
+  readonly verify?: (config: Config) => Effect.Effect<void, DeliveryFailed, ChannelDeps>
 
   /** Optional: channel-specific rendering. Falls back to the generic renderer. */
   readonly render?: (msg: NotificationMessage, config: Config) => ChannelPayload
@@ -47,18 +47,21 @@ A channel that needs more than that is doing too much.
 ## 2. Registry
 
 ```ts
-export class ChannelRegistry extends Effect.Service<ChannelRegistry>()(SERVICE_TAG.ChannelRegistry, {
-  effect: Effect.gen(function* () {
-    const channels = yield* ChannelSet          // ← the only extension point
-    const byKind = new Map(channels.map((c) => [c.kind, c]))
-    return {
-      get: (kind: string) => Option.fromNullable(byKind.get(kind)),
-      list: () => [...byKind.values()],
-      /** Powers GET /channels/kinds — the UI builds its forms from this. */
-      describe: () => [...byKind.values()].map(toChannelDescriptor),
-    } as const
-  }),
-}) {}
+export class ChannelRegistry extends Effect.Service<ChannelRegistry>()(
+  SERVICE_TAG.ChannelRegistry,
+  {
+    effect: Effect.gen(function* () {
+      const channels = yield* ChannelSet // ← the only extension point
+      const byKind = new Map(channels.map((c) => [c.kind, c]))
+      return {
+        get: (kind: string) => Option.fromNullable(byKind.get(kind)),
+        list: () => [...byKind.values()],
+        /** Powers GET /channels/kinds — the UI builds its forms from this. */
+        describe: () => [...byKind.values()].map(toChannelDescriptor),
+      } as const
+    }),
+  },
+) {}
 ```
 
 The frontend **generates channel settings forms from `describe()`**. A new channel
@@ -81,12 +84,17 @@ Then one line in `channels/index.ts`:
 
 ```ts
 export const ChannelSetLive = Layer.succeed(ChannelSet, [
-  emailChannel, webhookChannel, slackChannel, discordChannel, telegramChannel,
-  ntfyChannel,                                    // ← that's it
+  emailChannel,
+  webhookChannel,
+  slackChannel,
+  discordChannel,
+  telegramChannel,
+  ntfyChannel, // ← that's it
 ])
 ```
 
 Checklist for a new channel:
+
 - [ ] `configSchema` with `secretFields` declared
 - [ ] `send` classifies failures: 4xx (except 429) → terminal, 429/5xx/network → retryable
 - [ ] `verify` implemented if the provider allows a cheap ping
@@ -96,13 +104,13 @@ Checklist for a new channel:
 
 ## 4. v1 channels
 
-| Kind | Config | Notes |
-|---|---|---|
-| `email` | `to` | SMTP or a provider API via `Mailer`; HTML + text parts; unsubscribe/manage link |
-| `webhook` | `url`, `secret`, `headers`, `method` | **HMAC-SHA256** signature in `X-Scraper-Signature` + `X-Scraper-Timestamp`; stable JSON envelope. This is the escape hatch into Zapier/n8n/Make and the reason users can integrate anything. |
-| `slack` | `webhookUrl` | Block Kit rendering |
-| `discord` | `webhookUrl` | Embeds with color by change direction |
-| `telegram` | `botToken`, `chatId` | MarkdownV2 |
+| Kind       | Config                               | Notes                                                                                                                                                                                        |
+| ---------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `email`    | `to`                                 | SMTP or a provider API via `Mailer`; HTML + text parts; unsubscribe/manage link                                                                                                              |
+| `webhook`  | `url`, `secret`, `headers`, `method` | **HMAC-SHA256** signature in `X-Scraper-Signature` + `X-Scraper-Timestamp`; stable JSON envelope. This is the escape hatch into Zapier/n8n/Make and the reason users can integrate anything. |
+| `slack`    | `webhookUrl`                         | Block Kit rendering                                                                                                                                                                          |
+| `discord`  | `webhookUrl`                         | Embeds with color by change direction                                                                                                                                                        |
+| `telegram` | `botToken`, `chatId`                 | MarkdownV2                                                                                                                                                                                   |
 
 Backlog: `ntfy`, `gotify`, `matrix`, `msteams`, `pushover`, web push, SMS.
 An **Apprise**-backed adapter is a compelling single addition — one channel
@@ -113,11 +121,11 @@ sidecar container. Tracked in [13-PRODUCT-BACKLOG](./13-PRODUCT-BACKLOG.md).
 
 ```ts
 interface NotificationMessage {
-  readonly event: 'change' | 'digest' | 'run_failed' | 'run_recovered' | 'test'
-  readonly monitor: { id, name, url }
-  readonly rule: { id, name }
+  readonly event: "change" | "digest" | "run_failed" | "run_recovered" | "test"
+  readonly monitor: { id; name; url }
+  readonly rule: { id; name }
   readonly changes: readonly ChangeSummary[]
-  readonly run: { id, at, durationMs, strategy }
+  readonly run: { id; at; durationMs; strategy }
   readonly links: { monitor: string; run: string; unsubscribe: string }
   readonly screenshot?: { ref: string }
 }
@@ -152,7 +160,7 @@ change(s) ──► rule evaluation (runs module)
 - **Retries**: 5 attempts, exponential backoff 30s → 8m, only for retryable failures.
 - **Circuit breaking**: `channel.failure_count` increments on terminal failures;
   at `CHANNEL_FAILURE_LIMIT` (default 10) the channel auto-disables and the user
-  gets an email about it (unless it *is* the email channel, in which case it's an
+  gets an email about it (unless it _is_ the email channel, in which case it's an
   in-app banner).
 - **Deduplication**: `(rule_id, content_hash_of_message)` in Redis with a TTL equal
   to `throttle_seconds` — a flapping page can't emit the same alert twice.

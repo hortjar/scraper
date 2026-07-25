@@ -22,15 +22,15 @@ what to extract, say when a change matters, and pick how you want to hear about 
 
 ## Stack
 
-| Layer | Choice |
-|---|---|
-| Monorepo | pnpm workspaces — 4 packages, 3 apps |
-| Backend | Bun · Elysia · Effect · Drizzle · Postgres |
-| Jobs | BullMQ · Redis |
-| Scraping | fetch + Cheerio · Playwright |
-| API | OpenAPI 3.1 · Swagger UI · Hey API generated client |
+| Layer    | Choice                                                                           |
+| -------- | -------------------------------------------------------------------------------- |
+| Monorepo | pnpm workspaces — 4 packages, 3 apps                                             |
+| Backend  | Bun · Elysia · Effect · Drizzle · Postgres                                       |
+| Jobs     | BullMQ · Redis                                                                   |
+| Scraping | fetch + Cheerio · Playwright                                                     |
+| API      | OpenAPI 3.1 · Swagger UI · Hey API generated client                              |
 | Frontend | Vite · React 19 · TanStack Query/Store/Router · shadcn/ui · Tailwind 4 · i18next |
-| Deploy | Docker Compose on Portainer |
+| Deploy   | Docker Compose on Portainer                                                      |
 
 ## Layout
 

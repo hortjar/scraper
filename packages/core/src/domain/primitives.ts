@@ -63,10 +63,9 @@ export const Cursor = Schema.String.pipe(Schema.brand("Cursor"))
 export type Cursor = typeof Cursor.Type
 
 export const PageQuery = Schema.Struct({
-  limit: Schema.optionalWith(
-    Schema.Int.pipe(Schema.between(1, PAGINATION.maxLimit)),
-    { default: () => PAGINATION.defaultLimit },
-  ),
+  limit: Schema.optionalWith(Schema.Int.pipe(Schema.between(1, PAGINATION.maxLimit)), {
+    default: () => PAGINATION.defaultLimit,
+  }),
   cursor: Schema.optional(Cursor),
 })
 export type PageQuery = typeof PageQuery.Type

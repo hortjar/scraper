@@ -1,14 +1,5 @@
 import { sql } from "drizzle-orm"
-import {
-  check,
-  index,
-  integer,
-  jsonb,
-  pgTable,
-  text,
-  uniqueIndex,
-  uuid,
-} from "drizzle-orm/pg-core"
+import { check, index, integer, jsonb, pgTable, text, uniqueIndex, uuid } from "drizzle-orm/pg-core"
 
 import { bytea, citext, nullableTimestamp, primaryId, timestamps } from "./columns.js"
 import { tokenPurposeEnum, userRoleEnum, userStatusEnum } from "./enums.js"
@@ -70,7 +61,10 @@ export const apiKeys = pgTable(
     name: text("name").notNull(),
     prefix: text("prefix").notNull(),
     keyHash: bytea("key_hash").notNull(),
-    scopes: text("scopes").array().notNull().default(sql`'{}'`),
+    scopes: text("scopes")
+      .array()
+      .notNull()
+      .default(sql`'{}'`),
     lastUsedAt: nullableTimestamp("last_used_at"),
     expiresAt: nullableTimestamp("expires_at"),
     revokedAt: nullableTimestamp("revoked_at"),

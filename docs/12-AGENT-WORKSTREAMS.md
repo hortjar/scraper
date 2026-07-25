@@ -21,22 +21,22 @@ merge conflicts.**
 
 ## 2. Ownership map
 
-| Stream | Owns (exclusive write) | Reads |
-|---|---|---|
-| **0 · Foundation** | root configs, `packages/tooling/**`, `packages/core/**`, `packages/db/**`, app skeletons, `deploy/**`, `.github/**` | — |
-| **A · Auth** | `server/src/modules/auth/**`, `web/src/features/auth/**`, `web/src/routes/_auth/**` | core, db |
-| **B · Monitors** | `server/src/modules/monitors/**` | core, db, jobs types |
-| **C · Scraping** | `server/src/modules/scraping/**` | core |
-| **D · Notifications** | `server/src/modules/notifications/**` | core, db |
-| **E · Jobs** | `server/src/modules/jobs/**`, `apps/worker/src/**` | core, db |
-| **F · Web shell** | `web/src/{components,lib,stores,i18n,styles}/**`, `web/src/routes/__root.tsx`, `web/src/routes/_app/index.tsx` | generated client |
-| **G · Change detection** | `server/src/modules/runs/**` | core, db, scraping & notifications types |
-| **H · Monitor UI** | `web/src/features/monitors/**`, `web/src/routes/_app/monitors/**` | F's components, generated client |
-| **I · Runs UI** | `web/src/features/runs/**`, `web/src/routes/_app/runs/**` | same |
-| **J · Channels** | `server/src/modules/notifications/channels/**` (after D lands the registry), `web/src/features/channels/**` | same |
-| **K · Scheduling polish** | `server/src/modules/jobs/{digest,limits,health}/**` | — |
-| **L · Landing page** | `web/src/landing/**`, `web/src/routes/index.tsx`, `web/src/i18n/locales/*/landing.json` | F's tokens only |
-| **M/N/O/P · Hardening** | tests, `deploy/**`, `docs/**` — coordinated, mostly additive | everything |
+| Stream                    | Owns (exclusive write)                                                                                              | Reads                                    |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **0 · Foundation**        | root configs, `packages/tooling/**`, `packages/core/**`, `packages/db/**`, app skeletons, `deploy/**`, `.github/**` | —                                        |
+| **A · Auth**              | `server/src/modules/auth/**`, `web/src/features/auth/**`, `web/src/routes/_auth/**`                                 | core, db                                 |
+| **B · Monitors**          | `server/src/modules/monitors/**`                                                                                    | core, db, jobs types                     |
+| **C · Scraping**          | `server/src/modules/scraping/**`                                                                                    | core                                     |
+| **D · Notifications**     | `server/src/modules/notifications/**`                                                                               | core, db                                 |
+| **E · Jobs**              | `server/src/modules/jobs/**`, `apps/worker/src/**`                                                                  | core, db                                 |
+| **F · Web shell**         | `web/src/{components,lib,stores,i18n,styles}/**`, `web/src/routes/__root.tsx`, `web/src/routes/_app/index.tsx`      | generated client                         |
+| **G · Change detection**  | `server/src/modules/runs/**`                                                                                        | core, db, scraping & notifications types |
+| **H · Monitor UI**        | `web/src/features/monitors/**`, `web/src/routes/_app/monitors/**`                                                   | F's components, generated client         |
+| **I · Runs UI**           | `web/src/features/runs/**`, `web/src/routes/_app/runs/**`                                                           | same                                     |
+| **J · Channels**          | `server/src/modules/notifications/channels/**` (after D lands the registry), `web/src/features/channels/**`         | same                                     |
+| **K · Scheduling polish** | `server/src/modules/jobs/{digest,limits,health}/**`                                                                 | —                                        |
+| **L · Landing page**      | `web/src/landing/**`, `web/src/routes/index.tsx`, `web/src/i18n/locales/*/landing.json`                             | F's tokens only                          |
+| **M/N/O/P · Hardening**   | tests, `deploy/**`, `docs/**` — coordinated, mostly additive                                                        | everything                               |
 
 Every stream additionally owns its own i18n namespace file and its module README.
 
@@ -73,6 +73,7 @@ Written to be handed to an agent verbatim. All of them inherit §5.
 ---
 
 ### A · Auth
+
 > Implement `server/src/modules/auth` per [08-AUTH](./08-AUTH.md) and the auth
 > routes in [09-API §2](./09-API.md). Deliver: Argon2id passwords, opaque session
 > tokens with sliding + absolute expiry, the `requireUser` macro accepting cookie
@@ -80,10 +81,11 @@ Written to be handed to an agent verbatim. All of them inherit §5.
 > `core`, Redis sliding-window rate limiting, audit logging, API keys with scopes.
 > Then the frontend auth feature: login/register/reset screens, session bootstrap
 > query, route guards.
-> **Watch out:** no user enumeration — identical responses *and* timing for unknown
+> **Watch out:** no user enumeration — identical responses _and_ timing for unknown
 > emails. Ownership checks live in services, never routes.
 
 ### B · Monitors
+
 > Implement `server/src/modules/monitors` per [02 §2](./02-DATA-MODEL.md) and
 > [09 §2](./09-API.md). Deliver: monitor + extractor CRUD, URL normalization and the
 > SSRF guard (export it — C and D both need it), schedule validation against
@@ -93,6 +95,7 @@ Written to be handed to an agent verbatim. All of them inherit §5.
 > **Watch out:** every query filters `userId` in SQL.
 
 ### C · Scraping
+
 > Implement `server/src/modules/scraping` per [05-SCRAPING](./05-SCRAPING.md).
 > Deliver: `ScrapeStrategy` + registry, `http` and `browser` strategies, extraction
 > for all six selector kinds, the transform pipeline, normalization and hashing,
@@ -102,6 +105,7 @@ Written to be handed to an agent verbatim. All of them inherit §5.
 > **Watch out:** a missing required extractor is an error, never a change.
 
 ### D · Notifications
+
 > Implement `server/src/modules/notifications` per [06-NOTIFICATIONS](./06-NOTIFICATIONS.md).
 > Deliver: the `NotificationChannel` interface, registry + `ChannelSet` layer, config
 > encryption, `email` and `webhook` adapters, the generic renderer and sandboxed
@@ -112,6 +116,7 @@ Written to be handed to an agent verbatim. All of them inherit §5.
 > last and time it. Over 30 minutes means the seam is wrong.
 
 ### E · Jobs
+
 > Implement `server/src/modules/jobs` and `apps/worker` per [07-SCHEDULING](./07-SCHEDULING.md).
 > Deliver: queue definitions from `QUEUE` constants, payload schemas, `JobProducer`
 > with deterministic jitter, worker bootstrap with `ManagedRuntime` and graceful
@@ -122,6 +127,7 @@ Written to be handed to an agent verbatim. All of them inherit §5.
 > **Watch out:** every handler must be safe to run twice.
 
 ### F · Web shell
+
 > Build the frontend foundation per [04-FRONTEND](./04-FRONTEND.md) and
 > [15-DESIGN-SYSTEM](./15-DESIGN-SYSTEM.md). Deliver: Tailwind 4 token layer
 > (neutrals, brand, semantics, the 8-hue Signal ramp, light + dark), self-hosted
@@ -136,16 +142,18 @@ Written to be handed to an agent verbatim. All of them inherit §5.
 > **Watch out:** no component you ship may fetch. No `useEffect` outside `lib/browser`.
 
 ### G · Change detection
+
 > Implement `server/src/modules/runs` per [05 §6](./05-SCRAPING.md) and
 > [02 §3](./02-DATA-MODEL.md). Deliver: the `ScrapeRunner` implementation (the
 > 14-step pipeline in [07 §4](./07-SCHEDULING.md)), run/snapshot/field-value
 > persistence, all diff algorithms, change persistence, all 11 rule triggers,
 > throttle/quiet-hours/digest/dedupe suppression **with recorded reasons**, run and
 > change query routes, the time-series endpoint.
-> **Watch out:** `previous_run_id` is the last *successful* run. Use `TestClock` for
+> **Watch out:** `previous_run_id` is the last _successful_ run. Use `TestClock` for
 > every time-based rule — this is the subtlest code in the system.
 
 ### H · Monitor UI
+
 > Build `web/src/features/monitors`. The editor is **five components, not one**:
 > `MonitorBasicsForm`, `ExtractorList`, `SchedulePicker`, `RulesBuilder`,
 > `PreviewPanel` — each ≤150 lines, each independently testable, wired by one
@@ -153,6 +161,7 @@ Written to be handed to an agent verbatim. All of them inherit §5.
 > cancellable); build that first, it's the risky part. List rows carry a `PulseStrip`.
 
 ### I · Runs UI
+
 > Build `web/src/features/runs`: run timeline, the diff viewer (word-level,
 > inline/split, changed-only, `j`/`k` navigation), value charts using the Signal
 > ramp, screenshot view, manual run, failure drill-down.
@@ -160,16 +169,19 @@ Written to be handed to an agent verbatim. All of them inherit §5.
 > and use a sandboxed iframe if HTML is ever shown.
 
 ### J · Channels
+
 > Add `slack`, `discord`, `telegram` adapters and build `web/src/features/channels`.
 > The UI must be **generated from `GET /channels/kinds`** — forms, validation, icons,
 > test button, all driven by the descriptor. If you find yourself special-casing a
 > channel in the frontend, D's descriptor contract is incomplete: fix it there.
 
 ### K · Scheduling polish
+
 > Digest builder job, quiet-hours queueing and flush, per-domain rate limits under
 > real concurrency, auto-pause/auto-resume, monitor health scoring, heartbeat metrics.
 
 ### L · Landing page
+
 > Build the marketing page per [15 §7](./15-DESIGN-SYSTEM.md): the animated hero
 > (live pulse strip resolving into a rendered diff — the one orchestrated moment on
 > the page), how-it-works, what-people-watch, the "not every change is news" section,

@@ -86,8 +86,7 @@ export const toHttpFailure: (error: AppError) => HttpFailure = Match.type<AppErr
       }),
       retryAfterSeconds: error.retryAfterSeconds,
     }),
-    InvalidUrl: (error) =>
-      invalid(MSG.errors.invalidUrl, { url: error.url, reason: error.reason }),
+    InvalidUrl: (error) => invalid(MSG.errors.invalidUrl, { url: error.url, reason: error.reason }),
     BlockedHost: (error) =>
       invalid(MSG.errors.blockedHost, { host: error.host, reason: error.reason }),
     SelectorInvalid: (error) => invalid(MSG.errors.selectorInvalid, { kind: error.kind }),

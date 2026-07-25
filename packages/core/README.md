@@ -7,14 +7,14 @@ If two modules need to agree on something, it belongs here.
 
 ## What lives here
 
-| Path | Holds |
-|---|---|
-| `src/constants/` | Every string that repeats or crosses a boundary |
-| `src/domain/` | Branded ids, Effect Schema models, value objects |
-| `src/errors/` | The tagged error taxonomy and the `AppError` union |
-| `src/config/` | Effect `Config` for every environment variable, plus `ENV_SPEC` |
-| `src/i18n/` | Message keys, ICU catalogs, the `Translator` service |
-| `src/observability/` | JSON logger, metrics, the HTTP failure mapping |
+| Path                 | Holds                                                           |
+| -------------------- | --------------------------------------------------------------- |
+| `src/constants/`     | Every string that repeats or crosses a boundary                 |
+| `src/domain/`        | Branded ids, Effect Schema models, value objects                |
+| `src/errors/`        | The tagged error taxonomy and the `AppError` union              |
+| `src/config/`        | Effect `Config` for every environment variable, plus `ENV_SPEC` |
+| `src/i18n/`          | Message keys, ICU catalogs, the `Translator` service            |
+| `src/observability/` | JSON logger, metrics, the HTTP failure mapping                  |
 
 ## Constants
 
@@ -35,7 +35,7 @@ Module-local constants stay in the module. Only shared ones come here.
 Errors carry data, never prose:
 
 ```ts
-yield* new MonitorNotFound({ id })
+yield * new MonitorNotFound({ id })
 ```
 
 The sentence a human reads is produced at the edge by `toHttpFailure`, which maps
@@ -62,7 +62,7 @@ doesn't have.
 Secrets use `Config.redacted` and never carry a default value.
 
 ```ts
-const config = yield* AppConfig
+const config = yield * AppConfig
 config.scraping.minIntervalSeconds
 ```
 
@@ -75,7 +75,7 @@ Keys are declared in `src/i18n/keys.ts` as the `MSG` tree and translated in
 missing key is a type error rather than a runtime fallback.
 
 ```ts
-const translator = yield* Translator
+const translator = yield * Translator
 translator.render(MSG.errors.rateLimited, { seconds: 30 }, "cs")
 ```
 

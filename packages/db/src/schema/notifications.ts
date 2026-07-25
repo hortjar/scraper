@@ -97,7 +97,10 @@ export const notificationDeliveries = pgTable(
     monitorId: uuid("monitor_id")
       .notNull()
       .references(() => monitors.id, { onDelete: "cascade" }),
-    changeIds: uuid("change_ids").array().notNull().default(sql`'{}'`),
+    changeIds: uuid("change_ids")
+      .array()
+      .notNull()
+      .default(sql`'{}'`),
     status: deliveryStatusEnum("status").notNull().default("pending"),
     suppressedReason: suppressionReasonEnum("suppressed_reason"),
     attempts: integer("attempts").notNull().default(0),

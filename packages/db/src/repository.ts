@@ -17,9 +17,7 @@ interface PostgresError {
 }
 
 const asPostgresError = (cause: unknown): PostgresError | null =>
-  typeof cause === "object" && cause !== null && "code" in cause
-    ? (cause as PostgresError)
-    : null
+  typeof cause === "object" && cause !== null && "code" in cause ? (cause as PostgresError) : null
 
 export const constraintFailure = (
   error: DbError,
@@ -49,9 +47,7 @@ export const decodeRow = <A, I>(schema: Schema.Schema<A, I>, entity: string) => 
   const decode = Schema.decodeUnknown(schema)
   return (row: unknown): Effect.Effect<A, DataCorruption> =>
     decode(row).pipe(
-      Effect.mapError(
-        (issue) => new DataCorruption({ entity, detail: issue.message }),
-      ),
+      Effect.mapError((issue) => new DataCorruption({ entity, detail: issue.message })),
     )
 }
 

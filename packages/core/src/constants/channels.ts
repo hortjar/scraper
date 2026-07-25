@@ -24,4 +24,3 @@ export const SUPPRESSION_REASON = {
   belowThreshold: "below_threshold",
   digestPending: "digest_pending",
 } as const
-

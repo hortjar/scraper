@@ -17,11 +17,13 @@ const optional = (
   secret = false,
 ): Omit<EnvVar, "group"> => ({ name, required: false, secret, defaultValue, description })
 
-const required = (
-  name: string,
-  description: string,
-  secret = false,
-): Omit<EnvVar, "group"> => ({ name, required: true, secret, defaultValue: null, description })
+const required = (name: string, description: string, secret = false): Omit<EnvVar, "group"> => ({
+  name,
+  required: true,
+  secret,
+  defaultValue: null,
+  description,
+})
 
 export const ENV_SPEC: readonly EnvVar[] = [
   ...group("Core", [
@@ -121,6 +123,4 @@ export const ENV_SPEC: readonly EnvVar[] = [
   ]),
 ]
 
-export const envGroups = (): readonly string[] => [
-  ...new Set(ENV_SPEC.map((entry) => entry.group)),
-]
+export const envGroups = (): readonly string[] => [...new Set(ENV_SPEC.map((entry) => entry.group))]

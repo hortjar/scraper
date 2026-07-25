@@ -36,27 +36,27 @@ cover 1, 2, and 4; whole-page diffing covers 3 and 5.
 
 ## v1.1 — the fast follows
 
-| Item | Why | Effort |
-|---|---|---|
-| **Visual selector** — click an element in a rendered screenshot, get the selector | The single biggest usability unlock; non-technical users cannot write XPath. changedetection.io's most-praised feature. | L |
-| **Screenshot / visual diff** — pixel-compare with a change-percentage threshold | Catches layout and image changes text diffing can't see | M |
-| **Monitor templates** — presets for Amazon-style product pages, GitHub releases, RSS, generic pricing pages | Cuts time-to-first-alert from 10 minutes to 30 seconds | S |
-| **Browser login steps** — record/replay a login sequence, store cookies encrypted | Huge amount of watchable content lives behind a login | L |
-| **Import/export** — JSON config, and importing from changedetection.io | Lowers switching cost, gives users backup confidence | S |
-| **RSS/Atom output per monitor** | Users want changes in their own reader/automation | S |
+| Item                                                                                                        | Why                                                                                                                     | Effort |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------ |
+| **Visual selector** — click an element in a rendered screenshot, get the selector                           | The single biggest usability unlock; non-technical users cannot write XPath. changedetection.io's most-praised feature. | L      |
+| **Screenshot / visual diff** — pixel-compare with a change-percentage threshold                             | Catches layout and image changes text diffing can't see                                                                 | M      |
+| **Monitor templates** — presets for Amazon-style product pages, GitHub releases, RSS, generic pricing pages | Cuts time-to-first-alert from 10 minutes to 30 seconds                                                                  | S      |
+| **Browser login steps** — record/replay a login sequence, store cookies encrypted                           | Huge amount of watchable content lives behind a login                                                                   | L      |
+| **Import/export** — JSON config, and importing from changedetection.io                                      | Lowers switching cost, gives users backup confidence                                                                    | S      |
+| **RSS/Atom output per monitor**                                                                             | Users want changes in their own reader/automation                                                                       | S      |
 
 ## v1.2 — depth
 
-| Item | Why |
-|---|---|
-| **LLM-assisted selectors** — describe the field in plain language, get a selector proposal validated against the live page | Turns the hardest step into a sentence |
-| **LLM change summaries** — "the Pro plan went from $49 to $59 and dropped the SSO bullet" | Converts a raw diff into the answer the user actually wanted |
-| **Semantic-change filtering** — ignore changes that don't matter (reworded marketing copy) | Attacks notification fatigue from the other end |
-| **Multi-page / crawl monitors** — follow pagination or a listing → detail links | Needed for real listing collection |
-| **Conditional / chained monitors** — "when A changes, run B" | Composability people ask for constantly |
-| **Data export** — CSV/JSON/Parquet, scheduled to S3 or a webhook | Feeds the "collection" use case into warehouses |
-| **Apprise adapter** — one channel implementation, 80+ services | Enormous channel coverage for one sidecar |
-| **Web push + mobile PWA** | Restock alerts want a phone buzz, not an email |
+| Item                                                                                                                       | Why                                                          |
+| -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **LLM-assisted selectors** — describe the field in plain language, get a selector proposal validated against the live page | Turns the hardest step into a sentence                       |
+| **LLM change summaries** — "the Pro plan went from $49 to $59 and dropped the SSO bullet"                                  | Converts a raw diff into the answer the user actually wanted |
+| **Semantic-change filtering** — ignore changes that don't matter (reworded marketing copy)                                 | Attacks notification fatigue from the other end              |
+| **Multi-page / crawl monitors** — follow pagination or a listing → detail links                                            | Needed for real listing collection                           |
+| **Conditional / chained monitors** — "when A changes, run B"                                                               | Composability people ask for constantly                      |
+| **Data export** — CSV/JSON/Parquet, scheduled to S3 or a webhook                                                           | Feeds the "collection" use case into warehouses              |
+| **Apprise adapter** — one channel implementation, 80+ services                                                             | Enormous channel coverage for one sidecar                    |
+| **Web push + mobile PWA**                                                                                                  | Restock alerts want a phone buzz, not an email               |
 
 ## v2 — platform
 
@@ -72,12 +72,12 @@ cover 1, 2, and 4; whole-page diffing covers 3 and 5.
 
 ## Explicitly out of scope
 
-| Not doing | Why |
-|---|---|
-| CAPTCHA solving, fingerprint spoofing, anti-bot evasion | Legal exposure, an unwinnable arms race, and it changes what this tool *is* |
-| Scraping behind other people's authentication without the user's own credentials | Same |
-| A no-code general web-automation/RPA builder | Different product; scope discipline |
-| Bundled residential proxies | Operator's choice and operator's liability |
+| Not doing                                                                        | Why                                                                         |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| CAPTCHA solving, fingerprint spoofing, anti-bot evasion                          | Legal exposure, an unwinnable arms race, and it changes what this tool _is_ |
+| Scraping behind other people's authentication without the user's own credentials | Same                                                                        |
+| A no-code general web-automation/RPA builder                                     | Different product; scope discipline                                         |
+| Bundled residential proxies                                                      | Operator's choice and operator's liability                                  |
 
 ## Design principles the backlog is filtered through
 

@@ -58,11 +58,11 @@ react-project/
 ```tsx
 // Example: Button Component
 interface ButtonProps {
-  variant: "primary" | "secondary" | "danger";
-  size?: "small" | "medium" | "large";
-  disabled?: boolean;
-  onClick?: () => void;
-  children: React.ReactNode;
+  variant: "primary" | "secondary" | "danger"
+  size?: "small" | "medium" | "large"
+  disabled?: boolean
+  onClick?: () => void
+  children: React.ReactNode
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -73,15 +73,11 @@ export const Button: React.FC<ButtonProps> = ({
   children,
 }) => {
   return (
-    <button
-      className={`btn btn-${variant} btn-${size}`}
-      disabled={disabled}
-      onClick={onClick}
-    >
+    <button className={`btn btn-${variant} btn-${size}`} disabled={disabled} onClick={onClick}>
       {children}
     </button>
-  );
-};
+  )
+}
 ```
 
 ### State Management Standards
@@ -90,20 +86,20 @@ Using Zustand for state management:
 
 ```tsx
 // store/userStore.ts
-import { create } from "zustand";
+import { create } from "zustand"
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
+  id: string
+  name: string
+  email: string
 }
 
 interface UserState {
-  user: User | null;
-  isLoading: boolean;
-  setUser: (user: User) => void;
-  clearUser: () => void;
-  setLoading: (loading: boolean) => void;
+  user: User | null
+  isLoading: boolean
+  setUser: (user: User) => void
+  clearUser: () => void
+  setLoading: (loading: boolean) => void
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -112,39 +108,39 @@ export const useUserStore = create<UserState>((set) => ({
   setUser: (user) => set({ user }),
   clearUser: () => set({ user: null }),
   setLoading: (isLoading) => set({ isLoading }),
-}));
+}))
 ```
 
 ### API Service Standards
 
 ```tsx
 // services/api.ts
-import axios from "axios";
+import axios from "axios"
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
-});
+})
 
 // Request interceptor
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token")
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`
   }
-  return config;
-});
+  return config
+})
 
 // Response interceptor
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    console.error("API Error:", error);
-    return Promise.reject(error);
+    console.error("API Error:", error)
+    return Promise.reject(error)
   },
-);
+)
 
-export default api;
+export default api
 ```
 
 ## Environment Setup
@@ -187,10 +183,10 @@ VITE_ENABLE_MOCK=false
 
 ```tsx
 // App.tsx
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { HomePage } from "./pages/HomePage";
-import { AboutPage } from "./pages/AboutPage";
-import { NotFoundPage } from "./pages/NotFoundPage";
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { HomePage } from "./pages/HomePage"
+import { AboutPage } from "./pages/AboutPage"
+import { NotFoundPage } from "./pages/NotFoundPage"
 
 function App() {
   return (
@@ -201,10 +197,10 @@ function App() {
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App
 ```
 
 ## Testing Strategy
@@ -213,27 +209,27 @@ export default App;
 
 ```tsx
 // tests/components/Button.test.tsx
-import { render, screen, fireEvent } from "@testing-library/react";
-import { Button } from "../src/components/Button";
+import { render, screen, fireEvent } from "@testing-library/react"
+import { Button } from "../src/components/Button"
 
 describe("Button Component", () => {
   test("renders button with text", () => {
-    render(<Button variant="primary">Click me</Button>);
-    expect(screen.getByText("Click me")).toBeInTheDocument();
-  });
+    render(<Button variant="primary">Click me</Button>)
+    expect(screen.getByText("Click me")).toBeInTheDocument()
+  })
 
   test("calls onClick when clicked", () => {
-    const handleClick = vi.fn();
+    const handleClick = vi.fn()
     render(
       <Button variant="primary" onClick={handleClick}>
         Click me
       </Button>,
-    );
+    )
 
-    fireEvent.click(screen.getByText("Click me"));
-    expect(handleClick).toHaveBeenCalledTimes(1);
-  });
-});
+    fireEvent.click(screen.getByText("Click me"))
+    expect(handleClick).toHaveBeenCalledTimes(1)
+  })
+})
 ```
 
 ## Performance Optimization
@@ -241,35 +237,35 @@ describe("Button Component", () => {
 ### Code Splitting
 
 ```tsx
-import { lazy, Suspense } from "react";
+import { lazy, Suspense } from "react"
 
-const LazyComponent = lazy(() => import("./LazyComponent"));
+const LazyComponent = lazy(() => import("./LazyComponent"))
 
 function App() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <LazyComponent />
     </Suspense>
-  );
+  )
 }
 ```
 
 ### Memory Optimization
 
 ```tsx
-import { memo, useMemo, useCallback } from "react";
+import { memo, useMemo, useCallback } from "react"
 
 const ExpensiveComponent = memo(({ data, onUpdate }) => {
   const processedData = useMemo(() => {
-    return data.map((item) => ({ ...item, processed: true }));
-  }, [data]);
+    return data.map((item) => ({ ...item, processed: true }))
+  }, [data])
 
   const handleUpdate = useCallback(
     (id) => {
-      onUpdate(id);
+      onUpdate(id)
     },
     [onUpdate],
-  );
+  )
 
   return (
     <div>
@@ -279,8 +275,8 @@ const ExpensiveComponent = memo(({ data, onUpdate }) => {
         </div>
       ))}
     </div>
-  );
-});
+  )
+})
 ```
 
 ## Deployment Configuration
@@ -295,8 +291,8 @@ npm run build
 
 ```ts
 // vite.config.ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite"
+import react from "@vitejs/plugin-react"
 
 export default defineConfig({
   plugins: [react()],
@@ -314,7 +310,7 @@ export default defineConfig({
     port: 3000,
     open: true,
   },
-});
+})
 ```
 
 ## Common Issues

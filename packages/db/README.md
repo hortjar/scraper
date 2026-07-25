@@ -36,12 +36,13 @@ any repository call inside the callback joins it automatically without threading
 handle through every signature:
 
 ```ts
-yield* db.transaction(
-  Effect.gen(function* () {
-    const monitor = yield* monitorRepository.insert(input)
-    yield* extractorRepository.insertMany(monitor.id, fields)
-  }),
-)
+yield *
+  db.transaction(
+    Effect.gen(function* () {
+      const monitor = yield* monitorRepository.insert(input)
+      yield* extractorRepository.insertMany(monitor.id, fields)
+    }),
+  )
 ```
 
 Nested `transaction` calls are a no-op — the outermost one owns the boundary.

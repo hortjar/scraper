@@ -56,7 +56,8 @@ export const en = {
     "Delivery failed {count} times in a row. Check the channel settings and turn it back on.",
 
   "emails.verifySubject": "Confirm your email address",
-  "emails.verifyBody": "Confirm your address to start receiving alerts. The link expires in {minutes} minutes.",
+  "emails.verifyBody":
+    "Confirm your address to start receiving alerts. The link expires in {minutes} minutes.",
   "emails.resetSubject": "Reset your password",
   "emails.resetBody": "Use this link to set a new password. It expires in {minutes} minutes.",
   "emails.welcomeSubject": "Welcome to {appName}",

@@ -2,18 +2,18 @@
 
 Module: `packages/server/src/modules/jobs`. BullMQ 5 on Redis 7, consumed by `apps/worker`.
 
-**Source of truth:** Postgres decides *what should be scheduled*; Redis holds
-*execution state*. Losing Redis loses in-flight work, never configuration — the
+**Source of truth:** Postgres decides _what should be scheduled_; Redis holds
+_execution state_. Losing Redis loses in-flight work, never configuration — the
 reconciler rebuilds every scheduler from `monitors`.
 
 ## 1. Queues
 
-| Queue | Payload | Concurrency | Notes |
-|---|---|---|---|
-| `scrape` | `{ monitorId, trigger, attempt }` | `WORKER_CONCURRENCY` (default 5) | The hot path. Per-domain rate limited. |
-| `notify` | `{ deliveryId }` | 20 | I/O-bound, cheap, high concurrency |
-| `digest` | `{ ruleId, windowStart, windowEnd }` | 5 | Cron-triggered per rule |
-| `maintenance` | `{ task }` | 1 | Sweeper, reconciler, stats refresh, robots cache prune |
+| Queue         | Payload                              | Concurrency                      | Notes                                                  |
+| ------------- | ------------------------------------ | -------------------------------- | ------------------------------------------------------ |
+| `scrape`      | `{ monitorId, trigger, attempt }`    | `WORKER_CONCURRENCY` (default 5) | The hot path. Per-domain rate limited.                 |
+| `notify`      | `{ deliveryId }`                     | 20                               | I/O-bound, cheap, high concurrency                     |
+| `digest`      | `{ ruleId, windowStart, windowEnd }` | 5                                | Cron-triggered per rule                                |
+| `maintenance` | `{ task }`                           | 1                                | Sweeper, reconciler, stats refresh, robots cache prune |
 
 Payload schemas live in `jobs.schema.ts` as Effect Schemas and are
 **decoded on consumption**. Job data is untrusted input: it can be older than the
@@ -28,27 +28,29 @@ BullMQ **Job Schedulers** (the supported API since 5.16; the old `repeat` API is
 deprecated):
 
 ```ts
-const upsertSchedule = Effect.fn('JobProducer.upsertSchedule')(function* (m: Monitor) {
+const upsertSchedule = Effect.fn("JobProducer.upsertSchedule")(function* (m: Monitor) {
   const id = `monitor:${m.id}`
   if (!m.enabled || m.archivedAt) return yield* removeSchedule(m.id)
 
-  const repeat = m.scheduleKind === 'cron'
-    ? { pattern: m.scheduleValue, tz: m.scheduleTimezone }
-    : { every: Number(m.scheduleValue) * 1000 }
+  const repeat =
+    m.scheduleKind === "cron"
+      ? { pattern: m.scheduleValue, tz: m.scheduleTimezone }
+      : { every: Number(m.scheduleValue) * 1000 }
 
   yield* Effect.tryPromise(() =>
     queues.scrape.upsertJobScheduler(id, repeat, {
-      name: 'scrape',
-      data: { monitorId: m.id, trigger: 'schedule' },
+      name: "scrape",
+      data: { monitorId: m.id, trigger: "schedule" },
       opts: {
-        jobId: undefined,                 // let BullMQ generate per-iteration ids
+        jobId: undefined, // let BullMQ generate per-iteration ids
         attempts: SCRAPE_MAX_ATTEMPTS,
-        backoff: { type: 'exponential', delay: 30_000 },
+        backoff: { type: "exponential", delay: 30_000 },
         removeOnComplete: { age: 3600, count: 1000 },
         removeOnFail: { age: 86_400 },
-        delay: jitter(m.jitterSeconds),   // deterministic per-monitor, not random
+        delay: jitter(m.jitterSeconds), // deterministic per-monitor, not random
       },
-    }))
+    }),
+  )
 })
 ```
 
@@ -110,14 +112,14 @@ v2 item — for v1, at-least-once with dedupe is the accepted trade-off, documen
 
 ## 6. Retries and failure escalation
 
-| Failure | Retryable | Behavior |
-|---|---|---|
-| Network timeout, DNS, 5xx | yes | exponential backoff, up to `SCRAPE_MAX_ATTEMPTS` (3) |
-| 429 | yes | backoff honoring `Retry-After` |
-| 403 / challenge page | once | escalate to `browser` strategy, then terminal |
-| 404 / 410 | no | monitor → `failing`, user notified via `run_failed` rules |
-| Required extractor missing | no | run fails; **never** reported as a change |
-| Browser container unreachable | yes | monitor → `degraded`; alert the operator, not the user |
+| Failure                       | Retryable | Behavior                                                  |
+| ----------------------------- | --------- | --------------------------------------------------------- |
+| Network timeout, DNS, 5xx     | yes       | exponential backoff, up to `SCRAPE_MAX_ATTEMPTS` (3)      |
+| 429                           | yes       | backoff honoring `Retry-After`                            |
+| 403 / challenge page          | once      | escalate to `browser` strategy, then terminal             |
+| 404 / 410                     | no        | monitor → `failing`, user notified via `run_failed` rules |
+| Required extractor missing    | no        | run fails; **never** reported as a change                 |
+| Browser container unreachable | yes       | monitor → `degraded`; alert the operator, not the user    |
 
 `monitors.consecutive_failures ≥ AUTO_PAUSE_AFTER_FAILURES` (default 20) →
 monitor auto-pauses, user is notified once with a "resume" link. A permanently
@@ -125,15 +127,15 @@ broken monitor must stop burning resources and stop spamming.
 
 ## 7. Maintenance jobs
 
-| Task | Cadence | Does |
-|---|---|---|
-| `reconcile-schedules` | hourly | Diff `monitors` against BullMQ schedulers; add missing, remove orphans. Heals Redis loss and partial deploys. |
-| `sweep-runs` | daily 03:00 | Delete runs/snapshots/field values past retention; drop old partitions |
-| `sweep-sessions` | hourly | Delete expired sessions and consumed tokens |
-| `refresh-stats` | 5 min | `REFRESH MATERIALIZED VIEW CONCURRENTLY monitor_stats` |
-| `prune-robots` | daily | Expire robots.txt cache |
-| `digest-flush` | per rule cron | Build and enqueue digest notifications |
-| `heartbeat` | 1 min | Writes `worker:<id>:alive`; the API's `/ready` reports stale workers |
+| Task                  | Cadence       | Does                                                                                                          |
+| --------------------- | ------------- | ------------------------------------------------------------------------------------------------------------- |
+| `reconcile-schedules` | hourly        | Diff `monitors` against BullMQ schedulers; add missing, remove orphans. Heals Redis loss and partial deploys. |
+| `sweep-runs`          | daily 03:00   | Delete runs/snapshots/field values past retention; drop old partitions                                        |
+| `sweep-sessions`      | hourly        | Delete expired sessions and consumed tokens                                                                   |
+| `refresh-stats`       | 5 min         | `REFRESH MATERIALIZED VIEW CONCURRENTLY monitor_stats`                                                        |
+| `prune-robots`        | daily         | Expire robots.txt cache                                                                                       |
+| `digest-flush`        | per rule cron | Build and enqueue digest notifications                                                                        |
+| `heartbeat`           | 1 min         | Writes `worker:<id>:alive`; the API's `/ready` reports stale workers                                          |
 
 **Heartbeats matter.** The classic silent failure of a scheduling system isn't a
 crash — it's a scheduler that quietly stops firing. `/metrics` exposes

@@ -1,8 +1,7 @@
 import { Schema } from "effect"
 import { v7 as uuidv7 } from "uuid"
 
-const brandedId = <B extends string>(brand: B) =>
-  Schema.UUID.pipe(Schema.brand(brand))
+const brandedId = <B extends string>(brand: B) => Schema.UUID.pipe(Schema.brand(brand))
 
 export const UserId = brandedId("UserId")
 export type UserId = typeof UserId.Type

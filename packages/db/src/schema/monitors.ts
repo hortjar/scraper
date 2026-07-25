@@ -1,9 +1,4 @@
-import type {
-  BrowserOptions,
-  IgnoreRule,
-  RequestOptions,
-  Transform,
-} from "@scraper/core/domain"
+import type { BrowserOptions, IgnoreRule, RequestOptions, Transform } from "@scraper/core/domain"
 import { sql } from "drizzle-orm"
 import {
   boolean,
@@ -56,7 +51,10 @@ export const monitors = pgTable(
     lastRunAt: nullableTimestamp("last_run_at"),
     nextRunAt: nullableTimestamp("next_run_at"),
     lastChangeAt: nullableTimestamp("last_change_at"),
-    tags: text("tags").array().notNull().default(sql`'{}'`),
+    tags: text("tags")
+      .array()
+      .notNull()
+      .default(sql`'{}'`),
     archivedAt: nullableTimestamp("archived_at"),
     ...timestamps(),
   },
@@ -65,10 +63,7 @@ export const monitors = pgTable(
     index("monitors_due_idx").on(table.enabled, table.nextRunAt),
     index("monitors_tags_idx").using("gin", table.tags),
     check("monitors_jitter_non_negative", sql`${table.jitterSeconds} >= 0`),
-    check(
-      "monitors_consecutive_failures_non_negative",
-      sql`${table.consecutiveFailures} >= 0`,
-    ),
+    check("monitors_consecutive_failures_non_negative", sql`${table.consecutiveFailures} >= 0`),
   ],
 )
 

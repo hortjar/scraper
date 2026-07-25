@@ -20,32 +20,29 @@ export const observabilityPlugin = (runtime: AppRuntime) =>
       set.headers[HEADER.requestId] = requestId
       return { requestId, requestStartedAt: performance.now() }
     })
-    .onAfterResponse(
-      { as: "global" },
-      ({ request, path, set, requestId, requestStartedAt }) => {
-        const startedAt = requestStartedAt ?? performance.now()
-        const durationMs = performance.now() - startedAt
-        const status = resolveStatus(set.status)
-        runtime.runFork(
-          Effect.all(
-            [
-              Metric.increment(metrics.httpRequests),
-              Metric.update(metrics.httpDuration, durationMs / 1000),
-              Effect.logInfo("http.request").pipe(
-                Effect.annotateLogs({
-                  [LOG_FIELD.requestId]: requestId ?? String(set.headers[HEADER.requestId] ?? ""),
-                  method: request.method,
-                  path,
-                  status,
-                  [LOG_FIELD.durationMs]: durationMs,
-                }),
-              ),
-            ],
-            { discard: true },
-          ),
-        )
-      },
-    )
+    .onAfterResponse({ as: "global" }, ({ request, path, set, requestId, requestStartedAt }) => {
+      const startedAt = requestStartedAt ?? performance.now()
+      const durationMs = performance.now() - startedAt
+      const status = resolveStatus(set.status)
+      runtime.runFork(
+        Effect.all(
+          [
+            Metric.increment(metrics.httpRequests),
+            Metric.update(metrics.httpDuration, durationMs / 1000),
+            Effect.logInfo("http.request").pipe(
+              Effect.annotateLogs({
+                [LOG_FIELD.requestId]: requestId ?? String(set.headers[HEADER.requestId] ?? ""),
+                method: request.method,
+                path,
+                status,
+                [LOG_FIELD.durationMs]: durationMs,
+              }),
+            ),
+          ],
+          { discard: true },
+        ),
+      )
+    })
     .onError({ as: "global" }, ({ request, path, error, requestId, requestStartedAt }) => {
       const durationMs = performance.now() - (requestStartedAt ?? performance.now())
       const described = describeError(error)

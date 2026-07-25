@@ -14,6 +14,9 @@ export type WorkerLayer = typeof WorkerLayer
 
 export type WorkerServices = Layer.Layer.Success<WorkerLayer>
 
-export type WorkerRuntime = ManagedRuntime.ManagedRuntime<WorkerServices, Layer.Layer.Error<WorkerLayer>>
+export type WorkerRuntime = ManagedRuntime.ManagedRuntime<
+  WorkerServices,
+  Layer.Layer.Error<WorkerLayer>
+>
 
 export const makeRuntime = (): WorkerRuntime => ManagedRuntime.make(WorkerLayer)

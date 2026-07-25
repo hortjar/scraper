@@ -1,4 +1,5 @@
-const ALLOWED = /^(\s*(eslint|prettier|@ts-|global|globals|jsx|type|reference|#__PURE__|v8 ignore|c8 ignore|istanbul|vite-ignore|webpackChunkName))/
+const ALLOWED =
+  /^(\s*(eslint|prettier|@ts-|global|globals|jsx|type|reference|#__PURE__|v8 ignore|c8 ignore|istanbul|vite-ignore|webpackChunkName))/
 
 export const noComments = {
   meta: {

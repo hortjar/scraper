@@ -121,5 +121,9 @@ export const API_KEY_SCOPE = {
 
 export const STORAGE_DRIVER = { local: "local", s3: "s3" } as const
 export const MAIL_DRIVER = { smtp: "smtp", resend: "resend", console: "console" } as const
-export const APP_ENV = { development: "development", test: "test", production: "production" } as const
+export const APP_ENV = {
+  development: "development",
+  test: "test",
+  production: "production",
+} as const
 export const LOCALE = { en: "en", cs: "cs" } as const

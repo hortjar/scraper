@@ -40,8 +40,7 @@ export const react = tseslint.config(
         },
         {
           selector: "CallExpression[callee.name='useLayoutEffect']",
-          message:
-            "useLayoutEffect is banned outside src/lib/browser. See AGENTS.md §5.",
+          message: "useLayoutEffect is banned outside src/lib/browser. See AGENTS.md §5.",
         },
         {
           selector: "MemberExpression[object.name='Date'][property.name='now']",

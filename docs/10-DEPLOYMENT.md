@@ -6,17 +6,18 @@ we build for.
 
 ## 1. Images
 
-| Image | Base | Contents |
-|---|---|---|
-| `scraper-api` | `oven/bun:1-alpine` | Elysia server, migrations |
-| `scraper-worker` | `oven/bun:1-debian` | BullMQ consumers, Playwright client |
-| `scraper-web` | `nginx:alpine` | Static Vite build + runtime config shim |
+| Image            | Base                | Contents                                |
+| ---------------- | ------------------- | --------------------------------------- |
+| `scraper-api`    | `oven/bun:1-alpine` | Elysia server, migrations               |
+| `scraper-worker` | `oven/bun:1-debian` | BullMQ consumers, Playwright client     |
+| `scraper-web`    | `nginx:alpine`      | Static Vite build + runtime config shim |
 
 All three are **multi-stage** and share a `deps` stage that runs
 `pnpm install --frozen-lockfile` with `pnpm fetch` caching, then
 `pnpm deploy --filter=<app> --prod` to produce a minimal runtime tree.
 
 Notes:
+
 - `worker` uses the Debian base, not Alpine — Playwright's client and some native
   modules are unhappy on musl. The actual browser lives in its own container.
 - Non-root user (`uid 10001`), read-only root filesystem, `tmpfs` for `/tmp`.
@@ -123,7 +124,11 @@ Instead `web`'s entrypoint writes `/usr/share/nginx/html/config.js` from env at
 container start:
 
 ```js
-window.__APP_CONFIG__ = { apiUrl: "${API_URL}", appTitle: "${APP_TITLE}", defaultLocale: "${DEFAULT_LOCALE}" }
+window.__APP_CONFIG__ = {
+  apiUrl: "${API_URL}",
+  appTitle: "${APP_TITLE}",
+  defaultLocale: "${DEFAULT_LOCALE}",
+}
 ```
 
 `index.html` loads it before the bundle, and `lib/config.ts` reads
@@ -149,6 +154,7 @@ restart safe and a rollback survivable.
 ## 5. Graceful shutdown
 
 On `SIGTERM`:
+
 1. Health check flips to unhealthy (proxy stops routing).
 2. `api` stops accepting connections, drains in-flight requests (≤15s).
 3. `worker` calls `worker.close()` — BullMQ finishes active jobs, takes no new ones.
@@ -168,6 +174,7 @@ On `SIGTERM`:
 6. Upgrade: change `IMAGE_TAG`, redeploy. Rollback: set the previous tag, redeploy.
 
 Documented gotchas (each has bitten someone):
+
 - Portainer's stack `.env` is **not** the same file as `env_file:` inside a
   container — we use both, and STACK.md says which is which.
 - `shm_size` on the browser container is mandatory; without it Chromium segfaults

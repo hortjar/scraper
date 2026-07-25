@@ -48,16 +48,14 @@ matters (an unverified mail channel makes this service a spam relay).
 An Elysia macro provides typed request context:
 
 ```ts
-export const requireUser = new Elysia({ name: 'auth/requireUser' })
-  .use(effectPlugin)
-  .macro({
-    auth: (enabled: boolean) => ({
-      async resolve({ cookie, headers, runFx }) {
-        const user = await runFx(Sessions.authenticate({ cookie: cookie.sid.value, headers }))
-        return { user }        // typed, non-nullable, in every downstream handler
-      },
-    }),
-  })
+export const requireUser = new Elysia({ name: "auth/requireUser" }).use(effectPlugin).macro({
+  auth: (enabled: boolean) => ({
+    async resolve({ cookie, headers, runFx }) {
+      const user = await runFx(Sessions.authenticate({ cookie: cookie.sid.value, headers }))
+      return { user } // typed, non-nullable, in every downstream handler
+    },
+  }),
+})
 ```
 
 - Accepts either a session cookie **or** `Authorization: Bearer <api-key>`;
@@ -69,13 +67,13 @@ export const requireUser = new Elysia({ name: 'auth/requireUser' })
 
 ## 5. Rate limiting & abuse
 
-| Endpoint | Limit |
-|---|---|
-| `POST /auth/login` | 5 / 15 min per (IP, email), then exponential lockout |
-| `POST /auth/register` | 3 / hour per IP |
-| `POST /auth/password/reset` | 3 / hour per email, 10 / hour per IP |
-| Authenticated API | 600 / min per user |
-| `POST /monitors/preview` | 10 / min per user (it performs a live fetch) |
+| Endpoint                    | Limit                                                |
+| --------------------------- | ---------------------------------------------------- |
+| `POST /auth/login`          | 5 / 15 min per (IP, email), then exponential lockout |
+| `POST /auth/register`       | 3 / hour per IP                                      |
+| `POST /auth/password/reset` | 3 / hour per email, 10 / hour per IP                 |
+| Authenticated API           | 600 / min per user                                   |
+| `POST /monitors/preview`    | 10 / min per user (it performs a live fetch)         |
 
 Implemented as a Redis sliding window in `auth.rate-limit.ts`, returning
 `RateLimited` with `Retry-After`. CAPTCHA is deliberately not in v1; if abuse
@@ -109,13 +107,13 @@ monitor create/delete, robots override. Surfaced in settings as "recent security
 
 ## 9. Threat model — what we're defending against
 
-| Threat | Control |
-|---|---|
-| Credential stuffing | Rate limits + lockout + breach check + no user enumeration |
-| XSS stealing sessions | `httpOnly` cookies, CSP, React escaping, no `dangerouslySetInnerHTML` outside the sanitized diff viewer |
-| CSRF | `SameSite=Lax` + Origin check |
-| IDOR | Ownership filtered in every query, enforced at the service layer |
-| SSRF via monitor URLs / webhooks | Shared guard: scheme, host, private-range, DNS-rebinding, redirect re-validation |
-| Secret exfiltration via API | Secrets encrypted; never serialized into any response DTO |
-| Stored XSS via scraped content | Scraped content rendered as text; the diff viewer sanitizes with DOMPurify and renders in a sandboxed iframe when showing HTML |
-| Log leakage | Redaction layer strips known secret keys and cookie headers |
+| Threat                           | Control                                                                                                                        |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Credential stuffing              | Rate limits + lockout + breach check + no user enumeration                                                                     |
+| XSS stealing sessions            | `httpOnly` cookies, CSP, React escaping, no `dangerouslySetInnerHTML` outside the sanitized diff viewer                        |
+| CSRF                             | `SameSite=Lax` + Origin check                                                                                                  |
+| IDOR                             | Ownership filtered in every query, enforced at the service layer                                                               |
+| SSRF via monitor URLs / webhooks | Shared guard: scheme, host, private-range, DNS-rebinding, redirect re-validation                                               |
+| Secret exfiltration via API      | Secrets encrypted; never serialized into any response DTO                                                                      |
+| Stored XSS via scraped content   | Scraped content rendered as text; the diff viewer sanitizes with DOMPurify and renders in a sandboxed iframe when showing HTML |
+| Log leakage                      | Redaction layer strips known secret keys and cookie headers                                                                    |

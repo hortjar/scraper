@@ -17,15 +17,27 @@ const withExtraLabel = (labels: string, extra: string): string =>
 const renderSample = (name: string, labels: string, value: number | bigint): string =>
   `${name}${labels} ${typeof value === "bigint" ? value.toString() : value}${LINE_BREAK}`
 
-const renderCounter = (name: string, labels: string, state: MetricState.MetricState.Counter<number | bigint>): string =>
-  `# TYPE ${name} counter${LINE_BREAK}${renderSample(name, labels, state.count)}`
+const renderCounter = (
+  name: string,
+  labels: string,
+  state: MetricState.MetricState.Counter<number | bigint>,
+): string => `# TYPE ${name} counter${LINE_BREAK}${renderSample(name, labels, state.count)}`
 
-const renderGauge = (name: string, labels: string, state: MetricState.MetricState.Gauge<number | bigint>): string =>
-  `# TYPE ${name} gauge${LINE_BREAK}${renderSample(name, labels, state.value)}`
+const renderGauge = (
+  name: string,
+  labels: string,
+  state: MetricState.MetricState.Gauge<number | bigint>,
+): string => `# TYPE ${name} gauge${LINE_BREAK}${renderSample(name, labels, state.value)}`
 
-const renderHistogram = (name: string, labels: string, state: MetricState.MetricState.Histogram): string => {
+const renderHistogram = (
+  name: string,
+  labels: string,
+  state: MetricState.MetricState.Histogram,
+): string => {
   const buckets = state.buckets
-    .map(([boundary, count]) => renderSample(`${name}_bucket`, withExtraLabel(labels, `le="${boundary}"`), count))
+    .map(([boundary, count]) =>
+      renderSample(`${name}_bucket`, withExtraLabel(labels, `le="${boundary}"`), count),
+    )
     .join("")
   return (
     `# TYPE ${name} histogram${LINE_BREAK}${buckets}` +
@@ -34,11 +46,19 @@ const renderHistogram = (name: string, labels: string, state: MetricState.Metric
   )
 }
 
-const renderSummary = (name: string, labels: string, state: MetricState.MetricState.Summary): string => {
+const renderSummary = (
+  name: string,
+  labels: string,
+  state: MetricState.MetricState.Summary,
+): string => {
   const quantiles = state.quantiles
     .filter((entry): entry is [number, Option.Option<number>] => Option.isSome(entry[1]))
     .map(([quantile, value]) =>
-      renderSample(name, withExtraLabel(labels, `quantile="${quantile}"`), Option.getOrThrow(value)),
+      renderSample(
+        name,
+        withExtraLabel(labels, `quantile="${quantile}"`),
+        Option.getOrThrow(value),
+      ),
     )
     .join("")
   return (
@@ -48,7 +68,11 @@ const renderSummary = (name: string, labels: string, state: MetricState.MetricSt
   )
 }
 
-const renderFrequency = (name: string, labels: string, state: MetricState.MetricState.Frequency): string => {
+const renderFrequency = (
+  name: string,
+  labels: string,
+  state: MetricState.MetricState.Frequency,
+): string => {
   const occurrences = Array.from(state.occurrences.entries())
     .map(([bucket, count]) =>
       renderSample(name, withExtraLabel(labels, `bucket="${escapeLabelValue(bucket)}"`), count),

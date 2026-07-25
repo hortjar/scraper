@@ -61,9 +61,7 @@ export class Database extends Effect.Service<Database>()(SERVICE_TAG.Database, {
           return Effect.tryPromise<A, TransactionAborted<E> | DbError>({
             try: () =>
               db.transaction(async (tx) => {
-                const exit = await run(
-                  Effect.locally(body, currentTransaction, tx),
-                )
+                const exit = await run(Effect.locally(body, currentTransaction, tx))
                 if (Exit.isFailure(exit)) throw new TransactionAborted(exit.cause)
                 return exit.value
               }),
@@ -73,17 +71,14 @@ export class Database extends Effect.Service<Database>()(SERVICE_TAG.Database, {
                 : new DbError({ operation: SPAN.db.transaction, cause }),
           })
         }),
-        Effect.catchAll(
-          (error): Effect.Effect<never, E | DbError> =>
-            error instanceof TransactionAborted
-              ? Effect.failCause(error.failure)
-              : Effect.fail(error),
+        Effect.catchAll((error): Effect.Effect<never, E | DbError> =>
+          error instanceof TransactionAborted
+            ? Effect.failCause(error.failure)
+            : Effect.fail(error),
         ),
       )
 
-    const transaction = <A, E, R>(
-      body: Effect.Effect<A, E, R>,
-    ): Effect.Effect<A, E | DbError, R> =>
+    const transaction = <A, E, R>(body: Effect.Effect<A, E, R>): Effect.Effect<A, E | DbError, R> =>
       FiberRef.get(currentTransaction).pipe(
         Effect.flatMap((active): Effect.Effect<A, E | DbError, R> =>
           active ? body : runInTransaction(body),

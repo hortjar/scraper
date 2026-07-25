@@ -10,10 +10,11 @@ API, a proxy pool, a headless service) means adding one file.
 
 ```ts
 export interface ScrapeStrategy {
-  readonly kind: StrategyKind                       // 'http' | 'browser' | …
+  readonly kind: StrategyKind // 'http' | 'browser' | …
   readonly canHandle: (m: MonitorConfig) => boolean
-  readonly fetch: (req: ScrapeRequest) =>
-    Effect.Effect<ScrapeResponse, ScrapeFailed, Clock | AppConfig>
+  readonly fetch: (
+    req: ScrapeRequest,
+  ) => Effect.Effect<ScrapeResponse, ScrapeFailed, Clock | AppConfig>
 }
 
 export interface ScrapeResponse {
@@ -32,8 +33,10 @@ Strategies are registered in a `StrategyRegistry` service, resolved by
 monitor so the cost is paid once, not every run.
 
 ### `http` strategy
+
 Bun's `fetch` + `cheerio`. Milliseconds, a few MB of RAM. Handles the majority of
 targets — most pages still ship their content in the HTML.
+
 - Honors `request.headers`, `cookies`, `method`, `body`, `timeoutMs`
 - Sensible default UA identifying the tool + a contact URL (configurable)
 - Follows redirects with **re-validation of every hop** against the SSRF guard
@@ -42,8 +45,10 @@ targets — most pages still ship their content in the HTML.
   the whole run to "unchanged" — nearly free, and polite to the target
 
 ### `browser` strategy
+
 Playwright over CDP to the `browser` container (`chromium.connectOverCDP`), so the
 worker image stays small and browsers scale independently.
+
 - New **browser context** per run (never a shared context) — isolation of cookies and storage
 - `browser_options`: `waitUntil`, `waitForSelector`, `waitMs`, `viewport`, `blockResources[]`
 - Blocks images/media/fonts by default — typically 3–5× faster, and the DOM is what we want
@@ -66,6 +71,7 @@ JSON endpoints and embedded JSON), `regex` (capture group 1), `json_ld`
 structured price/availability/rating data on e-commerce sites), `whole_page`.
 
 Rules:
+
 - A **missing required** extractor fails the run with `ExtractorMissing`. It never
   produces a change. This is the guard against selector rot creating false alerts.
 - `occurrence: 'all'` yields a `list` value; list comparison is set-based
@@ -76,6 +82,7 @@ Rules:
 ## 3. Auto-escalation
 
 `engine: 'auto'` escalates `http` → `browser` when, after HTTP extraction:
+
 - all required extractors are missing, **or**
 - the body is under `AUTO_ESCALATE_MIN_BYTES` and contains a known SPA root
   (`<div id="root">`, `__NEXT_DATA__`, `ng-app`), **or**
@@ -89,19 +96,19 @@ once per 24h per monitor.
 An ordered, serializable list applied to the raw string. Each step is a pure
 function `(string, params) => Either<TransformError, string>`.
 
-| Transform | Params | Use |
-|---|---|---|
-| `trim`, `lowercase`, `uppercase`, `collapse_whitespace` | — | normalization |
-| `strip_html` | — | text from an HTML attribute |
-| `regex_extract` | `pattern`, `group` | pull `1,299.00` out of `Only $1,299.00!` |
-| `regex_replace` | `pattern`, `replacement` | remove noise |
-| `slice` | `start`, `end` | |
-| `parse_number` | `locale`, `decimal`, `thousands` | `1.299,00` → `1299` (EU formats matter) |
-| `parse_price` | `currency?` | number + detected currency |
-| `parse_date` | `format?`, `timezone` | to ISO |
-| `map_values` | `{from: to}` | `"In stock"` → `true` |
-| `default` | `value` | only for `required: false` extractors |
-| `json_path` | `path` | after `regex_extract` grabbed an inline JSON blob |
+| Transform                                               | Params                           | Use                                               |
+| ------------------------------------------------------- | -------------------------------- | ------------------------------------------------- |
+| `trim`, `lowercase`, `uppercase`, `collapse_whitespace` | —                                | normalization                                     |
+| `strip_html`                                            | —                                | text from an HTML attribute                       |
+| `regex_extract`                                         | `pattern`, `group`               | pull `1,299.00` out of `Only $1,299.00!`          |
+| `regex_replace`                                         | `pattern`, `replacement`         | remove noise                                      |
+| `slice`                                                 | `start`, `end`                   |                                                   |
+| `parse_number`                                          | `locale`, `decimal`, `thousands` | `1.299,00` → `1299` (EU formats matter)           |
+| `parse_price`                                           | `currency?`                      | number + detected currency                        |
+| `parse_date`                                            | `format?`, `timezone`            | to ISO                                            |
+| `map_values`                                            | `{from: to}`                     | `"In stock"` → `true`                             |
+| `default`                                               | `value`                          | only for `required: false` extractors             |
+| `json_path`                                             | `path`                           | after `regex_extract` grabbed an inline JSON blob |
 
 Pipelines are validated at save time and previewed live in the editor.
 
@@ -132,7 +139,7 @@ Lives in the `runs` module, consuming the `scraping` module output.
 - **text** — word-level diff (`diff` package) producing hunks with 2 lines of
   context; stored in `changes.diff` for the viewer.
 - **number / price** — `delta_absolute`, `delta_percent`, direction; a change under
-  a rule's threshold is still *recorded* but doesn't *notify* (so charts stay complete).
+  a rule's threshold is still _recorded_ but doesn't _notify_ (so charts stay complete).
 - **boolean / availability** — `appeared`/`disappeared` semantics.
 - **list** — set difference: added items, removed items, reordering ignored by default.
 - **whole page** — a single `modified` change with the text diff.
@@ -155,7 +162,7 @@ the operator:
 - **No stealth/anti-bot evasion ships in v1.** Fingerprint spoofing and CAPTCHA
   bypass are deliberately out of scope: they invite ToS and CFAA-adjacent exposure,
   and they're an arms race we'd lose to TLS fingerprinting anyway. Proxy support
-  is a v2 item for *legitimate* geo-testing, configured by the operator.
+  is a v2 item for _legitimate_ geo-testing, configured by the operator.
 - SSRF guard: reject non-`http(s)`, credentials-in-URL, private/loopback/link-local
   ranges, and `.local`/metadata hosts — re-checked after every redirect and after
   DNS resolution.

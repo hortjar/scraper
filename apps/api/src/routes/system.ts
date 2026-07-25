@@ -5,7 +5,11 @@ import { Database } from "@scraper/db"
 import { Clock, Effect, Schema } from "effect"
 import { Elysia } from "elysia"
 
-import { type HealthProbe, type HealthProbeResult, runHealthProbes } from "../health/health-probe.js"
+import {
+  type HealthProbe,
+  type HealthProbeResult,
+  runHealthProbes,
+} from "../health/health-probe.js"
 import { renderPrometheusText } from "../observability/prometheus.js"
 import type { AppRuntime } from "../runtime.js"
 

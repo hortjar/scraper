@@ -50,9 +50,9 @@ export class Monitors extends Effect.Service<Monitors>()(SERVICE_TAG.Monitors, {
       input: CreateMonitorInput,
     ) {
       yield* assertWithinPlanLimits(userId)
-      const url = yield* NormalizedUrl.make(input.url)   // fails: InvalidUrl | BlockedHost
+      const url = yield* NormalizedUrl.make(input.url) // fails: InvalidUrl | BlockedHost
       const monitor = yield* repo.insert({ ...input, userId, url })
-      yield* jobs.upsertSchedule(monitor)                 // idempotent
+      yield* jobs.upsertSchedule(monitor) // idempotent
       return monitor
     })
 
@@ -63,6 +63,7 @@ export class Monitors extends Effect.Service<Monitors>()(SERVICE_TAG.Monitors, {
 ```
 
 Rules:
+
 - **`Effect.fn(SPAN.x.y)` for every method.** Free trace spans, and stack traces
   point at the call site instead of generator internals.
 - Return a `const` object of functions — never a class instance.
@@ -83,10 +84,10 @@ frozen object plus its derived union type:
 ```ts
 // core/src/constants/queues.ts
 export const QUEUE = {
-  scrape: 'scrape',
-  notify: 'notify',
-  digest: 'digest',
-  maintenance: 'maintenance',
+  scrape: "scrape",
+  notify: "notify",
+  digest: "digest",
+  maintenance: "maintenance",
 } as const
 export type QueueName = (typeof QUEUE)[keyof typeof QUEUE]
 
@@ -98,18 +99,18 @@ export const REDIS_KEY = {
 } as const
 ```
 
-| File | Holds |
-|---|---|
-| `service-tags.ts` | `SERVICE_TAG` — every Effect service tag (`app/Monitors`, …) |
-| `queues.ts` | `QUEUE`, `JOB_NAME` |
-| `error-codes.ts` | `ERROR_CODE` — the wire `code` values, single source for API + client |
-| `channels.ts` | `CHANNEL_KIND` — `email`, `webhook`, `slack`, … |
-| `http.ts` | `HEADER`, `COOKIE`, `HTTP_STATUS`, `CONTENT_TYPE` |
-| `redis-keys.ts` | `KEY_PREFIX` + `REDIS_KEY` builders |
-| `telemetry.ts` | `SPAN`, `METRIC`, `LOG_FIELD` |
-| `audit.ts` | `AUDIT_ACTION` |
-| `defaults.ts` | Non-configurable defaults (retry counts, page sizes, truncation limits) |
-| `regex.ts` | Named patterns — never an inline regex used twice |
+| File              | Holds                                                                   |
+| ----------------- | ----------------------------------------------------------------------- |
+| `service-tags.ts` | `SERVICE_TAG` — every Effect service tag (`app/Monitors`, …)            |
+| `queues.ts`       | `QUEUE`, `JOB_NAME`                                                     |
+| `error-codes.ts`  | `ERROR_CODE` — the wire `code` values, single source for API + client   |
+| `channels.ts`     | `CHANNEL_KIND` — `email`, `webhook`, `slack`, …                         |
+| `http.ts`         | `HEADER`, `COOKIE`, `HTTP_STATUS`, `CONTENT_TYPE`                       |
+| `redis-keys.ts`   | `KEY_PREFIX` + `REDIS_KEY` builders                                     |
+| `telemetry.ts`    | `SPAN`, `METRIC`, `LOG_FIELD`                                           |
+| `audit.ts`        | `AUDIT_ACTION`                                                          |
+| `defaults.ts`     | Non-configurable defaults (retry counts, page sizes, truncation limits) |
+| `regex.ts`        | Named patterns — never an inline regex used twice                       |
 
 Module-local constants (an internal state machine's states, a module's cache TTLs)
 live in `<module>.constants.ts` and are **not** exported from `index.ts` unless
@@ -124,11 +125,14 @@ silently never consumes. Every one of the categories above has that failure shap
 Every expected failure is a `Data.TaggedError` in `core/src/errors/`:
 
 ```ts
-export class MonitorNotFound extends Data.TaggedError('MonitorNotFound')<{ id: MonitorId }> {}
-export class NotAuthorized   extends Data.TaggedError('NotAuthorized')<{ action: string }> {}
-export class ValidationFailed extends Data.TaggedError('ValidationFailed')<{ issues: Issue[] }> {}
-export class RateLimited     extends Data.TaggedError('RateLimited')<{ retryAfterSeconds: number }> {}
-export class ScrapeFailed    extends Data.TaggedError('ScrapeFailed')<{ reason: ScrapeFailureReason; retryable: boolean }> {}
+export class MonitorNotFound extends Data.TaggedError("MonitorNotFound")<{ id: MonitorId }> {}
+export class NotAuthorized extends Data.TaggedError("NotAuthorized")<{ action: string }> {}
+export class ValidationFailed extends Data.TaggedError("ValidationFailed")<{ issues: Issue[] }> {}
+export class RateLimited extends Data.TaggedError("RateLimited")<{ retryAfterSeconds: number }> {}
+export class ScrapeFailed extends Data.TaggedError("ScrapeFailed")<{
+  reason: ScrapeFailureReason
+  retryable: boolean
+}> {}
 ```
 
 **Errors carry data, never prose.** A tagged error holds the ids and numbers; the
@@ -137,23 +141,24 @@ locale. No English string is ever hardcoded in a service.
 
 HTTP mapping lives in exactly one exhaustive matcher:
 
-| Tag | Status | `code` | Message key |
-|---|---|---|---|
-| `ValidationFailed` | 422 | `ERROR_CODE.validationFailed` | `errors.validationFailed` |
-| `Unauthenticated` | 401 | `ERROR_CODE.unauthenticated` | `errors.unauthenticated` |
-| `NotAuthorized` | 403 | `ERROR_CODE.forbidden` | `errors.forbidden` |
-| `*NotFound` | 404 | `ERROR_CODE.notFound` | `errors.monitorNotFound` |
-| `Conflict`, `DuplicateName` | 409 | `ERROR_CODE.conflict` | `errors.conflict` |
-| `PlanLimitExceeded` | 402 | `ERROR_CODE.planLimitExceeded` | `errors.planLimitExceeded` |
-| `RateLimited` | 429 | `ERROR_CODE.rateLimited` (+ `Retry-After`) | `errors.rateLimited` |
-| `DbError`, unmatched defect | 500 | `ERROR_CODE.internalError` | `errors.internalError` |
+| Tag                         | Status | `code`                                     | Message key                |
+| --------------------------- | ------ | ------------------------------------------ | -------------------------- |
+| `ValidationFailed`          | 422    | `ERROR_CODE.validationFailed`              | `errors.validationFailed`  |
+| `Unauthenticated`           | 401    | `ERROR_CODE.unauthenticated`               | `errors.unauthenticated`   |
+| `NotAuthorized`             | 403    | `ERROR_CODE.forbidden`                     | `errors.forbidden`         |
+| `*NotFound`                 | 404    | `ERROR_CODE.notFound`                      | `errors.monitorNotFound`   |
+| `Conflict`, `DuplicateName` | 409    | `ERROR_CODE.conflict`                      | `errors.conflict`          |
+| `PlanLimitExceeded`         | 402    | `ERROR_CODE.planLimitExceeded`             | `errors.planLimitExceeded` |
+| `RateLimited`               | 429    | `ERROR_CODE.rateLimited` (+ `Retry-After`) | `errors.rateLimited`       |
+| `DbError`, unmatched defect | 500    | `ERROR_CODE.internalError`                 | `errors.internalError`     |
 
 ```ts
 const toHttpError = Match.type<AppError>().pipe(
-  Match.tag('MonitorNotFound', (e) =>
-    httpError(HTTP_STATUS.notFound, ERROR_CODE.notFound, MSG.errors.monitorNotFound, { id: e.id })),
+  Match.tag("MonitorNotFound", (e) =>
+    httpError(HTTP_STATUS.notFound, ERROR_CODE.notFound, MSG.errors.monitorNotFound, { id: e.id }),
+  ),
   /* … */
-  Match.exhaustive,   // ← a new error tag without a mapping breaks the build
+  Match.exhaustive, // ← a new error tag without a mapping breaks the build
 )
 ```
 
@@ -166,7 +171,7 @@ ignorable, say so with `Effect.catchTag('X', () => …)` and record why in the m
 typed `MSG` tree, and ICU catalogs per locale. The API resolves a locale from
 `user.locale` → `Accept-Language` → `DEFAULT_LOCALE`, and the error/response
 serializer renders `message` from `messageKey` + `params`. Notification templates
-and emails resolve against the *recipient's* locale, not the request's. Full rules
+and emails resolve against the _recipient's_ locale, not the request's. Full rules
 and the key-naming convention: [16-I18N](./16-I18N.md).
 
 ## 5. Routes
@@ -177,20 +182,24 @@ Business logic in a route handler is a review-blocking defect.
 ```ts
 export const monitorRoutes = new Elysia({ prefix: ROUTE.monitors, tags: [API_TAG.monitors] })
   .use(effectPlugin)
-  .use(requireUser)                            // macro from the auth module
-  .get('/', ({ runFx, user, query }) => runFx(Monitors.list(user.id, query)), {
-    query: ListMonitorsQuery,                  // Effect Schema — Standard Schema
+  .use(requireUser) // macro from the auth module
+  .get("/", ({ runFx, user, query }) => runFx(Monitors.list(user.id, query)), {
+    query: ListMonitorsQuery, // Effect Schema — Standard Schema
     response: { 200: MonitorPage },
-    detail: { summary: 'List monitors', operationId: 'listMonitors' },
+    detail: { summary: "List monitors", operationId: "listMonitors" },
   })
-  .post('/', ({ runFx, user, body, set }) => {
-    set.status = HTTP_STATUS.created
-    return runFx(Monitors.create(user.id, body))
-  }, {
-    body: CreateMonitorBody,
-    response: { 201: MonitorDto },
-    detail: { summary: 'Create a monitor', operationId: 'createMonitor' },
-  })
+  .post(
+    "/",
+    ({ runFx, user, body, set }) => {
+      set.status = HTTP_STATUS.created
+      return runFx(Monitors.create(user.id, body))
+    },
+    {
+      body: CreateMonitorBody,
+      response: { 201: MonitorDto },
+      detail: { summary: "Create a monitor", operationId: "createMonitor" },
+    },
+  )
 ```
 
 - **Effect Schema is the one schema language**, but it must be wrapped:
@@ -206,6 +215,7 @@ export const monitorRoutes = new Elysia({ prefix: ROUTE.monitors, tags: [API_TAG
   `mapJsonSchema: { effect: JSONSchema.make }` needs to emit real JSON Schema
   (required fields, enums, `additionalProperties: false`). Verified end to end —
   see [09-API §3](./09-API.md).
+
 - **`response` schemas and `operationId` are mandatory on every route.** They are
   not documentation niceties — the frontend's entire API layer is generated from
   this OpenAPI document by Hey API. A missing `response` schema produces an
@@ -230,15 +240,22 @@ export const monitorRoutes = new Elysia({ prefix: ROUTE.monitors, tags: [API_TAG
 // apps/worker/src/main.ts
 const runtime = ManagedRuntime.make(WorkerLayer)
 
-const scrapeWorker = new Worker(QUEUE.scrape, async (job) => {
-  const payload = Schema.decodeUnknownSync(ScrapeJob)(job.data)
-  return runtime.runPromise(
-    RunScrape.execute(payload).pipe(
-      Effect.annotateLogs({ [LOG_FIELD.jobId]: job.id, [LOG_FIELD.monitorId]: payload.monitorId }),
-      Effect.withSpan(SPAN.job.scrape),
-    ),
-  )
-}, { connection, concurrency: config.workerConcurrency })
+const scrapeWorker = new Worker(
+  QUEUE.scrape,
+  async (job) => {
+    const payload = Schema.decodeUnknownSync(ScrapeJob)(job.data)
+    return runtime.runPromise(
+      RunScrape.execute(payload).pipe(
+        Effect.annotateLogs({
+          [LOG_FIELD.jobId]: job.id,
+          [LOG_FIELD.monitorId]: payload.monitorId,
+        }),
+        Effect.withSpan(SPAN.job.scrape),
+      ),
+    )
+  },
+  { connection, concurrency: config.workerConcurrency },
+)
 ```
 
 - Job payloads are **decoded, never trusted** — they may be days old and predate a deploy.

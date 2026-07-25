@@ -27,7 +27,11 @@ const [user] = await db
 
 const userId =
   user?.id ??
-  (await db.select({ id: users.id }).from(users).limit(1).then((rows) => rows[0]?.id))
+  (await db
+    .select({ id: users.id })
+    .from(users)
+    .limit(1)
+    .then((rows) => rows[0]?.id))
 
 if (!userId) throw new Error("could not resolve a seed user")
 

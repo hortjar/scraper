@@ -4,7 +4,6 @@ import path from "node:path"
 import { AppConfig } from "@scraper/core/config"
 import { ROUTE } from "@scraper/core/constants"
 
-
 import { createApp } from "../src/app.js"
 import { makeRedisProbe } from "../src/health/redis-probe.js"
 import { makeRuntime } from "../src/runtime.js"

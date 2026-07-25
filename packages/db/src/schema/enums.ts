@@ -43,7 +43,4 @@ export const changeKindEnum = pgEnum("change_kind", values(CHANGE_KIND))
 export const triggerKindEnum = pgEnum("trigger_kind", values(TRIGGER_KIND))
 export const deliveryModeEnum = pgEnum("delivery_mode", values(DELIVERY_MODE))
 export const deliveryStatusEnum = pgEnum("delivery_status", values(DELIVERY_STATUS))
-export const suppressionReasonEnum = pgEnum(
-  "suppression_reason",
-  values(SUPPRESSION_REASON),
-)
+export const suppressionReasonEnum = pgEnum("suppression_reason", values(SUPPRESSION_REASON))
