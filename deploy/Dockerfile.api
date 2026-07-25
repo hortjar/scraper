@@ -1,0 +1,62 @@
+FROM oven/bun:1-alpine AS deps
+
+WORKDIR /build
+
+RUN corepack enable && corepack prepare pnpm@9 --activate
+
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm fetch --frozen-lockfile
+
+FROM oven/bun:1-alpine AS build
+
+WORKDIR /build
+
+RUN corepack enable && corepack prepare pnpm@9 --activate
+
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY --from=deps /build/.pnpm-store ./.pnpm-store
+COPY packages packages
+COPY apps/api apps/api
+
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @scraper/api build
+
+FROM oven/bun:1-alpine AS deploy
+
+WORKDIR /build
+
+RUN corepack enable && corepack prepare pnpm@9 --activate
+
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY --from=deps /build/.pnpm-store ./.pnpm-store
+COPY packages packages
+COPY apps/api apps/api
+
+RUN pnpm install --frozen-lockfile
+RUN pnpm deploy --filter @scraper/api --prod /app
+
+FROM oven/bun:1-alpine
+
+ARG APP_VERSION=unknown
+ARG GIT_SHA=unknown
+
+WORKDIR /app
+
+RUN addgroup -g 10001 -S scraper && adduser -u 10001 -S scraper -G scraper
+
+COPY --from=deploy /app .
+
+RUN mkdir -p /tmp && chown -R scraper:scraper /app /tmp
+
+ENV APP_VERSION=$APP_VERSION \
+    GIT_SHA=$GIT_SHA \
+    NODE_ENV=production
+
+USER scraper
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
+    CMD bun run healthcheck.ts || exit 1
+
+EXPOSE 3001
+
+CMD ["bun", "start"]

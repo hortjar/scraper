@@ -1,0 +1,103 @@
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-scraper}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?required}
+      POSTGRES_DB: ${POSTGRES_DB:-scraper}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-scraper}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory ${REDIS_MAXMEMORY:-512mb} --maxmemory-policy noeviction
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+  browser:
+    image: ${BROWSER_IMAGE:-ghcr.io/browserless/chromium@sha256:9e48bf8df71ba285f974dd9bd9effb59ce8a1e767cfe734b36a24b065ab033f4}
+    environment:
+      CONCURRENT: ${BROWSER_MAX_CONTEXTS:-4}
+      TIMEOUT: ${BROWSER_TIMEOUT_MS:-45000}
+      TOKEN: ${BROWSER_TOKEN:?required}
+    shm_size: 1gb
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+  api:
+    image: ghcr.io/${GH_ORG}/scraper-api:${IMAGE_TAG:?required}
+    env_file:
+      - .env
+    environment:
+      APP_VERSION: ${APP_VERSION:-}
+      GIT_SHA: ${GIT_SHA:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "bun", "run", "healthcheck.ts"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    stop_grace_period: 60s
+
+  worker:
+    image: ghcr.io/${GH_ORG}/scraper-worker:${IMAGE_TAG:?required}
+    env_file:
+      - .env
+    environment:
+      APP_VERSION: ${APP_VERSION:-}
+      GIT_SHA: ${GIT_SHA:-}
+      BROWSER_WS_ENDPOINT: ws://browser:3000?token=${BROWSER_TOKEN}
+    depends_on:
+      api:
+        condition: service_healthy
+    volumes:
+      - snapshots:/data/snapshots
+    deploy:
+      replicas: ${WORKER_REPLICAS:-1}
+    restart: unless-stopped
+    stop_grace_period: 60s
+
+  web:
+    image: ghcr.io/${GH_ORG}/scraper-web:${IMAGE_TAG:?required}
+    environment:
+      APP_VERSION: ${APP_VERSION:-}
+      GIT_SHA: ${GIT_SHA:-}
+      API_URL: ${API_URL:-http://api:3001}
+      APP_TITLE: ${APP_TITLE:-Scraper}
+      DEFAULT_LOCALE: ${DEFAULT_LOCALE:-en}
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+volumes:
+  pgdata: {}
+  redisdata: {}
+  snapshots: {}
