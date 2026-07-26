@@ -6,6 +6,37 @@ All notable changes to this project are documented here. The format follows
 
 This file starts at 0.2.0. For anything earlier, see the git history.
 
+## [0.3.0] - 2026-07-26
+
+### ⚠️ BREAKING — CI no longer builds or publishes images
+
+The `build-and-push` job is gone from `.github/workflows/release.yml`. Pushing a
+`v*` tag now creates the GitHub release and nothing else — **it does not produce a
+`ghcr.io/<org>/scraper-*` image.**
+
+If you deploy from Portainer or any pinned-tag stack, this changes your upgrade
+procedure: build and push the images yourself before setting `IMAGE_TAG`, using the
+existing `deploy/docker-compose.build.yml` overlay. An `IMAGE_TAG` naming a tag that
+was never pushed now fails at pull time rather than resolving to something CI made.
+
+Note also that `docker compose build` produces **one architecture, the build host's**.
+The removed job used buildx for `linux/amd64,linux/arm64`, so an ARM deploy target
+built from an x86 machine (or the reverse) needs `docker buildx bake` or a build on
+matching hardware. `docs/10-DEPLOYMENT.md` §8 and `deploy/portainer/STACK.md` §8 carry
+the commands.
+
+Nothing about the images themselves changed — the Dockerfiles, the compose files and
+the tag scheme are untouched. Only the thing that used to run the build was removed.
+
+### Changed
+
+- `@hortjar/eslint-config` upgraded to `0.3.1`, and **both
+  `scraper/pending-hortjar-eslint-config-0.3.1*` blocks are deleted** from
+  `eslint.config.ts` — the two overrides they carried (`repository` left unabbreviated,
+  `no-var` off in `.d.ts`) now come from the shared config, which is where they
+  belonged. This closes the "Known gaps" item recorded under 0.2.0. Lint stays clean
+  at `--max-warnings 0` with no local exception.
+
 ## [0.2.0] - 2026-07-25
 
 ### ⚠️ BREAKING — default ports moved into the 9300 block
