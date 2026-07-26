@@ -48,6 +48,13 @@ All three are **multi-stage** and share a `deps` stage that runs
 `pnpm install --frozen-lockfile` with `pnpm fetch` caching, then
 `pnpm deploy --filter=<app> --prod` to produce a minimal runtime tree.
 
+**The builder stages run on Node, the runtime stages on Bun.** pnpm is a Node tool
+and reaches the image through `corepack`, which ships with Node and does not exist in
+`oven/bun:*` — the stages were on a bun base and no image had ever built. The builder
+libc must also match the runtime libc, or native modules resolve against the wrong
+one: `node:22-alpine` for the two musl runtimes, `node:22-bookworm-slim` for the
+worker's Debian runtime.
+
 Notes:
 
 - `worker` uses the Debian base, not Alpine — Playwright's client and some native
@@ -57,7 +64,9 @@ Notes:
 - Tags: `ghcr.io/<org>/scraper-<app>:<semver>` plus `:sha-<short>`. **Never deploy
   `:latest`** — Portainer's "re-pull and redeploy" on a moving tag makes rollback
   guesswork.
-- **Nothing builds these automatically.** They are pushed by hand; see §8.
+- **Nothing builds these automatically.** Compose builds them from source with the
+  `docker-compose.build.yml` overlay, which is the default path; a registry is
+  optional. See §8.
 
 ## 2. Compose files
 
@@ -260,21 +269,32 @@ push → typecheck · lint · unit tests · build
 tag v* → GitHub release
 ```
 
-**CI does not build or publish images.** The release workflow only cuts the GitHub
-release; pushing a tag produces no new `ghcr.io/<org>/scraper-*` image. Images are
-built and pushed by hand with the `docker-compose.build.yml` overlay:
+**CI does not build or publish images**, and you do not need a registry at all.
+The default path is to build from source with Compose:
 
 ```bash
-export GH_ORG=<org> IMAGE_TAG=v0.2.1
-docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml build
-docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml push
+cd deploy
+docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+```
+
+`IMAGE_REGISTRY` and `IMAGE_TAG` default to `local` and `dev`, so nothing about
+images has to be configured. The build overlay sets `pull_policy: build` so Compose
+builds rather than trying to pull a name no registry serves.
+
+Publishing is opt-in, and worth it when you want pinned tags and instant rollback:
+
+```bash
+export IMAGE_REGISTRY=ghcr.io/<org> IMAGE_TAG=v0.4.0
+docker compose -f docker-compose.yml -f docker-compose.build.yml build
+docker compose -f docker-compose.yml -f docker-compose.build.yml push
 ```
 
 Two consequences worth knowing before a deploy:
 
-- **`IMAGE_TAG` in a production stack must name a tag that was actually pushed.**
-  Nothing publishes it for you, so a fresh git tag does not become a deployable
-  image until someone runs the commands above.
+- **If you set `IMAGE_REGISTRY`, `IMAGE_TAG` must name a tag that was actually
+  pushed.** Nothing publishes it for you, so a fresh git tag does not become a
+  deployable image until someone runs the commands above. Leave both unset and this
+  cannot bite you.
 - **`docker compose build` produces a single architecture — the host's.** The old
   pipeline built `linux/amd64,linux/arm64` via buildx. If the deploy target's
   architecture differs from the machine doing the build, build with

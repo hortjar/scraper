@@ -110,7 +110,7 @@ services:
     stop_grace_period: 30s
 
   api:
-    image: ghcr.io/${GH_ORG}/scraper-api:${IMAGE_TAG:?required}
+    image: ${IMAGE_REGISTRY:-local}/scraper-api:${IMAGE_TAG:-dev}
     env_file:
       - path: .env
         required: false
@@ -130,7 +130,7 @@ services:
     stop_grace_period: 60s
 
   worker:
-    image: ghcr.io/${GH_ORG}/scraper-worker:${IMAGE_TAG:?required}
+    image: ${IMAGE_REGISTRY:-local}/scraper-worker:${IMAGE_TAG:-dev}
     env_file:
       - path: .env
         required: false
@@ -146,7 +146,7 @@ services:
     stop_grace_period: 60s
 
   web:
-    image: ghcr.io/${GH_ORG}/scraper-web:${IMAGE_TAG:?required}
+    image: ${IMAGE_REGISTRY:-local}/scraper-web:${IMAGE_TAG:-dev}
     environment:
       APP_VERSION: ${APP_VERSION:-}
       GIT_SHA: ${GIT_SHA:-}

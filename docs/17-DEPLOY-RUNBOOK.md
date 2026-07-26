@@ -5,8 +5,41 @@ The commands, in order, for putting a version of scraper into production.
 this page is what you type.
 
 > **CI does not build images.** Since 0.3.0 the release workflow only cuts the
-> GitHub release. Pushing a tag produces **no** `ghcr.io` image, so step 2 is not
-> optional — skip it and the stack fails at pull time on a tag that does not exist.
+> GitHub release; nothing publishes a `ghcr.io` image.
+>
+> You do not need one. **Compose builds the whole stack from source** — see
+> [§A](#a-just-run-it-no-registry) — and that is the default. Steps 0 and 2 below are
+> only for publishing images to a registry, which is worth doing when you want pinned
+> tags and instant rollback, and skippable otherwise.
+
+## A. Just run it, no registry
+
+```bash
+cd deploy
+cat > .env <<'EOF'
+APP_URL=http://localhost:8080
+POSTGRES_PASSWORD=<openssl rand -base64 32>
+ENCRYPTION_KEY=<openssl rand -base64 32>
+SESSION_SECRET=<openssl rand -base64 32>
+BROWSER_TOKEN=<openssl rand -base64 32>
+EOF
+
+docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+```
+
+That is the whole thing. Five variables, one command, no `GH_ORG`, no `IMAGE_TAG`,
+no `docker login`. The three app images build locally and are tagged
+`local/scraper-{api,worker,web}:dev`.
+
+The build overlay sets `pull_policy: build`, so Compose builds these services rather
+than trying to pull a `local/...` name that exists in no registry.
+
+Rebuild after changing code with the same command — `--build` re-runs the build and
+recreates the containers.
+
+To publish to a registry instead, set `IMAGE_REGISTRY` and `IMAGE_TAG` and follow
+steps 0–2. Those two variables are the _only_ thing that switches the stack between
+"build here" and "pull pinned tags".
 
 ## 0. Once per machine
 
@@ -45,9 +78,11 @@ Commit messages go through commitlint — `release: v0.3.0` is rejected, and
 
 ## 2. Build and push the images
 
+Only for the registry path. Skip it if you are following §A.
+
 ```bash
-export GH_ORG=<your-org-or-username>
-export IMAGE_TAG=v0.3.0
+export IMAGE_REGISTRY=ghcr.io/<your-org-or-username>
+export IMAGE_TAG=v0.4.0
 export APP_VERSION=0.3.0
 export GIT_SHA=$(git rev-parse --short HEAD)
 
@@ -57,7 +92,7 @@ docker compose -f docker-compose.yml -f docker-compose.build.yml push
 ```
 
 Three images come out: `scraper-api`, `scraper-worker`, `scraper-web`, each tagged
-`ghcr.io/$GH_ORG/scraper-<app>:$IMAGE_TAG`.
+`$IMAGE_REGISTRY/scraper-<app>:$IMAGE_TAG`.
 
 `APP_VERSION` and `GIT_SHA` are **build args, baked into the image** — they are not
 runtime-overridable, because they identify the artifact and are what lets the web
@@ -81,7 +116,7 @@ for app in api worker web; do
     --file "deploy/Dockerfile.$app" \
     --build-arg "APP_VERSION=$APP_VERSION" \
     --build-arg "GIT_SHA=$GIT_SHA" \
-    --tag "ghcr.io/$GH_ORG/scraper-$app:$IMAGE_TAG" \
+    --tag "$IMAGE_REGISTRY/scraper-$app:$IMAGE_TAG" \
     --push .
 done
 ```
@@ -91,12 +126,12 @@ Run that from the repo root, not `deploy/` — the build context is the root.
 Verify what you actually published before deploying:
 
 ```bash
-docker buildx imagetools inspect ghcr.io/$GH_ORG/scraper-api:$IMAGE_TAG
+docker buildx imagetools inspect $IMAGE_REGISTRY/scraper-api:$IMAGE_TAG
 ```
 
 ## 3. Environment
 
-Six variables have no default and fail the stack immediately if unset — that is
+Five variables have no default and fail the stack immediately if unset — that is
 deliberate, so Portainer gives a clear message instead of a crash-looping container:
 
 | Variable            | Notes                                                       |
@@ -124,7 +159,10 @@ the stack starts normally and `/api/v1/meta` reports `emailAvailable: false`, so
 UI hides email channels instead of offering a delivery that would fail. Configure it
 when you want notifications.
 
-`GH_ORG` is needed too — without it the image names resolve to `ghcr.io//scraper-api`.
+`IMAGE_REGISTRY` and `IMAGE_TAG` are **not** required. They default to `local` and
+`dev`, which is what makes the build-from-source path work with no image
+configuration. Set them only when pulling published images, and then `IMAGE_TAG` must
+name a tag that was actually pushed.
 
 Start from `deploy/portainer/stack.env.example`. The full reference, including every
 optional variable, is [11-ENVIRONMENT](./11-ENVIRONMENT.md), generated from

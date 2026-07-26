@@ -4,7 +4,15 @@
 
 - Docker Engine 20.10+ or Docker Desktop
 - Portainer CE installed and running
-- Repository access to `ghcr.io/${GH_ORG}/scraper-*` images
+
+**No registry access is required.** Portainer clones this repository for a Git-backed
+stack, so Compose can build the three app images from the working tree. Add
+`deploy/docker-compose.build.yml` as a second compose path and leave `IMAGE_REGISTRY`
+and `IMAGE_TAG` unset — they default to `local` and `dev`.
+
+Pulling pre-built images from `ghcr.io/<org>/scraper-*` is the alternative, not the
+requirement. It buys pinned tags and instant rollback at the cost of publishing them
+yourself, since CI does not.
 
 ## Deployment Steps
 
@@ -16,6 +24,7 @@ In Portainer:
 2. Select **Repository** (enables GitOps and "Pull and redeploy")
 3. Paste repository URL: `https://github.com/your-org/scraper`
 4. Set compose path: `deploy/docker-compose.yml`
+   - To build from source, add a second path: `deploy/docker-compose.build.yml`
 5. Click **Deploy the stack**
 
 ### 2. Configure Environment Variables
@@ -57,9 +66,10 @@ missing one fails the deploy immediately, naming the variable:
 | `SESSION_SECRET`    | `openssl rand -base64 32`                                  |
 | `BROWSER_TOKEN`     | Any non-empty value; shared with the browserless container |
 
-`GH_ORG` is not marked required only because Compose cannot express it there, but
-without it the image name resolves to `ghcr.io//scraper-api` and the pull fails. Set
-it.
+**No image variables are required.** `IMAGE_REGISTRY` and `IMAGE_TAG` default to
+`local` and `dev`, which is what lets the build path run with no image configuration
+at all. Set them only when pulling published images — and then `IMAGE_TAG` must name
+a tag that was actually pushed, because nothing publishes it for you.
 
 **There is no `DATABASE_URL` to set.** The app assembles the connection string from
 `POSTGRES_HOST` (`postgres`), `POSTGRES_PORT` (`5432`), `POSTGRES_USER` (`scraper`),
@@ -223,34 +233,20 @@ Bind mounts would only be accessible via the host filesystem.
 If a dependent service won't start, check the service's logs — it's waiting for a
 dependency to become healthy.
 
-> ### ⚠️ Known blocker: the `api` and `worker` health checks cannot pass
+> ### The worker has no health check, deliberately
 >
-> `Dockerfile.api`, `Dockerfile.worker` and `docker-compose.yml` all run
-> `bun run healthcheck.ts`, but **no such file exists in the repository** —
-> `git ls-files | grep healthcheck` returns nothing, and nothing in the build creates
-> it. Bun exits non-zero on the missing module, so both containers stay `unhealthy`
-> forever.
+> `api` probes `/api/v1/ready` through `apps/api/scripts/healthcheck.ts`, so
+> `service_healthy` means the API can actually reach Postgres and Redis. That is what
+> `worker` waits on.
 >
-> The practical effect: `worker` declares `depends_on: api: {condition:
-service_healthy}`, so **the worker never starts**. The API and web UI come up and
-> look fine, but nothing is ever scraped.
+> The worker itself declares no `HEALTHCHECK`. It runs no HTTP server, so there is
+> nothing to probe without inventing a listener; Docker reports it as `running`
+> rather than `healthy`, and `restart: unless-stopped` covers crashes. A real
+> liveness signal — asserting its BullMQ connection, say — is still open work.
 >
-> Fixing it means adding the file and copying it into both images. For `api` it is
-> unambiguous — probe the readiness endpoint:
->
-> ```ts
-> const response = await fetch("http://localhost:9300/api/v1/ready")
-> process.exit(response.ok ? 0 : 1)
-> ```
->
-> For `worker` it is a real design question, because the worker runs no HTTP server
-> and so has nothing to probe. It needs either a minimal health listener or a
-> different check (for example asserting its BullMQ connection is live). That choice
-> has not been made yet, which is why this is documented rather than patched.
->
-> **Workaround until then:** remove the `condition: service_healthy` from `worker`'s
-> `depends_on` so it starts alongside the API, or drop the `HEALTHCHECK` lines. Both
-> trade a real signal for a starting stack — make the change deliberately.
+> Both Dockerfiles previously ran `bun run healthcheck.ts`, a file that did not exist
+> in the repository. Both containers stayed `unhealthy` forever and the worker, which
+> waits on `service_healthy`, never started at all.
 
 ### Logs and stdout
 

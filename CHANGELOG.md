@@ -86,18 +86,59 @@ the sender. Whitespace counts as unset.
   one-line drift every time. No variable was affected.
 - Three stale `env-spec.ts` references in `packages/core/README.md`.
 
+### The stack builds and runs from source — no registry
+
+`IMAGE_REGISTRY` and `IMAGE_TAG` replace `GH_ORG`/`IMAGE_TAG` and now **default** to
+`local` and `dev`, so nothing about images has to be configured:
+
+```bash
+cd deploy && docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+```
+
+Five variables and one command. Previously `${IMAGE_TAG:?required}` failed during
+interpolation, which happens _before_ compose merges overlays — so the build overlay
+could not rescue it and you were forced to invent image coordinates even when
+building locally. Publishing to a registry is now opt-in: set both variables.
+
+The build overlay declares `pull_policy: build` so compose builds these services
+rather than trying to pull a name no registry serves.
+
+**The images had never built at all.** All three Dockerfiles ran
+`corepack enable` on an `oven/bun` base, and corepack ships with Node, not Bun —
+every build died at that line with exit 127. The pnpm stages now run on Node, with
+the libc matched to each runtime (`node:22-alpine` for the two musl runtimes,
+`node:22-bookworm-slim` for the worker's Debian one) so native modules resolve
+against the right one. A second defect surfaced behind it: `pnpm fetch` wrote to the
+global store while later stages copied `/build/.pnpm-store`, so the cache mount was
+always empty; every `fetch`/`install` now pins `--store-dir`.
+
+Verified by building all three images and bringing the stack up: `/api/v1/health`,
+`/api/v1/ready` (`database: true, redis: true`), `/api/v1/meta` and
+`/api/v1/docs/json` all 200 through the nginx proxy, and the worker running four
+queues.
+
+### Fixed — the health check that never existed
+
+`Dockerfile.api`, `Dockerfile.worker` and `docker-compose.yml` all ran
+`bun run healthcheck.ts`, **a file that was in no commit.** Both containers stayed
+`unhealthy` forever, and because `worker` waits on `condition: service_healthy`, the
+worker never started — the API and UI came up looking fine while nothing was ever
+scraped.
+
+`apps/api/scripts/healthcheck.ts` now probes `/api/v1/ready`, so `service_healthy`
+means the API can genuinely reach Postgres and Redis. The worker's `HEALTHCHECK` is
+removed rather than faked: it runs no HTTP server, so there is nothing to probe
+without inventing a listener. It reports `running`, and `restart: unless-stopped`
+covers crashes.
+
 ### Known gaps
 
-- **`bun run healthcheck.ts` does not exist.** Both Dockerfiles and the compose file
-  reference it; nothing in the repo creates it. Both containers therefore stay
-  `unhealthy`, and because `worker` waits on `condition: service_healthy`, **the
-  worker never starts.** For the API the fix is a one-line probe against
-  `/api/v1/ready`; for the worker it is a design question, since it runs no HTTP
-  server. Documented in `deploy/portainer/STACK.md`.
+- The worker still has **no liveness signal of its own**. Asserting its BullMQ
+  connection would be the natural one.
 - **`STORAGE_DRIVER=s3` cannot be configured from Portainer.** The driver name is
   forwarded to the containers but none of the five `S3_*` credentials are. 23
   documented variables are absent from the compose anchor; they are listed in
-  `STACK.md` §3a.
+  `deploy/portainer/STACK.md` §3a.
 
 ## [0.3.0] - 2026-07-26
 

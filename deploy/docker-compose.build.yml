@@ -1,5 +1,6 @@
 services:
   api:
+    pull_policy: build
     build:
       context: ..
       dockerfile: deploy/Dockerfile.api
@@ -8,6 +9,7 @@ services:
         GIT_SHA: ${GIT_SHA:-local}
 
   worker:
+    pull_policy: build
     build:
       context: ..
       dockerfile: deploy/Dockerfile.worker
@@ -16,6 +18,7 @@ services:
         GIT_SHA: ${GIT_SHA:-local}
 
   web:
+    pull_policy: build
     build:
       context: ..
       dockerfile: deploy/Dockerfile.web

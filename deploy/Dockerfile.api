@@ -1,13 +1,13 @@
-FROM oven/bun:1-alpine AS deps
+FROM node:22-alpine AS deps
 
 WORKDIR /build
 
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm fetch --frozen-lockfile
+RUN pnpm fetch --frozen-lockfile --store-dir /build/.pnpm-store
 
-FROM oven/bun:1-alpine AS build
+FROM node:22-alpine AS build
 
 WORKDIR /build
 
@@ -18,10 +18,10 @@ COPY --from=deps /build/.pnpm-store ./.pnpm-store
 COPY packages packages
 COPY apps/api apps/api
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --store-dir /build/.pnpm-store
 RUN pnpm --filter @scraper/api build
 
-FROM oven/bun:1-alpine AS deploy
+FROM node:22-alpine AS deploy
 
 WORKDIR /build
 
@@ -32,7 +32,7 @@ COPY --from=deps /build/.pnpm-store ./.pnpm-store
 COPY packages packages
 COPY apps/api apps/api
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --store-dir /build/.pnpm-store
 RUN pnpm deploy --filter @scraper/api --prod /app
 
 FROM oven/bun:1-alpine
@@ -45,6 +45,7 @@ WORKDIR /app
 RUN addgroup -g 10001 -S scraper && adduser -u 10001 -S scraper -G scraper
 
 COPY --from=deploy /app .
+COPY apps/api/scripts/healthcheck.ts ./healthcheck.ts
 
 RUN mkdir -p /tmp && chown -R scraper:scraper /app /tmp
 
