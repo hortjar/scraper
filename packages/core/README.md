@@ -53,11 +53,13 @@ Every variable is declared twice on purpose, and a test enforces that the two
 agree:
 
 - `src/config/schema.ts` — the Effect `Config` that reads and validates it
-- `src/config/env-spec.ts` — the metadata (group, default, secret, description)
+- `src/config/environment-spec.ts` — the metadata (group, default, secret, description)
 
 `pnpm gen:env` renders `deploy/.env.example` from the spec, so the example file
-cannot drift. `env-spec.test.ts` fails if either side gains a variable the other
-doesn't have.
+cannot drift — but only if you re-run it. CI's `verify-generated` job runs the
+generators and fails on any diff, which is what catches a spec change that never
+made it into the example. `environment-spec.test.ts` fails if either side gains a
+variable the other doesn't have.
 
 Secrets use `Config.redacted` and never carry a default value.
 
@@ -93,5 +95,6 @@ declared in `MSG`, or an orphaned translation.
 2. New entity → a schema in `src/domain/`, and update `docs/02-DATA-MODEL.md`.
 3. New error → `src/errors/index.ts`, add it to the `AppError` union, and add its
    mapping to `toHttpFailure`. The build will tell you if you forget.
-4. New env var → both `schema.ts` and `env-spec.ts`, then `docs/11-ENVIRONMENT.md`.
+4. New env var → both `schema.ts` and `environment-spec.ts`, then `pnpm gen:env`
+   and `docs/11-ENVIRONMENT.md`.
 5. New user-facing string → `MSG` plus every locale catalog.
