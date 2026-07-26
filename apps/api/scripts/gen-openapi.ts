@@ -16,6 +16,8 @@ const PLACEHOLDERS: readonly (readonly [string, string])[] = [
   ["REDIS_URL", "redis://localhost:9303/0"],
   ["ENCRYPTION_KEY", "openapi-placeholder-key-000000000"],
   ["SESSION_SECRET", "openapi-placeholder-secret-000000"],
+  ["POSTGRES_PASSWORD", "openapi-placeholder-password"],
+  ["BROWSER_TOKEN", "openapi-placeholder-token"],
 ]
 
 for (const [name, value] of PLACEHOLDERS) {

@@ -1,11 +1,13 @@
 # Auth — Implementation Handoff
 
-**Status: not started. No auth code exists in this repository.**
+**Status: built, not mounted.** `packages/server/src/modules/auth` exists and is
+tested. Its routes are exported but **nothing composes them**, so the API does not
+serve them yet. See §4.
 
 This is a handoff, not a design doc. The design is
 [08-AUTH](./08-AUTH.md); this page records what is actually on disk as of
-**0.6.0 (2026-07-26)**, the decisions already made, the traps found the hard way,
-and the order to build in. Read it before touching anything.
+**2026-07-26**, the decisions already made, and the traps found the hard way.
+Read it before touching anything.
 
 ## 1. The decision
 
@@ -27,20 +29,23 @@ exists in `file-sync` and `checklists`. See
 
 ## 2. What exists today
 
-| Thing                                     | State                                                          |
-| ----------------------------------------- | -------------------------------------------------------------- |
-| `packages/db/src/schema/identity.ts`      | ✅ `users`, `sessions`, `apiKeys`, `verificationTokens`        |
-| `packages/db/migrations/0000_init.sql`    | ✅ exists, creates those tables                                |
-| `packages/core/src/config/schema.ts`      | ✅ `securityConfig` — argon2 params, session TTLs, cookie name |
-| `ROUTE.auth`, `API_TAG`, error taxonomy   | ✅ constants declared                                          |
-| `docs/08-AUTH.md`                         | ✅ the design to implement                                     |
-| `packages/server/src/modules/`            | ❌ **does not exist** — the directory has no subdirectories    |
-| Any login/session/hashing code            | ❌ none                                                        |
-| argon2 or any password-hashing dependency | ❌ not installed                                               |
-| Auth routes mounted                       | ❌ `createApiRoutes` mounts only `systemRoutes`                |
+| Thing                                   | State                                                       |
+| --------------------------------------- | ----------------------------------------------------------- |
+| `packages/server`                       | ✅ exists, four modules, 328 tests, lint clean              |
+| `modules/auth`                          | ✅ hashing, sessions, API keys, tokens, audit, RL           |
+| `modules/auth/universal`                | ✅ JWKS verification, vendored (§3.3)                       |
+| `modules/scraping`                      | ✅ strategies, extraction, transforms, UrlGuard             |
+| `modules/notifications`                 | ✅ 5 channels, encryption, templates, dispatcher            |
+| `modules/jobs`                          | ✅ queues, schedulers, rate limits, maintenance             |
+| Boot-time migrations                    | ✅ resolved, see §3.1                                       |
+| `modules/monitors`                      | ❌ **not started**                                          |
+| `modules/runs`                          | ❌ **not started** (the change-detection pipeline)          |
+| Any module's routes mounted             | ❌ **`createApiRoutes` still composes only `systemRoutes`** |
+| Web features for auth / monitors / runs | ❌ not started                                              |
 
-The four endpoints the API serves today — `/health`, `/ready`, `/metrics`, `/meta` —
-are the entire API surface.
+The API still serves exactly four endpoints — `/health`, `/ready`, `/metrics`,
+`/meta`. **Everything in `packages/server` is unreachable over HTTP until §4 is
+done.**
 
 ## 3. Findings that will bite you
 
@@ -122,32 +127,36 @@ what `gen:openapi` generates from; `createApp` mounts it under `/api/v1`. Regist
 on `createApp` would prefix the document's paths a second time on top of its
 `servers` entry and send every generated client call to `/api/v1/api/v1/…`.
 
-## 4. Build order
+## 4. Build order — what is left
 
-Each step should land green — `pnpm lint && pnpm typecheck && pnpm test` — before the
-next.
+Steps 1–8 of the original plan are done. Each remaining step should land green —
+`pnpm lint && pnpm typecheck && pnpm test` — before the next.
 
-1. ~~**Run migrations on boot.**~~ Done — §3.1.
-2. **Resolve the `auth-client` question.** §3.3. Shapes step 6.
-3. **Password hashing.** Add argon2, wire `securityConfig.argon2MemoryKib` /
-   `argon2TimeCost`. Keep it behind a small service so `universal` mode can skip it.
-4. **Local sessions.** `sessions` table, `SESSION_COOKIE_NAME`, `SESSION_TTL_SECONDS`
-   and `SESSION_ABSOLUTE_TTL_SECONDS` are all already in config. Secure, `SameSite=Lax`
-   — same-origin is why no CSRF token is needed, so do not break the `/api/v1` proxy
-   assumption.
-5. **Routes** on `createApiRoutes` (§3.7): register, login, logout, me. Every route
-   needs a `response` schema wrapped in `Schema.standardSchemaV1(...)`, a unique
-   camelCase `operationId`, and `tags` — see [09-API §3](./09-API.md). A bare
-   `Schema.Struct` is silently ignored by Elysia and produces an unvalidated route
-   with an empty schema in the document.
-6. **Universal mode.** `AUTH_MODE=universal` verifies bearer tokens against
-   `admin-app`'s JWKS with `issuer` and `audience` checks, and JIT-provisions a local
-   `users` row on first sight of a subject.
-7. **API keys, verification tokens, password policy, rate limiting** — the rest of
-   08-AUTH. `RATE_LIMIT_ENABLED` and `PASSWORD_BREACH_CHECK` already exist in config.
-8. **Admin bootstrap.** `ADMIN_EMAIL` / `ADMIN_PASSWORD`, created idempotently on
-   first start — `file-sync` does exactly this and is worth copying. Only meaningful
-   in `local` mode.
+1. **Mount the modules. This is the blocker for everything else.**
+   `apps/api/src/app.ts` still composes only `systemRoutes`, so none of
+   `packages/server` is reachable. You need to:
+   - add the module layers to `apps/api/src/runtime.ts` (the worker already does
+     this for the jobs module — copy the shape),
+   - `.use(...)` each module's exported plugin on **`createApiRoutes`**, never
+     `createApp` (§3.7),
+   - run `pnpm gen:openapi && pnpm gen:api`, and commit both. CI's
+     `verify-generated` fails on drift.
+   - `apps/api` will need `@scraper/server` as a dependency; the worker already has it.
+2. **Call the admin bootstrap.** `modules/auth` exports it as an effect but nothing
+   invokes it. It belongs in `apps/api/src/main.ts` after migrations, gated on
+   `local` mode.
+3. **`modules/monitors`** — Phase 1 stream B. Monitor + extractor CRUD, schedule
+   validation, ownership filtered at the query level, pagination. It depends on
+   `jobs` for `upsertSchedule` and on `scraping`'s `UrlGuard`.
+4. **`modules/runs`** — Phase 2 stream G, the 14-step pipeline: diffing, change
+   persistence, the 11 rule triggers, throttle / quiet hours / digest / dedupe. This
+   is the largest remaining piece and the one that makes the product work. The jobs
+   module already defines the injectable `ScrapeRunner` / `NotifyRunner` handler
+   interfaces it must implement.
+5. **Web features** — `web/features/auth`, `monitors`, `runs`, `channels`. The design
+   system, layouts and generated client are already in place; these are the consumers.
+6. **Integration checkpoint I1**: create a monitor, watch a scheduled run write a row
+   in `runs`.
 
 ## 5. Conventions you cannot skip in this repo
 
