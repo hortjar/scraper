@@ -1,5 +1,9 @@
 # Authentication & Authorization
 
+> **Nothing in this document is implemented yet.** Read
+> [18-AUTH-HANDOFF](./18-AUTH-HANDOFF.md) first — it records what actually exists,
+> the blockers found while verifying, and the order to build in.
+
 Module: `packages/server/src/modules/auth`. Custom, Effect-native — no third-party auth dependency.
 
 ## 1. Model

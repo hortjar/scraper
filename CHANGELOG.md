@@ -8,6 +8,23 @@ This file starts at 0.2.0. For anything earlier, see the git history.
 
 ## [0.6.0] - 2026-07-26
 
+### Added
+
+- **`docs/18-AUTH-HANDOFF.md`** — auth is the next feature and none of it is built.
+  The handoff records the verified state of the repo, the blockers found while
+  checking, the decision to implement the full `08-AUTH` scope _plus_ an
+  `AUTH_MODE=local|universal` switch against `admin-app`, and the order to build in.
+  `AGENTS.md`, `docs/README.md` and `08-AUTH.md` all point at it.
+
+### Documented — not fixed
+
+- **`RUN_MIGRATIONS_ON_BOOT` is read by nothing.** `10-DEPLOYMENT` §4 claims the API
+  applies migrations on boot under an advisory lock; grep finds only the config field
+  and the env spec. The SQL in `packages/db/migrations/` exists but nothing runs it in
+  the container, so a freshly deployed stack has **no tables** — invisible today
+  because `/api/v1/ready` only checks connectivity. §4 now carries a warning, and
+  fixing it is step 1 of the auth handoff.
+
 ### Changed
 
 - **The app version is read from `package.json`.** `apps/api` and `apps/worker` seed

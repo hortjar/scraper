@@ -6,28 +6,29 @@ and get notified through pluggable channels.
 
 ## Read in this order
 
-| #   | Doc                                                | What it answers                                                   |
-| --- | -------------------------------------------------- | ----------------------------------------------------------------- |
-| 00  | [Implementation Plan](./00-IMPLEMENTATION-PLAN.md) | Phases, milestones, what ships when                               |
-| 01  | [Architecture](./01-ARCHITECTURE.md)               | Processes, packages, modules, data flow                           |
-| 02  | [Data Model](./02-DATA-MODEL.md)                   | Every table, column, index, and why                               |
-| 03  | [Backend Conventions](./03-BACKEND.md)             | Effect/Elysia idioms, constants, errors, modules                  |
-| 04  | [Frontend Conventions](./04-FRONTEND.md)           | Atomic components, no-`useEffect`, state, generated client        |
-| 05  | [Scraping Engine](./05-SCRAPING.md)                | Strategies, extraction, transforms, diffing, ethics               |
-| 06  | [Notifications](./06-NOTIFICATIONS.md)             | Channel contract, registry, adding a channel                      |
-| 07  | [Scheduling & Jobs](./07-SCHEDULING.md)            | BullMQ topology, retries, rate limits, idempotency                |
-| 08  | [Auth](./08-AUTH.md)                               | Effect-native sessions, password policy, API keys                 |
-| 09  | [API Contract](./09-API.md)                        | Routes, Swagger, OpenAPI → generated client                       |
-| 10  | [Deployment](./10-DEPLOYMENT.md)                   | Docker images, compose, Portainer stack, ops                      |
-| 11  | [Environment Variables](./11-ENVIRONMENT.md)       | Every env var, default, and owner                                 |
-| 12  | [Agent Workstreams](./12-AGENT-WORKSTREAMS.md)     | Parallelization, ownership, briefs, the docs rule                 |
-| 13  | [Product Backlog](./13-PRODUCT-BACKLOG.md)         | Researched use cases, prioritized                                 |
-| 14  | [Testing Strategy](./14-TESTING.md)                | What gets tested at which layer                                   |
-| 15  | [Design System](./15-DESIGN-SYSTEM.md)             | Color, type, the signature device, landing page                   |
-| 16  | [Internationalization](./16-I18N.md)               | Translation architecture, both sides                              |
-| 17  | [Deploy Runbook](./17-DEPLOY-RUNBOOK.md)           | The commands, in order, for shipping a version                    |
-| —   | [REACT.md](./REACT.md)                             | Pre-existing React guide (see 04 for deltas)                      |
-| —   | [adr/](./adr/)                                     | Decision log — why a version is pinned, why a design was rejected |
+| #   | Doc                                                | What it answers                                                     |
+| --- | -------------------------------------------------- | ------------------------------------------------------------------- |
+| 00  | [Implementation Plan](./00-IMPLEMENTATION-PLAN.md) | Phases, milestones, what ships when                                 |
+| 01  | [Architecture](./01-ARCHITECTURE.md)               | Processes, packages, modules, data flow                             |
+| 02  | [Data Model](./02-DATA-MODEL.md)                   | Every table, column, index, and why                                 |
+| 03  | [Backend Conventions](./03-BACKEND.md)             | Effect/Elysia idioms, constants, errors, modules                    |
+| 04  | [Frontend Conventions](./04-FRONTEND.md)           | Atomic components, no-`useEffect`, state, generated client          |
+| 05  | [Scraping Engine](./05-SCRAPING.md)                | Strategies, extraction, transforms, diffing, ethics                 |
+| 06  | [Notifications](./06-NOTIFICATIONS.md)             | Channel contract, registry, adding a channel                        |
+| 07  | [Scheduling & Jobs](./07-SCHEDULING.md)            | BullMQ topology, retries, rate limits, idempotency                  |
+| 08  | [Auth](./08-AUTH.md)                               | Effect-native sessions, password policy, API keys                   |
+| 09  | [API Contract](./09-API.md)                        | Routes, Swagger, OpenAPI → generated client                         |
+| 10  | [Deployment](./10-DEPLOYMENT.md)                   | Docker images, compose, Portainer stack, ops                        |
+| 11  | [Environment Variables](./11-ENVIRONMENT.md)       | Every env var, default, and owner                                   |
+| 12  | [Agent Workstreams](./12-AGENT-WORKSTREAMS.md)     | Parallelization, ownership, briefs, the docs rule                   |
+| 13  | [Product Backlog](./13-PRODUCT-BACKLOG.md)         | Researched use cases, prioritized                                   |
+| 14  | [Testing Strategy](./14-TESTING.md)                | What gets tested at which layer                                     |
+| 15  | [Design System](./15-DESIGN-SYSTEM.md)             | Color, type, the signature device, landing page                     |
+| 16  | [Internationalization](./16-I18N.md)               | Translation architecture, both sides                                |
+| 17  | [Deploy Runbook](./17-DEPLOY-RUNBOOK.md)           | The commands, in order, for shipping a version                      |
+| 18  | [Auth Handoff](./18-AUTH-HANDOFF.md)               | **Start here for auth** — nothing is built yet; state, traps, order |
+| —   | [REACT.md](./REACT.md)                             | Pre-existing React guide (see 04 for deltas)                        |
+| —   | [adr/](./adr/)                                     | Decision log — why a version is pinned, why a design was rejected   |
 
 Agents start at [AGENTS.md](../AGENTS.md) in the repo root.
 

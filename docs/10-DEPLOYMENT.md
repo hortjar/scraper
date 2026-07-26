@@ -187,9 +187,16 @@ detect a version skew after a rolling deploy and offer a reload
 
 ## 4. Migrations
 
-`api` runs `drizzle-kit migrate` on boot when `RUN_MIGRATIONS_ON_BOOT=true`, holding
-a Postgres advisory lock so N replicas can't race. Workers wait for the API's
-health check.
+> ⚠️ **Not implemented.** `RUN_MIGRATIONS_ON_BOOT` is declared in config and read by
+> nothing — `grep -rn runMigrationsOnBoot` finds only the config and the spec. The
+> migration SQL in `packages/db/migrations/` exists but nothing applies it in the
+> container, so a freshly deployed stack has **no tables**. `/api/v1/ready` only
+> checks connectivity, which is why the stack still reports healthy. See
+> [18-AUTH-HANDOFF §3.1](./18-AUTH-HANDOFF.md).
+
+The intent, once implemented: `api` runs `drizzle-kit migrate` on boot when
+`RUN_MIGRATIONS_ON_BOOT=true`, holding a Postgres advisory lock so N replicas can't
+race. Workers wait for the API's health check.
 
 Rules: migrations are **additive and backward-compatible within a release** —
 expand, deploy, backfill, contract in a later release. That's what makes a rolling
