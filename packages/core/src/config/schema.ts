@@ -1,4 +1,4 @@
-import { Config, Redacted } from "effect"
+import { Config, Option, Redacted } from "effect"
 
 import { RETRY, TIMEOUT } from "../constants/defaults.js"
 import { APP_ENV, MAIL_DRIVER, STORAGE_DRIVER } from "../constants/domain-values.js"
@@ -42,8 +42,41 @@ export const httpConfig = Config.all({
   enableRegistration: Config.boolean("ENABLE_REGISTRATION").pipe(Config.withDefault(true)),
 })
 
+const encodedUserInfo = (user: string, password: string) =>
+  `${encodeURIComponent(user)}:${encodeURIComponent(password)}@`
+
+const postgresUrlFromParts = Config.all({
+  host: Config.string("POSTGRES_HOST").pipe(Config.withDefault("postgres")),
+  port: Config.integer("POSTGRES_PORT").pipe(Config.withDefault(5432)),
+  user: Config.string("POSTGRES_USER").pipe(Config.withDefault("scraper")),
+  database: Config.string("POSTGRES_DB").pipe(Config.withDefault("scraper")),
+  password: Config.redacted("POSTGRES_PASSWORD"),
+}).pipe(
+  Config.map(({ database, host, password, port, user }) =>
+    Redacted.make(
+      `postgres://${encodedUserInfo(user, Redacted.value(password))}${host}:${String(port)}/${database}`,
+    ),
+  ),
+)
+
+const redisUrlFromParts = Config.all({
+  host: Config.string("REDIS_HOST").pipe(Config.withDefault("redis")),
+  port: Config.integer("REDIS_PORT").pipe(Config.withDefault(6379)),
+  database: Config.integer("REDIS_DB").pipe(Config.withDefault(0)),
+  password: Config.option(Config.redacted("REDIS_PASSWORD")),
+}).pipe(
+  Config.map(({ database, host, password, port }) =>
+    Redacted.make(
+      `redis://${Option.match(password, {
+        onNone: () => "",
+        onSome: (secret) => encodedUserInfo("", Redacted.value(secret)),
+      })}${host}:${String(port)}/${String(database)}`,
+    ),
+  ),
+)
+
 export const databaseConfig = Config.all({
-  url: Config.redacted("DATABASE_URL"),
+  url: Config.redacted("DATABASE_URL").pipe(Config.orElse(() => postgresUrlFromParts)),
   poolMax: Config.integer("DATABASE_POOL_MAX").pipe(Config.withDefault(10)),
   poolIdleTimeout: Config.integer("DATABASE_POOL_IDLE_TIMEOUT").pipe(Config.withDefault(30)),
   ssl: Config.boolean("DATABASE_SSL").pipe(Config.withDefault(false)),
@@ -51,7 +84,7 @@ export const databaseConfig = Config.all({
 })
 
 export const redisConfig = Config.all({
-  url: Config.redacted("REDIS_URL"),
+  url: Config.redacted("REDIS_URL").pipe(Config.orElse(() => redisUrlFromParts)),
   jobPrefix: Config.string("JOB_PREFIX").pipe(Config.withDefault("scraper")),
   workerConcurrency: Config.integer("WORKER_CONCURRENCY").pipe(Config.withDefault(5)),
   notifyConcurrency: Config.integer("NOTIFY_CONCURRENCY").pipe(Config.withDefault(20)),
@@ -119,13 +152,32 @@ export const storageConfig = Config.all({
   screenshotRetentionDays: Config.integer("SCREENSHOT_RETENTION_DAYS").pipe(Config.withDefault(14)),
 })
 
+interface MailTransport {
+  readonly driver: (typeof MAIL_DRIVER)[keyof typeof MAIL_DRIVER]
+  readonly from: string
+  readonly smtpHost: string
+  readonly resendApiKey: Redacted.Redacted
+}
+
+const isMailTransportConfigured = ({
+  driver,
+  from,
+  resendApiKey,
+  smtpHost,
+}: MailTransport): boolean => {
+  if (from.trim() === "") return false
+  if (driver === MAIL_DRIVER.smtp) return smtpHost.trim() !== ""
+  if (driver === MAIL_DRIVER.resend) return Redacted.value(resendApiKey).trim() !== ""
+  return true
+}
+
 export const mailConfig = Config.all({
   driver: Config.literal(
     MAIL_DRIVER.smtp,
     MAIL_DRIVER.resend,
     MAIL_DRIVER.console,
   )("MAIL_DRIVER").pipe(Config.withDefault(MAIL_DRIVER.smtp)),
-  from: Config.string("MAIL_FROM"),
+  from: Config.string("MAIL_FROM").pipe(Config.withDefault("")),
   smtpHost: Config.string("SMTP_HOST").pipe(Config.withDefault("")),
   smtpPort: Config.integer("SMTP_PORT").pipe(Config.withDefault(587)),
   smtpUser: Config.string("SMTP_USER").pipe(Config.withDefault("")),
@@ -133,7 +185,7 @@ export const mailConfig = Config.all({
   smtpSecure: Config.boolean("SMTP_SECURE").pipe(Config.withDefault(true)),
   resendApiKey: Config.redacted("RESEND_API_KEY").pipe(Config.withDefault(NO_SECRET)),
   channelFailureLimit: Config.integer("CHANNEL_FAILURE_LIMIT").pipe(Config.withDefault(10)),
-})
+}).pipe(Config.map((mail) => ({ ...mail, isAvailable: isMailTransportConfigured(mail) })))
 
 export const observabilityConfig = Config.all({
   otelEndpoint: Config.string("OTEL_EXPORTER_OTLP_ENDPOINT").pipe(Config.withDefault("")),
