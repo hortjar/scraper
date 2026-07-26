@@ -15,10 +15,10 @@ import type { Users } from "./users/users.service.js"
 
 export type AuthServices = AppConfig | Translator | Users | Sessions | ApiKeys
 
-export type AuthRuntime = ManagedRuntime.ManagedRuntime<AuthServices, unknown>
+export type AuthRuntime<R = never> = ManagedRuntime.ManagedRuntime<R | AuthServices, unknown>
 
-export interface AuthPluginOptions {
-  readonly runtime: AuthRuntime
+export interface AuthPluginOptions<R = never> {
+  readonly runtime: AuthRuntime<R>
   readonly config: RootConfig
 }
 
@@ -27,12 +27,12 @@ export interface AuthFailureResponse {
   readonly body: HttpErrorBody
 }
 
-export type RunAuthFx = <A, E extends AppError>(
-  effect: Effect.Effect<A, E, AuthServices>,
+export type RunAuthFx<R = never> = <A, E extends AppError>(
+  effect: Effect.Effect<A, E, R | AuthServices>,
 ) => Promise<A | HttpErrorBody>
 
-export type RunAuthEither = <A, E extends AppError>(
-  effect: Effect.Effect<A, E, AuthServices>,
+export type RunAuthEither<R = never> = <A, E extends AppError>(
+  effect: Effect.Effect<A, E, R | AuthServices>,
 ) => Promise<Either.Either<A, AuthFailureResponse>>
 
 const COOKIE_PAIR_SEPARATOR = ";"
@@ -122,12 +122,12 @@ const failureResponse = (
   })
 
 export const makeRunAuthEither =
-  (
-    runtime: AuthRuntime,
+  <R>(
+    runtime: AuthRuntime<R>,
     headers: Readonly<Record<string, string | undefined>>,
     set: ResponseSink,
-  ): RunAuthEither =>
-  <A, E extends AppError>(effect: Effect.Effect<A, E, AuthServices>) =>
+  ): RunAuthEither<R> =>
+  <A, E extends AppError>(effect: Effect.Effect<A, E, R | AuthServices>) =>
     runtime.runPromise(
       effect.pipe(
         Effect.map((value): Either.Either<A, AuthFailureResponse> => Either.right(value)),
@@ -139,20 +139,20 @@ export const makeRunAuthEither =
       ),
     )
 
-export const makeRunAuthFx = (
-  runtime: AuthRuntime,
+export const makeRunAuthFx = <R>(
+  runtime: AuthRuntime<R>,
   headers: Readonly<Record<string, string | undefined>>,
   set: ResponseSink,
-): RunAuthFx => {
-  const runEither = makeRunAuthEither(runtime, headers, set)
+): RunAuthFx<R> => {
+  const runEither = makeRunAuthEither<R>(runtime, headers, set)
   return async (effect) => {
     const outcome = await runEither(effect)
     return Either.isRight(outcome) ? outcome.right : outcome.left.body
   }
 }
 
-export const authBase = ({ runtime, config }: AuthPluginOptions, name: string) =>
+export const authBase = <R>({ runtime, config }: AuthPluginOptions<R>, name: string) =>
   new Elysia({ name }).derive({ as: "scoped" }, ({ headers, set }) => ({
-    runAuthFx: makeRunAuthFx(runtime, headers, set),
+    runAuthFx: makeRunAuthFx<R>(runtime, headers, set),
     requestContext: requestContextFrom(headers, config.http.trustProxy),
   }))

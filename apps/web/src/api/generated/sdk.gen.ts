@@ -3,7 +3,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateApiKeyData, CreateApiKeyErrors, CreateApiKeyResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetHealthData, GetHealthResponses, GetMetaData, GetMetaResponses, GetMetricsData, GetMetricsResponses, GetReadinessData, GetReadinessErrors, GetReadinessResponses, ListApiKeysData, ListApiKeysErrors, ListApiKeysResponses, ListSessionsData, ListSessionsErrors, ListSessionsResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, RegisterData, RegisterErrors, RegisterResponses, RequestEmailVerificationData, RequestEmailVerificationErrors, RequestEmailVerificationResponses, RequestPasswordResetData, RequestPasswordResetErrors, RequestPasswordResetResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllSessionsData, RevokeAllSessionsErrors, RevokeAllSessionsResponses, RevokeApiKeyData, RevokeApiKeyErrors, RevokeApiKeyResponses, RevokeSessionData, RevokeSessionErrors, RevokeSessionResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, VerifyEmailData, VerifyEmailErrors, VerifyEmailResponses } from './types.gen';
+import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateApiKeyData, CreateApiKeyErrors, CreateApiKeyResponses, CreateMonitorData, CreateMonitorErrors, CreateMonitorResponses, DeleteMonitorData, DeleteMonitorErrors, DeleteMonitorResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetHealthData, GetHealthResponses, GetMetaData, GetMetaResponses, GetMetricsData, GetMetricsResponses, GetMonitorData, GetMonitorErrors, GetMonitorResponses, GetReadinessData, GetReadinessErrors, GetReadinessResponses, ListApiKeysData, ListApiKeysErrors, ListApiKeysResponses, ListMonitorsData, ListMonitorsErrors, ListMonitorsResponses, ListSessionsData, ListSessionsErrors, ListSessionsResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, RegisterData, RegisterErrors, RegisterResponses, RequestEmailVerificationData, RequestEmailVerificationErrors, RequestEmailVerificationResponses, RequestPasswordResetData, RequestPasswordResetErrors, RequestPasswordResetResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllSessionsData, RevokeAllSessionsErrors, RevokeAllSessionsResponses, RevokeApiKeyData, RevokeApiKeyErrors, RevokeApiKeyResponses, RevokeSessionData, RevokeSessionErrors, RevokeSessionResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UpdateMonitorData, UpdateMonitorErrors, UpdateMonitorResponses, VerifyEmailData, VerifyEmailErrors, VerifyEmailResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -169,6 +169,45 @@ export const getMeta = <ThrowOnError extends boolean = false>(options?: Options<
  * Prometheus metrics
  */
 export const getMetrics = <ThrowOnError extends boolean = false>(options?: Options<GetMetricsData, ThrowOnError>): RequestResult<GetMetricsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetMetricsResponses, unknown, ThrowOnError>({ url: '/metrics', ...options });
+
+/**
+ * List monitors
+ */
+export const listMonitors = <ThrowOnError extends boolean = false>(options?: Options<ListMonitorsData, ThrowOnError>): RequestResult<ListMonitorsResponses, ListMonitorsErrors, ThrowOnError> => (options?.client ?? client).get<ListMonitorsResponses, ListMonitorsErrors, ThrowOnError>({ url: '/monitors', ...options });
+
+/**
+ * Create a monitor
+ */
+export const createMonitor = <ThrowOnError extends boolean = false>(options: Options<CreateMonitorData, ThrowOnError>): RequestResult<CreateMonitorResponses, CreateMonitorErrors, ThrowOnError> => (options.client ?? client).post<CreateMonitorResponses, CreateMonitorErrors, ThrowOnError>({
+    url: '/monitors',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete a monitor
+ */
+export const deleteMonitor = <ThrowOnError extends boolean = false>(options: Options<DeleteMonitorData, ThrowOnError>): RequestResult<DeleteMonitorResponses, DeleteMonitorErrors, ThrowOnError> => (options.client ?? client).delete<DeleteMonitorResponses, DeleteMonitorErrors, ThrowOnError>({ url: '/monitors/{monitorId}', ...options });
+
+/**
+ * Get a monitor
+ */
+export const getMonitor = <ThrowOnError extends boolean = false>(options: Options<GetMonitorData, ThrowOnError>): RequestResult<GetMonitorResponses, GetMonitorErrors, ThrowOnError> => (options.client ?? client).get<GetMonitorResponses, GetMonitorErrors, ThrowOnError>({ url: '/monitors/{monitorId}', ...options });
+
+/**
+ * Update a monitor
+ */
+export const updateMonitor = <ThrowOnError extends boolean = false>(options: Options<UpdateMonitorData, ThrowOnError>): RequestResult<UpdateMonitorResponses, UpdateMonitorErrors, ThrowOnError> => (options.client ?? client).patch<UpdateMonitorResponses, UpdateMonitorErrors, ThrowOnError>({
+    url: '/monitors/{monitorId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Readiness probe

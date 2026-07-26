@@ -4,8 +4,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { changePassword, createApiKey, getCurrentUser, getHealth, getMeta, getMetrics, getReadiness, listApiKeys, listSessions, login, logout, type Options, register, requestEmailVerification, requestPasswordReset, resetPassword, revokeAllSessions, revokeApiKey, revokeSession, updateCurrentUser, verifyEmail } from '../sdk.gen';
-import type { ChangePasswordData, ChangePasswordError, CreateApiKeyData, CreateApiKeyError, CreateApiKeyResponse, GetCurrentUserData, GetCurrentUserError, GetCurrentUserResponse, GetHealthData, GetHealthResponse, GetMetaData, GetMetaResponse, GetMetricsData, GetMetricsResponse, GetReadinessData, GetReadinessError, GetReadinessResponse, ListApiKeysData, ListApiKeysError, ListApiKeysResponse, ListSessionsData, ListSessionsError, ListSessionsResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, RegisterData, RegisterError, RegisterResponse, RequestEmailVerificationData, RequestEmailVerificationError, RequestEmailVerificationResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordData, ResetPasswordError, RevokeAllSessionsData, RevokeAllSessionsError, RevokeApiKeyData, RevokeApiKeyError, RevokeSessionData, RevokeSessionError, UpdateCurrentUserData, UpdateCurrentUserError, UpdateCurrentUserResponse, VerifyEmailData, VerifyEmailError } from '../types.gen';
+import { changePassword, createApiKey, createMonitor, deleteMonitor, getCurrentUser, getHealth, getMeta, getMetrics, getMonitor, getReadiness, listApiKeys, listMonitors, listSessions, login, logout, type Options, register, requestEmailVerification, requestPasswordReset, resetPassword, revokeAllSessions, revokeApiKey, revokeSession, updateCurrentUser, updateMonitor, verifyEmail } from '../sdk.gen';
+import type { ChangePasswordData, ChangePasswordError, CreateApiKeyData, CreateApiKeyError, CreateApiKeyResponse, CreateMonitorData, CreateMonitorError, CreateMonitorResponse, DeleteMonitorData, DeleteMonitorError, GetCurrentUserData, GetCurrentUserError, GetCurrentUserResponse, GetHealthData, GetHealthResponse, GetMetaData, GetMetaResponse, GetMetricsData, GetMetricsResponse, GetMonitorData, GetMonitorError, GetMonitorResponse, GetReadinessData, GetReadinessError, GetReadinessResponse, ListApiKeysData, ListApiKeysError, ListApiKeysResponse, ListMonitorsData, ListMonitorsError, ListMonitorsResponse, ListSessionsData, ListSessionsError, ListSessionsResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, RegisterData, RegisterError, RegisterResponse, RequestEmailVerificationData, RequestEmailVerificationError, RequestEmailVerificationResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordData, ResetPasswordError, RevokeAllSessionsData, RevokeAllSessionsError, RevokeApiKeyData, RevokeApiKeyError, RevokeSessionData, RevokeSessionError, UpdateCurrentUserData, UpdateCurrentUserError, UpdateCurrentUserResponse, UpdateMonitorData, UpdateMonitorError, UpdateMonitorResponse, VerifyEmailData, VerifyEmailError } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -368,6 +368,93 @@ export const getMetricsOptions = (options?: Options<GetMetricsData>) => queryOpt
     },
     queryKey: getMetricsQueryKey(options)
 });
+
+export const listMonitorsQueryKey = (options?: Options<ListMonitorsData>) => createQueryKey('listMonitors', options);
+
+/**
+ * List monitors
+ */
+export const listMonitorsOptions = (options?: Options<ListMonitorsData>) => queryOptions<ListMonitorsResponse, ListMonitorsError, ListMonitorsResponse, ReturnType<typeof listMonitorsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await listMonitors({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: listMonitorsQueryKey(options)
+});
+
+/**
+ * Create a monitor
+ */
+export const createMonitorMutation = (options?: Partial<Options<CreateMonitorData>>): UseMutationOptions<CreateMonitorResponse, CreateMonitorError, Options<CreateMonitorData>> => {
+    const mutationOptions: UseMutationOptions<CreateMonitorResponse, CreateMonitorError, Options<CreateMonitorData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await createMonitor({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Delete a monitor
+ */
+export const deleteMonitorMutation = (options?: Partial<Options<DeleteMonitorData>>): UseMutationOptions<unknown, DeleteMonitorError, Options<DeleteMonitorData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DeleteMonitorError, Options<DeleteMonitorData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteMonitor({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const getMonitorQueryKey = (options: Options<GetMonitorData>) => createQueryKey('getMonitor', options);
+
+/**
+ * Get a monitor
+ */
+export const getMonitorOptions = (options: Options<GetMonitorData>) => queryOptions<GetMonitorResponse, GetMonitorError, GetMonitorResponse, ReturnType<typeof getMonitorQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getMonitor({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getMonitorQueryKey(options)
+});
+
+/**
+ * Update a monitor
+ */
+export const updateMonitorMutation = (options?: Partial<Options<UpdateMonitorData>>): UseMutationOptions<UpdateMonitorResponse, UpdateMonitorError, Options<UpdateMonitorData>> => {
+    const mutationOptions: UseMutationOptions<UpdateMonitorResponse, UpdateMonitorError, Options<UpdateMonitorData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateMonitor({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
 
 export const getReadinessQueryKey = (options?: Options<GetReadinessData>) => createQueryKey('getReadiness', options);
 

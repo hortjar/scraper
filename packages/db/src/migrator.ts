@@ -12,6 +12,7 @@ type ReservedSql = Awaited<ReturnType<Sql["reserve"]>>
 const MIGRATIONS_DIR_URL = new URL("../migrations/", import.meta.url)
 const SQL_EXTENSION = ".sql"
 const MIGRATIONS_TABLE = "schema_migrations"
+const BASELINE_PROBE_TABLE = "public.users"
 
 const MIGRATION_STEP = {
   reserve: "migrate.reserve",
@@ -22,6 +23,8 @@ const MIGRATION_STEP = {
   listFiles: "migrate.listFiles",
   readFile: "migrate.readFile",
   apply: "migrate.apply",
+  probeSchema: "migrate.probeSchema",
+  baseline: "migrate.baseline",
 } as const
 
 export interface MigrationResult {
@@ -30,6 +33,9 @@ export interface MigrationResult {
 
 export const sortMigrationFiles = (files: readonly string[]): readonly string[] =>
   files.filter((file) => file.endsWith(SQL_EXTENSION)).toSorted((a, b) => a.localeCompare(b))
+
+export const shouldAdoptBaseline = (appliedCount: number, isSchemaPresent: boolean): boolean =>
+  appliedCount === 0 && isSchemaPresent
 
 export const selectPendingMigrations = (
   available: readonly string[],
@@ -77,6 +83,21 @@ const loadAppliedMigrations = (sql: Sql) =>
     () => sql<{ filename: string }[]>`select filename from ${sql(MIGRATIONS_TABLE)}`,
   ).pipe(Effect.map((rows) => new Set(rows.map((row) => row.filename))))
 
+const probeExistingSchema = (sql: Sql) =>
+  runQuery(
+    MIGRATION_STEP.probeSchema,
+    () =>
+      sql<
+        { present: boolean }[]
+      >`select to_regclass(${BASELINE_PROBE_TABLE}) is not null as present`,
+  ).pipe(Effect.map((rows) => rows[0]?.present === true))
+
+const recordBaseline = (sql: Sql, files: readonly string[]) =>
+  runQuery(
+    MIGRATION_STEP.baseline,
+    () => sql`insert into ${sql(MIGRATIONS_TABLE)} ${sql(files.map((filename) => ({ filename })))}`,
+  )
+
 const listMigrationFiles = () =>
   runQuery(MIGRATION_STEP.listFiles, () => readdir(MIGRATIONS_DIR_URL))
 
@@ -102,11 +123,26 @@ const applyMigration = (sql: Sql, file: string) =>
     Effect.zipRight(logMigrationApplied(file)),
   )
 
+const adoptExistingSchema = (sql: Sql, available: readonly string[]) =>
+  Effect.gen(function* () {
+    const baseline = sortMigrationFiles(available)
+    if (baseline.length > 0) yield* recordBaseline(sql, baseline)
+    yield* Effect.logWarning("db.migrate.baseline").pipe(
+      Effect.annotateLogs({ [LOG_FIELD.migrationsApplied]: baseline.length }),
+    )
+    return { applied: [] as readonly string[] }
+  })
+
 const applyPendingMigrations = (sql: Sql) =>
   Effect.gen(function* () {
     yield* ensureMigrationsTable(sql)
     const applied = yield* loadAppliedMigrations(sql)
     const entries = yield* listMigrationFiles()
+
+    if (shouldAdoptBaseline(applied.size, yield* probeExistingSchema(sql))) {
+      return yield* adoptExistingSchema(sql, entries)
+    }
+
     const pending = selectPendingMigrations(entries, applied)
 
     yield* Effect.forEach(pending, (file) => applyMigration(sql, file), { discard: true })

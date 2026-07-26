@@ -117,6 +117,17 @@ The runner does **not** shell out to `drizzle-kit`. It:
 
 3. Creates a `schema_migrations(filename text primary key, applied_at timestamptz)`
    tracking table if it does not already exist.
+
+   **Baselines an existing schema instead of crashing.** If the tracking table is
+   empty but `public.users` already exists, the database was migrated by some other
+   route — `pnpm db:migrate` via drizzle-kit tracks in its own
+   `__drizzle_migrations` table, not this one. Every current migration file is then
+   recorded as applied and nothing is executed, with a `db.migrate.baseline`
+   warning. Without this, boot re-runs `0000_init.sql`, and only 2 of its 60
+   `CREATE` statements are `IF NOT EXISTS`, so it fails, `main.ts` exits non-zero,
+   and a previously healthy deployment starts answering 502. That is not
+   hypothetical — it happened.
+
 4. Reads `migrations/*.sql`, sorted lexically by filename — hence the zero-padded
    `NNNN_` prefix convention — and applies whichever filenames are not yet in
    `schema_migrations`.

@@ -3431,6 +3431,1660 @@ export type GetMetricsResponses = {
 
 export type GetMetricsResponse = GetMetricsResponses[keyof GetMetricsResponses];
 
+export type ListMonitorsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/monitors';
+};
+
+export type ListMonitorsErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type ListMonitorsError = ListMonitorsErrors[keyof ListMonitorsErrors];
+
+export type ListMonitorsResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        items: Array<{
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            consecutiveFailures: number;
+            contentSelector: string | unknown;
+            createdAt: string;
+            enabled: boolean;
+            engine: 'http' | 'browser' | 'auto';
+            engineResolved: string | unknown;
+            /**
+             * a Universally Unique Identifier
+             */
+            id: string;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            jitterSeconds: number;
+            lastChangeAt: string | unknown;
+            lastRunAt: string | unknown;
+            name: string;
+            nextRunAt: string | unknown;
+            respectRobots: boolean;
+            schedule: {
+                /**
+                 * positive
+                 *
+                 * a positive number
+                 */
+                intervalSeconds: number;
+                kind: 'interval';
+                /**
+                 * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+                 */
+                timezone: string;
+            } | {
+                /**
+                 * a string matching the pattern ^(\*|[0-5]?\d)(\/\d+)?(,(\*|[0-5]?\d))*\s+(\*|1?\d|2[0-3])(\/\d+)?(,(\*|1?\d|2[0-3]))*\s+(\*|[12]?\d|3[01])(\/\d+)?\s+(\*|[1-9]|1[0-2])(\/\d+)?\s+(\*|[0-6])(\/\d+)?$
+                 */
+                expression: string;
+                kind: 'cron';
+                /**
+                 * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+                 */
+                timezone: string;
+            };
+            status: string;
+            tags: Array<string>;
+            updatedAt: string;
+            url: string;
+        }>;
+        nextCursor: string | unknown;
+    };
+};
+
+export type ListMonitorsResponse = ListMonitorsResponses[keyof ListMonitorsResponses];
+
+export type CreateMonitorData = {
+    body: {
+        browserOptions?: {
+            blockResources?: Array<string>;
+            screenshot?: boolean;
+            steps?: Array<{
+                kind: 'click' | 'fill' | 'select' | 'scroll' | 'wait_for';
+                selector?: string;
+                /**
+                 * positive
+                 *
+                 * a positive number
+                 */
+                timeoutMs?: number;
+                value?: string;
+            }>;
+            viewport?: {
+                /**
+                 * positive
+                 *
+                 * a positive number
+                 */
+                height: number;
+                /**
+                 * positive
+                 *
+                 * a positive number
+                 */
+                width: number;
+            };
+            waitForSelector?: string;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            waitMs?: number;
+            waitUntil?: 'load' | 'domcontentloaded' | 'networkidle';
+        };
+        contentSelector?: string | unknown;
+        enabled?: boolean;
+        engine?: 'http' | 'browser' | 'auto';
+        extractors?: Array<{
+            attribute?: string | unknown;
+            /**
+             * a string matching the pattern ^[a-z][a-z0-9_]{0,63}$
+             */
+            key: string;
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            label: string;
+            occurrence?: 'first' | 'last' | 'all' | 'nth';
+            occurrenceIndex?: number | unknown;
+            required?: boolean;
+            selector: string;
+            selectorKind: 'css' | 'xpath' | 'jsonpath' | 'regex' | 'json_ld' | 'whole_page';
+            transforms?: Array<{
+                kind: 'trim';
+            } | {
+                kind: 'lowercase';
+            } | {
+                kind: 'uppercase';
+            } | {
+                kind: 'collapse_whitespace';
+            } | {
+                kind: 'strip_html';
+            } | {
+                /**
+                 * nonNegative
+                 *
+                 * a non-negative number
+                 */
+                group?: number;
+                kind: 'regex_extract';
+                /**
+                 * trimmed
+                 *
+                 * a string with no leading or trailing whitespace
+                 */
+                pattern: string;
+            } | {
+                kind: 'regex_replace';
+                /**
+                 * trimmed
+                 *
+                 * a string with no leading or trailing whitespace
+                 */
+                pattern: string;
+                replacement: string;
+            } | {
+                /**
+                 * nonNegative
+                 *
+                 * a non-negative number
+                 */
+                end?: number;
+                kind: 'slice';
+                /**
+                 * nonNegative
+                 *
+                 * a non-negative number
+                 */
+                start: number;
+            } | {
+                decimal?: string;
+                kind: 'parse_number';
+                locale?: string;
+                thousands?: string;
+            } | {
+                currency?: string;
+                kind: 'parse_price';
+            } | {
+                format?: string;
+                kind: 'parse_date';
+                /**
+                 * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+                 */
+                timezone?: string;
+            } | {
+                kind: 'map_values';
+                mapping: {
+                    [key: string]: string;
+                };
+            } | {
+                kind: 'default';
+                value: string;
+            } | {
+                kind: 'json_path';
+                /**
+                 * trimmed
+                 *
+                 * a string with no leading or trailing whitespace
+                 */
+                path: string;
+            }>;
+            valueType: 'text' | 'number' | 'price' | 'boolean' | 'url' | 'date' | 'list';
+        }>;
+        ignoreRules?: Array<{
+            kind: 'selector' | 'regex';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            value: string;
+        }>;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        jitterSeconds?: number;
+        /**
+         * trimmed
+         *
+         * a string with no leading or trailing whitespace
+         */
+        name: string;
+        request?: {
+            body?: string;
+            cookies?: {
+                [key: string]: string;
+            };
+            followRedirects?: boolean;
+            headers?: {
+                [key: string]: string;
+            };
+            method?: 'GET' | 'POST' | 'HEAD';
+            /**
+             * positive
+             *
+             * a positive number
+             */
+            timeoutMs?: number;
+            userAgent?: string;
+        };
+        respectRobots?: boolean;
+        schedule: {
+            /**
+             * positive
+             *
+             * a positive number
+             */
+            intervalSeconds: number;
+            kind: 'interval';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        } | {
+            /**
+             * a string matching the pattern ^(\*|[0-5]?\d)(\/\d+)?(,(\*|[0-5]?\d))*\s+(\*|1?\d|2[0-3])(\/\d+)?(,(\*|1?\d|2[0-3]))*\s+(\*|[12]?\d|3[01])(\/\d+)?\s+(\*|[1-9]|1[0-2])(\/\d+)?\s+(\*|[0-6])(\/\d+)?$
+             */
+            expression: string;
+            kind: 'cron';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        };
+        tags?: Array<string>;
+        url: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/monitors';
+};
+
+export type CreateMonitorErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type CreateMonitorError = CreateMonitorErrors[keyof CreateMonitorErrors];
+
+export type CreateMonitorResponses = {
+    /**
+     * Response for status 201
+     */
+    201: {
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        consecutiveFailures: number;
+        contentSelector: string | unknown;
+        createdAt: string;
+        enabled: boolean;
+        engine: 'http' | 'browser' | 'auto';
+        engineResolved: string | unknown;
+        extractors: Array<{
+            attribute: string | unknown;
+            id: string;
+            key: string;
+            label: string;
+            occurrence: 'first' | 'last' | 'all' | 'nth';
+            occurrenceIndex: number | unknown;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            position: number;
+            required: boolean;
+            selector: string;
+            selectorKind: 'css' | 'xpath' | 'jsonpath' | 'regex' | 'json_ld' | 'whole_page';
+            valueType: 'text' | 'number' | 'price' | 'boolean' | 'url' | 'date' | 'list';
+        }>;
+        /**
+         * a Universally Unique Identifier
+         */
+        id: string;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        jitterSeconds: number;
+        lastChangeAt: string | unknown;
+        lastRunAt: string | unknown;
+        name: string;
+        nextRunAt: string | unknown;
+        respectRobots: boolean;
+        schedule: {
+            /**
+             * positive
+             *
+             * a positive number
+             */
+            intervalSeconds: number;
+            kind: 'interval';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        } | {
+            /**
+             * a string matching the pattern ^(\*|[0-5]?\d)(\/\d+)?(,(\*|[0-5]?\d))*\s+(\*|1?\d|2[0-3])(\/\d+)?(,(\*|1?\d|2[0-3]))*\s+(\*|[12]?\d|3[01])(\/\d+)?\s+(\*|[1-9]|1[0-2])(\/\d+)?\s+(\*|[0-6])(\/\d+)?$
+             */
+            expression: string;
+            kind: 'cron';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        };
+        status: string;
+        tags: Array<string>;
+        updatedAt: string;
+        url: string;
+    };
+};
+
+export type CreateMonitorResponse = CreateMonitorResponses[keyof CreateMonitorResponses];
+
+export type DeleteMonitorData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}';
+};
+
+export type DeleteMonitorErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type DeleteMonitorError = DeleteMonitorErrors[keyof DeleteMonitorErrors];
+
+export type DeleteMonitorResponses = {
+    /**
+     * Response for status 204
+     */
+    204: unknown;
+};
+
+export type GetMonitorData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}';
+};
+
+export type GetMonitorErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type GetMonitorError = GetMonitorErrors[keyof GetMonitorErrors];
+
+export type GetMonitorResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        consecutiveFailures: number;
+        contentSelector: string | unknown;
+        createdAt: string;
+        enabled: boolean;
+        engine: 'http' | 'browser' | 'auto';
+        engineResolved: string | unknown;
+        extractors: Array<{
+            attribute: string | unknown;
+            id: string;
+            key: string;
+            label: string;
+            occurrence: 'first' | 'last' | 'all' | 'nth';
+            occurrenceIndex: number | unknown;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            position: number;
+            required: boolean;
+            selector: string;
+            selectorKind: 'css' | 'xpath' | 'jsonpath' | 'regex' | 'json_ld' | 'whole_page';
+            valueType: 'text' | 'number' | 'price' | 'boolean' | 'url' | 'date' | 'list';
+        }>;
+        /**
+         * a Universally Unique Identifier
+         */
+        id: string;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        jitterSeconds: number;
+        lastChangeAt: string | unknown;
+        lastRunAt: string | unknown;
+        name: string;
+        nextRunAt: string | unknown;
+        respectRobots: boolean;
+        schedule: {
+            /**
+             * positive
+             *
+             * a positive number
+             */
+            intervalSeconds: number;
+            kind: 'interval';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        } | {
+            /**
+             * a string matching the pattern ^(\*|[0-5]?\d)(\/\d+)?(,(\*|[0-5]?\d))*\s+(\*|1?\d|2[0-3])(\/\d+)?(,(\*|1?\d|2[0-3]))*\s+(\*|[12]?\d|3[01])(\/\d+)?\s+(\*|[1-9]|1[0-2])(\/\d+)?\s+(\*|[0-6])(\/\d+)?$
+             */
+            expression: string;
+            kind: 'cron';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        };
+        status: string;
+        tags: Array<string>;
+        updatedAt: string;
+        url: string;
+    };
+};
+
+export type GetMonitorResponse = GetMonitorResponses[keyof GetMonitorResponses];
+
+export type UpdateMonitorData = {
+    body: {
+        browserOptions?: {
+            blockResources?: Array<string>;
+            screenshot?: boolean;
+            steps?: Array<{
+                kind: 'click' | 'fill' | 'select' | 'scroll' | 'wait_for';
+                selector?: string;
+                /**
+                 * positive
+                 *
+                 * a positive number
+                 */
+                timeoutMs?: number;
+                value?: string;
+            }>;
+            viewport?: {
+                /**
+                 * positive
+                 *
+                 * a positive number
+                 */
+                height: number;
+                /**
+                 * positive
+                 *
+                 * a positive number
+                 */
+                width: number;
+            };
+            waitForSelector?: string;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            waitMs?: number;
+            waitUntil?: 'load' | 'domcontentloaded' | 'networkidle';
+        };
+        contentSelector?: string | unknown;
+        enabled?: boolean;
+        engine?: 'http' | 'browser' | 'auto';
+        extractors?: Array<{
+            attribute?: string | unknown;
+            /**
+             * a string matching the pattern ^[a-z][a-z0-9_]{0,63}$
+             */
+            key: string;
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            label: string;
+            occurrence?: 'first' | 'last' | 'all' | 'nth';
+            occurrenceIndex?: number | unknown;
+            required?: boolean;
+            selector: string;
+            selectorKind: 'css' | 'xpath' | 'jsonpath' | 'regex' | 'json_ld' | 'whole_page';
+            transforms?: Array<{
+                kind: 'trim';
+            } | {
+                kind: 'lowercase';
+            } | {
+                kind: 'uppercase';
+            } | {
+                kind: 'collapse_whitespace';
+            } | {
+                kind: 'strip_html';
+            } | {
+                /**
+                 * nonNegative
+                 *
+                 * a non-negative number
+                 */
+                group?: number;
+                kind: 'regex_extract';
+                /**
+                 * trimmed
+                 *
+                 * a string with no leading or trailing whitespace
+                 */
+                pattern: string;
+            } | {
+                kind: 'regex_replace';
+                /**
+                 * trimmed
+                 *
+                 * a string with no leading or trailing whitespace
+                 */
+                pattern: string;
+                replacement: string;
+            } | {
+                /**
+                 * nonNegative
+                 *
+                 * a non-negative number
+                 */
+                end?: number;
+                kind: 'slice';
+                /**
+                 * nonNegative
+                 *
+                 * a non-negative number
+                 */
+                start: number;
+            } | {
+                decimal?: string;
+                kind: 'parse_number';
+                locale?: string;
+                thousands?: string;
+            } | {
+                currency?: string;
+                kind: 'parse_price';
+            } | {
+                format?: string;
+                kind: 'parse_date';
+                /**
+                 * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+                 */
+                timezone?: string;
+            } | {
+                kind: 'map_values';
+                mapping: {
+                    [key: string]: string;
+                };
+            } | {
+                kind: 'default';
+                value: string;
+            } | {
+                kind: 'json_path';
+                /**
+                 * trimmed
+                 *
+                 * a string with no leading or trailing whitespace
+                 */
+                path: string;
+            }>;
+            valueType: 'text' | 'number' | 'price' | 'boolean' | 'url' | 'date' | 'list';
+        }>;
+        ignoreRules?: Array<{
+            kind: 'selector' | 'regex';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            value: string;
+        }>;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        jitterSeconds?: number;
+        /**
+         * trimmed
+         *
+         * a string with no leading or trailing whitespace
+         */
+        name?: string;
+        request?: {
+            body?: string;
+            cookies?: {
+                [key: string]: string;
+            };
+            followRedirects?: boolean;
+            headers?: {
+                [key: string]: string;
+            };
+            method?: 'GET' | 'POST' | 'HEAD';
+            /**
+             * positive
+             *
+             * a positive number
+             */
+            timeoutMs?: number;
+            userAgent?: string;
+        };
+        respectRobots?: boolean;
+        schedule?: {
+            /**
+             * positive
+             *
+             * a positive number
+             */
+            intervalSeconds: number;
+            kind: 'interval';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        } | {
+            /**
+             * a string matching the pattern ^(\*|[0-5]?\d)(\/\d+)?(,(\*|[0-5]?\d))*\s+(\*|1?\d|2[0-3])(\/\d+)?(,(\*|1?\d|2[0-3]))*\s+(\*|[12]?\d|3[01])(\/\d+)?\s+(\*|[1-9]|1[0-2])(\/\d+)?\s+(\*|[0-6])(\/\d+)?$
+             */
+            expression: string;
+            kind: 'cron';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        };
+        tags?: Array<string>;
+        url?: string;
+    };
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}';
+};
+
+export type UpdateMonitorErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type UpdateMonitorError = UpdateMonitorErrors[keyof UpdateMonitorErrors];
+
+export type UpdateMonitorResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        consecutiveFailures: number;
+        contentSelector: string | unknown;
+        createdAt: string;
+        enabled: boolean;
+        engine: 'http' | 'browser' | 'auto';
+        engineResolved: string | unknown;
+        extractors: Array<{
+            attribute: string | unknown;
+            id: string;
+            key: string;
+            label: string;
+            occurrence: 'first' | 'last' | 'all' | 'nth';
+            occurrenceIndex: number | unknown;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            position: number;
+            required: boolean;
+            selector: string;
+            selectorKind: 'css' | 'xpath' | 'jsonpath' | 'regex' | 'json_ld' | 'whole_page';
+            valueType: 'text' | 'number' | 'price' | 'boolean' | 'url' | 'date' | 'list';
+        }>;
+        /**
+         * a Universally Unique Identifier
+         */
+        id: string;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        jitterSeconds: number;
+        lastChangeAt: string | unknown;
+        lastRunAt: string | unknown;
+        name: string;
+        nextRunAt: string | unknown;
+        respectRobots: boolean;
+        schedule: {
+            /**
+             * positive
+             *
+             * a positive number
+             */
+            intervalSeconds: number;
+            kind: 'interval';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        } | {
+            /**
+             * a string matching the pattern ^(\*|[0-5]?\d)(\/\d+)?(,(\*|[0-5]?\d))*\s+(\*|1?\d|2[0-3])(\/\d+)?(,(\*|1?\d|2[0-3]))*\s+(\*|[12]?\d|3[01])(\/\d+)?\s+(\*|[1-9]|1[0-2])(\/\d+)?\s+(\*|[0-6])(\/\d+)?$
+             */
+            expression: string;
+            kind: 'cron';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        };
+        status: string;
+        tags: Array<string>;
+        updatedAt: string;
+        url: string;
+    };
+};
+
+export type UpdateMonitorResponse = UpdateMonitorResponses[keyof UpdateMonitorResponses];
+
 export type GetReadinessData = {
     body?: never;
     path?: never;

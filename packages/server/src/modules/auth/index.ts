@@ -30,6 +30,8 @@ export { bootstrapAdmin } from "./auth.bootstrap.js"
 
 export { iso, isoOrNull, toApiKeyDto, toSessionDto, toUserDto } from "./auth.dto.js"
 
+export { authBase } from "./auth.http.js"
+
 export {
   buildSessionCookie,
   clearedSessionCookie,
@@ -64,6 +66,14 @@ export {
 } from "./auth.rate-limit.js"
 
 export { authRoutes } from "./auth.routes.js"
+
+export {
+  ACCEPTED_BODY,
+  FAILURES,
+  standardAccepted,
+  standardError,
+  standardNoContent,
+} from "./routes/auth.responses.js"
 
 export {
   ApiKeyDto,

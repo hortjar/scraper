@@ -2,7 +2,7 @@ import { readdirSync } from "node:fs"
 
 import { describe, expect, it } from "vitest"
 
-import { selectPendingMigrations, sortMigrationFiles } from "./migrator.js"
+import { selectPendingMigrations, shouldAdoptBaseline, sortMigrationFiles } from "./migrator.js"
 
 const MIGRATIONS_DIR_URL = new URL("../migrations/", import.meta.url)
 
@@ -61,5 +61,20 @@ describe("selectPendingMigrations", () => {
       "0000_init.sql",
       "0002_notifications.sql",
     ])
+  })
+})
+
+describe("shouldAdoptBaseline", () => {
+  it("adopts when the schema exists but nothing is tracked", () => {
+    expect(shouldAdoptBaseline(0, true)).toBe(true)
+  })
+
+  it("migrates normally on an empty database", () => {
+    expect(shouldAdoptBaseline(0, false)).toBe(false)
+  })
+
+  it("never adopts once anything is tracked, so later migrations still apply", () => {
+    expect(shouldAdoptBaseline(2, true)).toBe(false)
+    expect(shouldAdoptBaseline(2, false)).toBe(false)
   })
 })
