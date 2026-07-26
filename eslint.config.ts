@@ -105,27 +105,6 @@ const architecture: ConfigArray = [
     files: ["apps/web/src/components/**/*.tsx", "apps/web/src/landing/**/*.tsx"],
     rules: { "max-lines": ["error", { max: 150, skipBlankLines: true }] },
   },
-  {
-    name: "scraper/pending-hortjar-eslint-config-0.3.1",
-    files: ["**/*.{ts,tsx}"],
-    rules: {
-      "unicorn/name-replacements": [
-        "error",
-        {
-          replacements: {
-            db: { database: true },
-            e: false,
-            repository: false,
-          },
-        },
-      ],
-    },
-  },
-  {
-    name: "scraper/pending-hortjar-eslint-config-0.3.1-ambient",
-    files: ["**/*.d.ts"],
-    rules: { "no-var": "off" },
-  },
 ]
 
 export default defineConfig(
