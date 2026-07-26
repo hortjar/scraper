@@ -68,13 +68,13 @@ locally, `verify-generated` fails on `main` after you have already pushed.
 Then bump the versions, update `CHANGELOG.md`, and:
 
 ```bash
-git commit -am "chore(release): v0.3.0"
-git tag -a v0.3.0 -m "v0.3.0"
-git push origin main && git push origin v0.3.0
+git commit -am "chore(release): v0.5.0"
+git tag -a v0.5.0 -m "v0.5.0"
+git push origin main && git push origin v0.5.0
 ```
 
-Commit messages go through commitlint — `release: v0.3.0` is rejected, and
-`chore(release): v0.3.0` is the form that passes.
+Commit messages go through commitlint — `release: v0.5.0` is rejected, and
+`chore(release): v0.5.0` is the form that passes.
 
 ## 2. Build and push the images
 
@@ -82,8 +82,8 @@ Only for the registry path. Skip it if you are following §A.
 
 ```bash
 export IMAGE_REGISTRY=ghcr.io/<your-org-or-username>
-export IMAGE_TAG=v0.4.0
-export APP_VERSION=0.3.0
+export IMAGE_TAG=v0.5.0
+export APP_VERSION=0.5.0
 export GIT_SHA=$(git rev-parse --short HEAD)
 
 cd deploy
@@ -194,7 +194,7 @@ inside the network:
 
 ```bash
 docker compose exec api wget -qO- http://localhost:9300/api/v1/health
-# {"status":"ok","version":"0.3.0","commit":"a1b2c3d","time":"..."}
+# {"status":"ok","version":"0.5.0","commit":"a1b2c3d","time":"..."}
 ```
 
 `version` and `commit` come from the `APP_VERSION`/`GIT_SHA` build args, so a stale

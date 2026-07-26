@@ -59,7 +59,7 @@ missing one fails the deploy immediately, naming the variable:
 
 | Variable            | Value                                                      |
 | ------------------- | ---------------------------------------------------------- |
-| `IMAGE_TAG`         | The tag you pushed, e.g. `v0.3.0`. **Not** `latest`        |
+| `IMAGE_TAG`         | The tag you pushed, e.g. `v0.5.0`. **Not** `latest`        |
 | `APP_URL`           | Public URL, e.g. `https://scraper.example.com`             |
 | `POSTGRES_PASSWORD` | `openssl rand -base64 32`                                  |
 | `ENCRYPTION_KEY`    | `openssl rand -base64 32`                                  |

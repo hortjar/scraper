@@ -284,7 +284,7 @@ builds rather than trying to pull a name no registry serves.
 Publishing is opt-in, and worth it when you want pinned tags and instant rollback:
 
 ```bash
-export IMAGE_REGISTRY=ghcr.io/<org> IMAGE_TAG=v0.4.0
+export IMAGE_REGISTRY=ghcr.io/<org> IMAGE_TAG=v0.5.0
 docker compose -f docker-compose.yml -f docker-compose.build.yml build
 docker compose -f docker-compose.yml -f docker-compose.build.yml push
 ```
