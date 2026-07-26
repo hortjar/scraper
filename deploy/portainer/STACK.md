@@ -103,9 +103,13 @@ Workers are stateless. To increase scraping throughput:
 
 To deploy a new version:
 
-1. Update `IMAGE_TAG` to the new image tag (e.g., `v0.2.0`)
-2. Optionally update `APP_VERSION` and `GIT_SHA` (for version tracking)
-3. Redeploy
+1. **Build and push the images first** — CI does not do this. See
+   [docs/10-DEPLOYMENT.md §8](../../docs/10-DEPLOYMENT.md). A git tag alone does not
+   produce a deployable image, so an `IMAGE_TAG` that was never pushed fails the
+   pull.
+2. Update `IMAGE_TAG` to that image tag (e.g., `v0.2.0`)
+3. Optionally update `APP_VERSION` and `GIT_SHA` (for version tracking)
+4. Redeploy
 
 **Rolling deployment** — Docker will start new containers and drain old ones respecting `stop_grace_period`.
 

@@ -54,6 +54,7 @@ Notes:
 - Tags: `ghcr.io/<org>/scraper-<app>:<semver>` plus `:sha-<short>`. **Never deploy
   `:latest`** — Portainer's "re-pull and redeploy" on a moving tag makes rollback
   guesswork.
+- **Nothing builds these automatically.** They are pushed by hand; see §8.
 
 ## 2. Compose files
 
@@ -250,8 +251,26 @@ expensive ones: budget ~300 MB per concurrent context.
 push → typecheck · lint · unit tests · build
      → integration tests (Testcontainers: postgres + redis)
      → E2E (compose up, Playwright against the real stack)
-     → build & push 3 images (buildx cache, multi-arch amd64/arm64)
-     → tag release → optional Portainer webhook to redeploy
+
+tag v* → GitHub release
 ```
 
-Multi-arch matters: plenty of self-hosters run this on ARM boxes.
+**CI does not build or publish images.** The release workflow only cuts the GitHub
+release; pushing a tag produces no new `ghcr.io/<org>/scraper-*` image. Images are
+built and pushed by hand with the `docker-compose.build.yml` overlay:
+
+```bash
+export GH_ORG=<org> IMAGE_TAG=v0.2.1
+docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml build
+docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml push
+```
+
+Two consequences worth knowing before a deploy:
+
+- **`IMAGE_TAG` in a production stack must name a tag that was actually pushed.**
+  Nothing publishes it for you, so a fresh git tag does not become a deployable
+  image until someone runs the commands above.
+- **`docker compose build` produces a single architecture — the host's.** The old
+  pipeline built `linux/amd64,linux/arm64` via buildx. If the deploy target's
+  architecture differs from the machine doing the build, build with
+  `docker buildx bake` or run the build on the target's architecture instead.
