@@ -3,6 +3,7 @@ import process from "node:process"
 import { AppConfig, seedAppVersion } from "@scraper/core/config"
 import { LOG_FIELD, TIMEOUT } from "@scraper/core/constants"
 import { runMigrations } from "@scraper/db/migrator"
+import { bootstrapAdmin } from "@scraper/server/modules/auth"
 import { Cause, Effect, Exit } from "effect"
 
 import { createApp } from "./app.js"
@@ -37,12 +38,14 @@ if (Exit.isFailure(migrationExit)) {
   process.exit(1)
 }
 
+await runtime.runPromise(bootstrapAdmin)
+
 const redisProbe = makeRedisProbe(config.redis)
 
 const app = createApp({
   runtime,
   redisProbe,
-  corsOrigins: config.http.corsOrigins,
+  config,
 })
 
 app.listen({ hostname: config.http.host, port: config.http.port }, () => {

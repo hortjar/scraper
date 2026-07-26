@@ -96,7 +96,6 @@ export const API_KEY = {
   prefix: "sk",
   separator: "_",
   prefixLength: 8,
-  segments: 3,
 } as const
 
 export const DUMMY_PASSWORD = "equalize-login-timing-for-unknown-accounts"

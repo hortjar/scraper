@@ -23,10 +23,8 @@ export interface ParsedApiKey {
 }
 
 export const parseApiKey = (raw: string): ParsedApiKey | null => {
-  if (!PATTERN.apiKeyFormat.test(raw)) return null
-  const parts = raw.split(API_KEY.separator)
-  if (parts.length !== API_KEY.segments) return null
-  const [, prefix] = parts
+  const match = PATTERN.apiKeyFormat.exec(raw)
+  const prefix = match?.[1]
   return prefix === undefined ? null : { prefix, raw }
 }
 

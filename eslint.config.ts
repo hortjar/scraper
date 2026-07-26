@@ -56,7 +56,7 @@ const architecture: ConfigArray = [
         {
           patterns: [
             {
-              group: ["**/modules/*/!(index)", "**/modules/*/*"],
+              group: ["**/modules/*/!(index.js)", "**/modules/*/*/**"],
               message: "Import a module through its index.ts contract only.",
             },
             {

@@ -5,6 +5,8 @@ import { Effect } from "effect"
 
 export type SqlClient = Database["client"]
 
+export const sqlTimestamp = (value: Date): string => value.toISOString()
+
 export const runSql = <A>(
   database: Database,
   operation: string,

@@ -6,7 +6,7 @@ import { constraintFailure, decodeRow } from "@scraper/db/repository"
 import { users } from "@scraper/db/schema"
 import { Effect, Schema } from "effect"
 
-import { runSql } from "../auth.database.js"
+import { runSql, sqlTimestamp } from "../auth.database.js"
 
 export const UserRecord = Schema.Struct({
   ...User.fields,
@@ -90,7 +90,7 @@ export class UserRepository extends Effect.Service<UserRepository>()(SERVICE_TAG
              set display_name = coalesce(${patch.displayName ?? null}, display_name),
                  timezone = coalesce(${patch.timezone ?? null}, timezone),
                  locale = coalesce(${patch.locale ?? null}, locale),
-                 updated_at = ${now}
+                 updated_at = ${sqlTimestamp(now)}
            where id = ${id}
         `,
       )
@@ -107,7 +107,7 @@ export class UserRepository extends Effect.Service<UserRepository>()(SERVICE_TAG
         SPAN.auth.changePassword,
         (client) => client`
           update users
-             set password_hash = ${passwordHash}, updated_at = ${now}
+             set password_hash = ${passwordHash}, updated_at = ${sqlTimestamp(now)}
            where id = ${id}
         `,
       )
@@ -119,7 +119,7 @@ export class UserRepository extends Effect.Service<UserRepository>()(SERVICE_TAG
         SPAN.auth.verifyEmail,
         (client) => client`
           update users
-             set email_verified_at = ${now}, updated_at = ${now}
+             set email_verified_at = ${sqlTimestamp(now)}, updated_at = ${sqlTimestamp(now)}
            where id = ${id}
         `,
       )

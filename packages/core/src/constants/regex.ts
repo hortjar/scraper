@@ -14,6 +14,6 @@ export const PATTERN = {
   scriptOrStyle: /<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,
   whitespaceRun: /\s+/g,
   bearerToken: /^Bearer\s+(.+)$/i,
-  apiKeyFormat: /^sk_[a-zA-Z0-9]{8}_[A-Za-z0-9_-]{20,}$/,
+  apiKeyFormat: /^sk_([a-zA-Z0-9]{8})_([A-Za-z0-9_-]{20,})$/,
   localePart: /^[a-z]{2}(-[A-Z]{2})?$/,
 } as const

@@ -1,3 +1,10 @@
+import { Layer } from "effect"
+
+import { JobProducer } from "./job-producer.service.js"
+import { QueueRegistry } from "./queue-registry.service.js"
+import { RateLimiter } from "./rate-limiter.service.js"
+import { RedisClient } from "./redis-client.service.js"
+
 export { isRetryableFailure, describeFailure } from "./failure-classification.js"
 export {
   NotifyRunner,
@@ -30,3 +37,10 @@ export { recordQueueFire } from "./record-queue-fire.js"
 export { BULLMQ_CONNECTION_OPTIONS, RedisClient } from "./redis-client.service.js"
 export { type MonitorScheduleInput, type ScrapeSchedulerSource } from "./schedule-plan.js"
 export { slidingWindowDecision, type SlidingWindowDecision } from "./sliding-window.js"
+
+export const JobsLayer = Layer.mergeAll(
+  RedisClient.Default,
+  QueueRegistry.Default,
+  RateLimiter.Default,
+  JobProducer.Default,
+)

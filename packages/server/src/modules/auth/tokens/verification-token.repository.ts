@@ -5,7 +5,7 @@ import { constraintFailure, decodeRow } from "@scraper/db/repository"
 import { verificationTokens } from "@scraper/db/schema"
 import { Effect, Schema } from "effect"
 
-import { runSql } from "../auth.database.js"
+import { runSql, sqlTimestamp } from "../auth.database.js"
 
 export const VerificationTokenRecord = Schema.Struct({
   id: TokenId,
@@ -69,7 +69,7 @@ export class VerificationTokenRepository extends Effect.Service<VerificationToke
           SPAN.auth.consumeToken,
           (client) => client<{ id: string }[]>`
             update verification_tokens
-               set consumed_at = ${now}
+               set consumed_at = ${sqlTimestamp(now)}
              where id = ${id} and consumed_at is null
             returning id
           `,
@@ -87,7 +87,7 @@ export class VerificationTokenRepository extends Effect.Service<VerificationToke
           SPAN.auth.issueToken,
           (client) => client`
             update verification_tokens
-               set consumed_at = ${now}
+               set consumed_at = ${sqlTimestamp(now)}
              where user_id = ${userId} and purpose = ${purpose} and consumed_at is null
           `,
         )

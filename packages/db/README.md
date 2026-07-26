@@ -95,8 +95,11 @@ above is for local/manual use only.
 
 The runner does **not** shell out to `drizzle-kit`. It:
 
-1. **Reserves a single pooled connection** (`sql.reserve()`) and does everything on
-   it, releasing it in every path via `Effect.acquireUseRelease`.
+1. **Reserves a single pooled connection** (`sql.reserve()`) to hold the lock, and
+   releases it in every path via `Effect.acquireUseRelease`. The migrations
+   themselves run on the pool, **not** on the reserved connection — a `ReservedSql`
+   has no `.begin()`, so transactions are unavailable on it. Its only job is to be a
+   stable session for lock and unlock.
 2. Acquires a Postgres session-level advisory lock (`pg_advisory_lock`) using the
    fixed key `DATABASE_LOCK.migrations` from `@scraper/core/constants`, so that N
    API replicas booting at once serialize instead of racing on DDL. The lock is

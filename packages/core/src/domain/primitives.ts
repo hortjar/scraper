@@ -56,13 +56,13 @@ export type CronExpression = typeof CronExpression.Type
 
 export const QuietHourTime = Schema.String.pipe(Schema.pattern(PATTERN.quietHourTime))
 
-export const PositiveInt = Schema.Int.pipe(Schema.positive())
-export const NonNegativeInt = Schema.Int.pipe(Schema.nonNegative())
+export const PositiveInt = Schema.Number.pipe(Schema.int(), Schema.positive())
+export const NonNegativeInt = Schema.Number.pipe(Schema.int(), Schema.nonNegative())
 
 export const Cursor = Schema.String.pipe(Schema.brand("Cursor"))
 export type Cursor = typeof Cursor.Type
 
-const PageLimit = Schema.Int.pipe(Schema.between(1, PAGINATION.maxLimit))
+const PageLimit = Schema.Number.pipe(Schema.int(), Schema.between(1, PAGINATION.maxLimit))
 
 export const PageQuery = Schema.Struct({
   limit: Schema.optionalWith(PageLimit, {

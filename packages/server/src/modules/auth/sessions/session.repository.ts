@@ -7,7 +7,7 @@ import { sessions } from "@scraper/db/schema"
 import { Effect } from "effect"
 
 import { SESSION_LIST_LIMIT } from "../auth.constants.js"
-import { runSql } from "../auth.database.js"
+import { runSql, sqlTimestamp } from "../auth.database.js"
 
 export interface NewSession {
   readonly userId: UserId
@@ -65,7 +65,7 @@ export class SessionRepository extends Effect.Service<SessionRepository>()(
           SPAN.auth.touchSession,
           (client) => client`
             update sessions
-               set last_seen_at = ${lastSeenAt}, expires_at = ${expiresAt}
+               set last_seen_at = ${sqlTimestamp(lastSeenAt)}, expires_at = ${sqlTimestamp(expiresAt)}
              where id = ${id}
           `,
         )
@@ -81,7 +81,7 @@ export class SessionRepository extends Effect.Service<SessionRepository>()(
           SPAN.auth.revokeSession,
           (client) => client<{ id: string }[]>`
             update sessions
-               set revoked_at = ${now}
+               set revoked_at = ${sqlTimestamp(now)}
              where id = ${id} and user_id = ${userId} and revoked_at is null
             returning id
           `,
@@ -99,7 +99,7 @@ export class SessionRepository extends Effect.Service<SessionRepository>()(
           SPAN.auth.revokeAllSessions,
           (client) => client<{ id: string }[]>`
             update sessions
-               set revoked_at = ${now}
+               set revoked_at = ${sqlTimestamp(now)}
              where user_id = ${userId}
                and revoked_at is null
                and (${except}::uuid is null or id <> ${except}::uuid)

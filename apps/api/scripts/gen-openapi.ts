@@ -41,7 +41,7 @@ const config = await runtime.runPromise(AppConfig)
 
 const redisProbe = makeRedisProbe(config.redis)
 
-const app = createApiRoutes({ runtime, redisProbe, corsOrigins: config.http.corsOrigins })
+const app = createApiRoutes({ runtime, redisProbe, config })
 
 const response = await app.handle(new Request(`http://localhost${ROUTE.docs}/json`))
 

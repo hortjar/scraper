@@ -6,7 +6,7 @@ import { constraintFailure, decodeRow, decodeRows } from "@scraper/db/repository
 import { apiKeys } from "@scraper/db/schema"
 import { Effect } from "effect"
 
-import { runSql } from "../auth.database.js"
+import { runSql, sqlTimestamp } from "../auth.database.js"
 
 export interface NewApiKey {
   readonly userId: UserId
@@ -77,7 +77,7 @@ export class ApiKeyRepository extends Effect.Service<ApiKeyRepository>()(
           SPAN.auth.revokeApiKey,
           (client) => client<{ id: string }[]>`
             update api_keys
-               set revoked_at = ${now}, updated_at = ${now}
+               set revoked_at = ${sqlTimestamp(now)}, updated_at = ${sqlTimestamp(now)}
              where id = ${id} and user_id = ${userId} and revoked_at is null
             returning id
           `,
@@ -89,7 +89,8 @@ export class ApiKeyRepository extends Effect.Service<ApiKeyRepository>()(
         yield* runSql(
           database,
           SPAN.auth.verifyApiKey,
-          (client) => client`update api_keys set last_used_at = ${now} where id = ${id}`,
+          (client) =>
+            client`update api_keys set last_used_at = ${sqlTimestamp(now)} where id = ${id}`,
         )
       })
 

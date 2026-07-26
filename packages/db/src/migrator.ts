@@ -60,7 +60,7 @@ const releaseLock = (sql: ReservedSql) =>
     Effect.ignore,
   )
 
-const ensureMigrationsTable = (sql: ReservedSql) =>
+const ensureMigrationsTable = (sql: Sql) =>
   runQuery(
     MIGRATION_STEP.ensureTable,
     () => sql`
@@ -71,7 +71,7 @@ const ensureMigrationsTable = (sql: ReservedSql) =>
     `,
   )
 
-const loadAppliedMigrations = (sql: ReservedSql) =>
+const loadAppliedMigrations = (sql: Sql) =>
   runQuery(
     MIGRATION_STEP.loadApplied,
     () => sql<{ filename: string }[]>`select filename from ${sql(MIGRATIONS_TABLE)}`,
@@ -83,7 +83,7 @@ const listMigrationFiles = () =>
 const readMigrationFile = (file: string) =>
   runQuery(MIGRATION_STEP.readFile, () => readFile(new URL(file, MIGRATIONS_DIR_URL), "utf8"))
 
-const applyInTransaction = (sql: ReservedSql, file: string, content: string) =>
+const applyInTransaction = (sql: Sql, file: string, content: string) =>
   sql.begin(async (tx) => {
     await tx.unsafe(content)
     await tx`insert into ${tx(MIGRATIONS_TABLE)} (filename) values (${file})`
@@ -94,7 +94,7 @@ const logMigrationApplied = (file: string) =>
     Effect.annotateLogs({ [LOG_FIELD.migrationFile]: file }),
   )
 
-const applyMigration = (sql: ReservedSql, file: string) =>
+const applyMigration = (sql: Sql, file: string) =>
   readMigrationFile(file).pipe(
     Effect.flatMap((content) =>
       runQuery(MIGRATION_STEP.apply, () => applyInTransaction(sql, file, content)),
@@ -102,7 +102,7 @@ const applyMigration = (sql: ReservedSql, file: string) =>
     Effect.zipRight(logMigrationApplied(file)),
   )
 
-const applyPendingMigrations = (sql: ReservedSql) =>
+const applyPendingMigrations = (sql: Sql) =>
   Effect.gen(function* () {
     yield* ensureMigrationsTable(sql)
     const applied = yield* loadAppliedMigrations(sql)
@@ -114,9 +114,9 @@ const applyPendingMigrations = (sql: ReservedSql) =>
     return { applied: pending }
   })
 
-const underAdvisoryLock = (sql: ReservedSql) => {
-  const guarded = applyPendingMigrations(sql).pipe(Effect.ensuring(releaseLock(sql)))
-  return acquireLock(sql).pipe(Effect.zipRight(guarded))
+const underAdvisoryLock = (lockConnection: ReservedSql, sql: Sql) => {
+  const guarded = applyPendingMigrations(sql).pipe(Effect.ensuring(releaseLock(lockConnection)))
+  return acquireLock(lockConnection).pipe(Effect.zipRight(guarded))
 }
 
 const releaseConnection = (reserved: ReservedSql) =>
@@ -127,9 +127,11 @@ const releaseConnection = (reserved: ReservedSql) =>
 export const runMigrations = Effect.fn(SPAN.db.migrate)(function* () {
   const database = yield* Database
 
+  const sql = database.client
+
   return yield* Effect.acquireUseRelease(
-    runQuery(MIGRATION_STEP.reserve, () => database.client.reserve()),
-    underAdvisoryLock,
+    runQuery(MIGRATION_STEP.reserve, () => sql.reserve()),
+    (lockConnection) => underAdvisoryLock(lockConnection, sql),
     releaseConnection,
   )
 })
