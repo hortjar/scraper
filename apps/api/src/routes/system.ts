@@ -61,6 +61,7 @@ const metaEffect = Effect.gen(function* () {
     locales: translator.locales(),
     defaultLocale: config.app.defaultLocale,
     registrationOpen: config.http.enableRegistration,
+    emailAvailable: config.mail.isAvailable,
     channelKinds: [] as readonly string[],
   }
 })

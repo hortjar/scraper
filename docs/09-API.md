@@ -7,10 +7,10 @@ the route definitions, served as Swagger UI, and consumed by a code generator th
 produces the entire frontend API layer. A route with a missing `response` schema or
 `operationId` degrades the client for everyone — see §3.
 
-| Endpoint     | Serves                                                             |
-| ------------ | ------------------------------------------------------------------ |
-| `/docs`      | **Swagger UI** (`@elysiajs/openapi` with `provider: 'swagger-ui'`) |
-| `/docs/json` | OpenAPI 3.0.3 JSON — the machine-readable contract                 |
+| Endpoint            | Serves                                                             |
+| ------------------- | ------------------------------------------------------------------ |
+| `/api/v1/docs`      | **Swagger UI** (`@elysiajs/openapi` with `provider: 'swagger-ui'`) |
+| `/api/v1/docs/json` | OpenAPI 3.0.3 JSON — the machine-readable contract                 |
 
 ## 1. Conventions
 
@@ -153,7 +153,7 @@ GET    /admin/queues  Bull Board, admin only, feature-flagged
 Effect Schema route definitions
         │  @elysiajs/openapi + mapJsonSchema: { effect: JSONSchema.make }
         ▼
-  OpenAPI 3.0.3 ──► /docs (Swagger UI)  ──► humans
+  OpenAPI 3.0.3 ──► /api/v1/docs (Swagger UI) ──► humans
         │
         │  @hey-api/openapi-ts
         ▼

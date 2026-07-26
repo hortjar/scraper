@@ -40,6 +40,7 @@ export type GetMetaResponses = {
     200: {
         channelKinds: Array<string>;
         defaultLocale: string;
+        emailAvailable: boolean;
         locales: Array<string>;
         registrationOpen: boolean;
     };

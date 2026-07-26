@@ -6,7 +6,7 @@ import { AppConfig } from "@scraper/core/config"
 import { ROUTE } from "@scraper/core/constants"
 import { Effect } from "effect"
 
-import { createApp } from "../src/app.js"
+import { createApiRoutes } from "../src/app.js"
 import { makeRedisProbe } from "../src/health/redis-probe.js"
 import { makeRuntime } from "../src/runtime.js"
 
@@ -16,7 +16,6 @@ const PLACEHOLDERS: readonly (readonly [string, string])[] = [
   ["REDIS_URL", "redis://localhost:9303/0"],
   ["ENCRYPTION_KEY", "openapi-placeholder-key-000000000"],
   ["SESSION_SECRET", "openapi-placeholder-secret-000000"],
-  ["MAIL_FROM", "openapi@example.com"],
 ]
 
 for (const [name, value] of PLACEHOLDERS) {
@@ -40,7 +39,7 @@ const config = await runtime.runPromise(AppConfig)
 
 const redisProbe = makeRedisProbe(config.redis)
 
-const app = createApp({ runtime, redisProbe, corsOrigins: config.http.corsOrigins })
+const app = createApiRoutes({ runtime, redisProbe, corsOrigins: config.http.corsOrigins })
 
 const response = await app.handle(new Request(`http://localhost${ROUTE.docs}/json`))
 

@@ -1,10 +1,19 @@
 x-app-environment: &app-environment
   - APP_URL=${APP_URL:?required}
-  - DATABASE_URL=${DATABASE_URL:?required}
-  - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+  - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
+  - POSTGRES_USER=${POSTGRES_USER:-scraper}
+  - POSTGRES_DB=${POSTGRES_DB:-scraper}
+  - POSTGRES_HOST
+  - POSTGRES_PORT
+  - REDIS_PASSWORD
+  - REDIS_HOST
+  - REDIS_PORT
+  - REDIS_DB
+  - DATABASE_URL
+  - REDIS_URL
   - ENCRYPTION_KEY=${ENCRYPTION_KEY:?required}
   - SESSION_SECRET=${SESSION_SECRET:?required}
-  - MAIL_FROM=${MAIL_FROM:?required}
+  - MAIL_FROM
   - BROWSER_WS_ENDPOINT=ws://browser:3000?token=${BROWSER_TOKEN:?required}
   - APP_VERSION
   - GIT_SHA
@@ -71,11 +80,15 @@ services:
 
   redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes --maxmemory ${REDIS_MAXMEMORY:-512mb} --maxmemory-policy noeviction
+    command: redis-server --appendonly yes --maxmemory ${REDIS_MAXMEMORY:-512mb} --maxmemory-policy noeviction ${REDIS_PASSWORD:+--requirepass ${REDIS_PASSWORD}}
     volumes:
       - redisdata:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test:
+        [
+          "CMD-SHELL",
+          "redis-cli ${REDIS_PASSWORD:+-a ${REDIS_PASSWORD} --no-auth-warning} ping | grep -q PONG",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -137,7 +150,7 @@ services:
     environment:
       APP_VERSION: ${APP_VERSION:-}
       GIT_SHA: ${GIT_SHA:-}
-      API_URL: ${API_URL:-http://api:9300}
+      API_URL: ${API_URL:-/api/v1}
       APP_TITLE: ${APP_TITLE:-Scraper}
       DEFAULT_LOCALE: ${DEFAULT_LOCALE:-en}
     ports:

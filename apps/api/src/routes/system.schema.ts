@@ -28,6 +28,7 @@ export const MetaResponse = Schema.Struct({
   locales: Schema.Array(Schema.String),
   defaultLocale: Schema.String,
   registrationOpen: Schema.Boolean,
+  emailAvailable: Schema.Boolean,
   channelKinds: Schema.Array(Schema.String),
 })
 export type MetaResponse = typeof MetaResponse.Type

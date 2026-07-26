@@ -33,6 +33,25 @@ not built yet. When they land, `app.ts` grows by one `.use(xRoutes(runtime))` li
 per module, appended after `systemRoutes` — the chain itself is the insertion
 point, deliberately without a comment marker.
 
+## Two app factories, and why
+
+`app.ts` exports both:
+
+- **`createApiRoutes`** — the plugins and routes, paths at the root (`/health`).
+- **`createApp`** — those routes mounted under `ROUTE.apiBase` (`/api/v1`). This is
+  what `main.ts` listens with, and it is what the nginx proxy, the Vite dev proxy,
+  the generated client and the web app's fallback all expect.
+
+The split exists because of how OpenAPI expresses a base path. The document declares
+`servers: [{ url: ROUTE.apiBase }]`, so its **paths must stay relative** — `/health`,
+not `/api/v1/health`. `scripts/gen-openapi.ts` therefore generates from
+`createApiRoutes`. Generating from `createApp` would bake the prefix into the paths
+_on top of_ `servers`, and every generated client call would go to
+`/api/v1/api/v1/…`.
+
+If you add a route module, add it to `createApiRoutes`. Nothing should be registered
+on `createApp` directly.
+
 ## The Effect ↔ Elysia bridge
 
 `plugins/effect.ts` decorates every route with `runFx`, which runs an `Effect`

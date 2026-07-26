@@ -1,3 +1,4 @@
+import { ROUTE } from "@scraper/core/constants"
 import { Elysia } from "elysia"
 
 import type { HealthProbe } from "./health/health-probe.js"
@@ -15,7 +16,7 @@ export interface CreateAppOptions {
   readonly corsOrigins: readonly string[]
 }
 
-export const createApp = ({ runtime, redisProbe, corsOrigins }: CreateAppOptions) =>
+export const createApiRoutes = ({ runtime, redisProbe, corsOrigins }: CreateAppOptions) =>
   new Elysia()
     .use(securityPlugin({ corsOrigins }))
     .use(observabilityPlugin(runtime))
@@ -23,5 +24,8 @@ export const createApp = ({ runtime, redisProbe, corsOrigins }: CreateAppOptions
     .use(effectPlugin(runtime))
     .use(openapiPlugin)
     .use(systemRoutes(runtime, redisProbe))
+
+export const createApp = (options: CreateAppOptions) =>
+  new Elysia().group(ROUTE.apiBase, (api) => api.use(createApiRoutes(options)))
 
 export type App = ReturnType<typeof createApp>

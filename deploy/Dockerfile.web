@@ -33,7 +33,7 @@ COPY --from=build --chown=scraper:scraper /build/apps/web/dist /usr/share/nginx/
 
 ENV APP_VERSION=$APP_VERSION \
     GIT_SHA=$GIT_SHA \
-    API_URL=http://api:9300 \
+    API_URL=/api/v1 \
     APP_TITLE=Scraper \
     DEFAULT_LOCALE=en
 

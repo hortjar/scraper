@@ -52,7 +52,7 @@ Nothing else starts until this is merged. One agent, one branch.
 ### 0.4 App skeletons
 
 - [ ] `apps/api`: boots, `/health` (with version), `/ready`, `/metrics`, `/meta`,
-      Swagger UI at `/docs`, OpenAPI at `/docs/json`, graceful shutdown
+      Swagger UI at `/api/v1/docs`, OpenAPI at `/api/v1/docs/json`, graceful shutdown
 - [ ] `apps/worker`: boots, Redis connected, empty queue set registered, graceful shutdown
 - [x] `apps/web`: Vite, React 19, Tailwind 4 with the design tokens from
       [15-DESIGN-SYSTEM](./15-DESIGN-SYSTEM.md), i18next wired, TanStack Router +

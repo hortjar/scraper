@@ -75,6 +75,9 @@
                     "defaultLocale": {
                       "type": "string"
                     },
+                    "emailAvailable": {
+                      "type": "boolean"
+                    },
                     "locales": {
                       "items": {
                         "type": "string"
@@ -89,6 +92,7 @@
                     "locales",
                     "defaultLocale",
                     "registrationOpen",
+                    "emailAvailable",
                     "channelKinds"
                   ],
                   "type": "object"
