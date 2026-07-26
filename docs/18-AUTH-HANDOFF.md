@@ -48,7 +48,7 @@ Each of these was verified this session, not inferred.
 
 ### 3.1 Migrations never run — the deployed database is empty
 
-`RUN_MIGRATIONS_ON_BOOT` is declared in `securityConfig`… and read by nothing.
+`RUN_MIGRATIONS_ON_BOOT` is declared in `databaseConfig`… and read by nothing.
 
 ```bash
 grep -rn "runMigrationsOnBoot" --include="*.ts" apps packages   # config + spec only
@@ -71,7 +71,7 @@ them disagreeing.
 `packages/db/scripts/seed.ts` inserts `dev@example.com` with
 `passwordHash = "!"` — an intentionally unusable hash. It exists to own demo
 monitors, not to be an account. Do not "fix" it by putting a real hash there; add a
-proper admin bootstrap (§4.6) instead.
+proper admin bootstrap (§4, step 8) instead.
 
 ### 3.3 `@universal-admin/auth-client` is not on npm
 
