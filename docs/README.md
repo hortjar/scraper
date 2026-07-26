@@ -25,6 +25,7 @@ and get notified through pluggable channels.
 | 14  | [Testing Strategy](./14-TESTING.md)                | What gets tested at which layer                                   |
 | 15  | [Design System](./15-DESIGN-SYSTEM.md)             | Color, type, the signature device, landing page                   |
 | 16  | [Internationalization](./16-I18N.md)               | Translation architecture, both sides                              |
+| 17  | [Deploy Runbook](./17-DEPLOY-RUNBOOK.md)           | The commands, in order, for shipping a version                    |
 | —   | [REACT.md](./REACT.md)                             | Pre-existing React guide (see 04 for deltas)                      |
 | —   | [adr/](./adr/)                                     | Decision log — why a version is pinned, why a design was rejected |
 

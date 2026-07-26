@@ -6,8 +6,6 @@ services:
       args:
         APP_VERSION: ${APP_VERSION:-dev}
         GIT_SHA: ${GIT_SHA:-local}
-      cache_from:
-        - type=gha
 
   worker:
     build:
@@ -16,8 +14,6 @@ services:
       args:
         APP_VERSION: ${APP_VERSION:-dev}
         GIT_SHA: ${GIT_SHA:-local}
-      cache_from:
-        - type=gha
 
   web:
     build:
@@ -26,5 +22,3 @@ services:
       args:
         APP_VERSION: ${APP_VERSION:-dev}
         GIT_SHA: ${GIT_SHA:-local}
-      cache_from:
-        - type=gha

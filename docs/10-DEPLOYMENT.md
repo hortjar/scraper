@@ -1,5 +1,9 @@
 # Deployment — Docker, Compose & Portainer
 
+> Looking for the commands rather than the reasoning? See
+> [17-DEPLOY-RUNBOOK](./17-DEPLOY-RUNBOOK.md), which also records a **known blocker
+> in the browser → API path** that affects any real deployment.
+
 Design goal: **one `docker-compose.yml` plus one set of environment variables is a
 complete deployment.** Those variables come from Portainer's stack editor in
 production, or a `deploy/.env` file locally.
