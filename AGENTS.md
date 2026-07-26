@@ -7,14 +7,15 @@ file gets fixed.
 
 ---
 
-## Auth is the next feature, and it is not started
+## Start at the handoff
 
-`packages/server/src/modules/` is empty — there is no auth code. Migrations now run
-on boot (`RUN_MIGRATIONS_ON_BOOT`, see `docs/18-AUTH-HANDOFF.md` §3.1), so the schema
-exists once the API is up.
-**Read [docs/18-AUTH-HANDOFF.md](./docs/18-AUTH-HANDOFF.md) before starting.** It
-records the verified state, the traps, and the build order, and it supersedes
-`docs/08-AUTH.md` on anything about current state.
+**Read [docs/18-HANDOFF.md](./docs/18-HANDOFF.md) before starting.** It records what
+is actually built, the traps that only show up when you boot the stack, how a module
+gets wired, and what is left. It supersedes every other doc on current state.
+
+Short version: `auth`, `scraping`, `notifications`, `jobs` and `monitors` are built;
+`auth` and `monitors` are mounted and verified over HTTP. The change-detection
+pipeline (`modules/runs`) and the web features are the remaining work.
 
 ## 0. The rule that outranks the others
 

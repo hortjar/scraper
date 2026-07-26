@@ -1,8 +1,8 @@
 # Authentication & Authorization
 
-> **Nothing in this document is implemented yet.** Read
-> [18-AUTH-HANDOFF](./18-AUTH-HANDOFF.md) first — it records what actually exists,
-> the blockers found while verifying, and the order to build in.
+> **This is implemented and mounted.** `AUTH_MODE=local|universal` both work and are
+> verified over HTTP. [18-HANDOFF](./18-HANDOFF.md) records the current state and the
+> traps found while building it; `modules/auth/README.md` covers the module itself.
 
 Module: `packages/server/src/modules/auth`. Custom, Effect-native — no third-party auth dependency.
 

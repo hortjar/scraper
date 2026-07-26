@@ -6,11 +6,52 @@ All notable changes to this project are documented here. The format follows
 
 This file starts at 0.2.0. For anything earlier, see the git history.
 
+## [Unreleased]
+
+### Added
+
+- **`packages/server`** with five feature modules: `auth`, `scraping`,
+  `notifications`, `jobs` and `monitors`. `auth` and `monitors` are mounted on
+  `createApiRoutes` and verified over HTTP against a live stack; the API now serves
+  19 paths.
+- **Auth, complete.** Argon2id, opaque session cookies, API keys, verification
+  tokens, rate limiting, audit trail, admin bootstrap, and an
+  `AUTH_MODE=local|universal` switch that verifies `admin-app` RS256 tokens against
+  its JWKS. The universal client is vendored from `admin-app`'s unpublished
+  `@universal-admin/auth-client`.
+- **Monitors.** Monitor and extractor CRUD, cursor pagination, tag and search
+  filters, SSRF-guarded URLs, interval floor and plan limits enforced in the service.
+- **Boot-time migrations**, which `RUN_MIGRATIONS_ON_BOOT` had promised since 0.2.0
+  and nothing implemented.
+
+### Fixed
+
+- **A deployed stack answered 502 after boot migrations landed.** A database already
+  migrated by drizzle-kit has no rows in `schema_migrations`, so boot re-ran
+  `0000_init.sql` — of whose 60 `CREATE` statements only 2 are `IF NOT EXISTS` — and
+  the API exited non-zero, leaving nginx with no upstream. An existing schema is now
+  baselined instead.
+- **The advisory lock could block every future replica.** Lock and unlock were issued
+  against a connection _pool_; `pg_advisory_unlock` from a different pooled connection
+  returns false and does nothing, so the lock survived for the life of the process.
+- **An SSRF bypass.** WHATWG URL rewrites `[::ffff:10.0.0.1]` to `::ffff:a00:1`, so
+  the dotted-quad check never matched and private ranges — including cloud metadata —
+  were reachable.
+- **API keys failed to authenticate at random.** The base64url secret contains `_`,
+  and the key was parsed with `String.split("_")`.
+- **Every raw-SQL timestamp write was a 500**: a `Date` in a postgres.js tagged
+  template throws under Bun.
+- **`304 Not Modified` was treated as a redirect**, defeating conditional requests.
+- **The UI reported version `dev`** and `/health` reported `unknown`: build args
+  defaulted to placeholders that `??` accepted as real values.
+- **The client generator crashed** on a `$ref` to a `$defs` block Elysia drops.
+- **The module-boundary lint rule rejected a module's own `index.js`.**
+
 ## [0.6.0] - 2026-07-26
 
 ### Added
 
-- **`docs/18-AUTH-HANDOFF.md`** — auth is the next feature and none of it is built.
+- **`docs/18-HANDOFF.md`** (then named `18-AUTH-HANDOFF.md`) — auth is the next feature and none of it is built.
   The handoff records the verified state of the repo, the blockers found while
   checking, the decision to implement the full `08-AUTH` scope _plus_ an
   `AUTH_MODE=local|universal` switch against `admin-app`, and the order to build in.
