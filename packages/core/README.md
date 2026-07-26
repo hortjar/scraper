@@ -55,6 +55,32 @@ agree:
 - `src/config/schema.ts` — the Effect `Config` that reads and validates it
 - `src/config/environment-spec.ts` — the metadata (group, default, secret, description)
 
+### Connection URLs are assembled, never pasted
+
+`DATABASE_URL` and `REDIS_URL` are **derived** from parts — `POSTGRES_HOST`,
+`POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_DB`, `POSTGRES_PASSWORD`, and the
+`REDIS_*` equivalents. The password is therefore configured in exactly one place
+instead of being duplicated into a connection string that nothing cross-checks.
+
+The assembly percent-encodes the userinfo section, which is not cosmetic:
+`openssl rand -base64 32` — the command the deployment docs tell you to run —
+produces passwords containing `+`, `/` and `=`. Pasted raw into a URL those change
+where the host begins, and the failure surfaces as an unrelated-looking connection
+error. `encodedUserInfo` is what makes an arbitrary password safe to carry.
+
+Setting `DATABASE_URL` or `REDIS_URL` explicitly still wins. That escape hatch
+exists for managed providers that issue one connection string and no parts.
+
+### Mail is optional, and absence is a first-class state
+
+`mailConfig.isAvailable` reports whether a transport is actually configured:
+a non-empty `MAIL_FROM`, plus `SMTP_HOST` on the `smtp` driver or `RESEND_API_KEY`
+on `resend`. The `console` driver needs only the sender. Whitespace counts as unset.
+
+Nothing is required to boot. An instance with no mail configuration starts normally
+and reports `emailAvailable: false` from `/api/v1/meta`, so the frontend can hide
+email channels rather than offering a delivery that would silently fail.
+
 `pnpm gen:env` renders `deploy/.env.example` from the spec, so the example file
 cannot drift — but only if you re-run it. CI's `verify-generated` job runs the
 generators and fails on any diff, which is what catches a spec change that never

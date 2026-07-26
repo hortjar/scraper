@@ -45,23 +45,93 @@ supply a `.env` file; use the stack variables.
 
 ### 3. Set Required Secrets
 
-These variables **must** be set or the stack will not start:
+**Hard requirements.** Each is declared `${VAR:?required}` in the compose file, so a
+missing one fails the deploy immediately, naming the variable:
 
-- `POSTGRES_PASSWORD` — generate: `openssl rand -base64 32`
-- `DATABASE_URL` — format: `postgres://scraper:PASSWORD@postgres:5432/scraper`
-- `REDIS_URL` — default: `redis://redis:6379/0`
-- `ENCRYPTION_KEY` — generate: `openssl rand -base64 32`
-- `SESSION_SECRET` — generate: `openssl rand -base64 32`
-- `BROWSER_TOKEN` — any value, but required; example: `openssl rand -base64 32`
-- `GH_ORG` — your GitHub organization or username
-- `IMAGE_TAG` — image tag to deploy (e.g., `v0.1.0` or `sha-a1b2c3d`)
-- `APP_URL` — the public URL, e.g. `https://scraper.example.com`
-- `MAIL_FROM` — e.g. `Scraper <alerts@example.com>`
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` — your mail server
+| Variable            | Value                                                      |
+| ------------------- | ---------------------------------------------------------- |
+| `IMAGE_TAG`         | The tag you pushed, e.g. `v0.3.0`. **Not** `latest`        |
+| `APP_URL`           | Public URL, e.g. `https://scraper.example.com`             |
+| `POSTGRES_PASSWORD` | `openssl rand -base64 32`                                  |
+| `ENCRYPTION_KEY`    | `openssl rand -base64 32`                                  |
+| `SESSION_SECRET`    | `openssl rand -base64 32`                                  |
+| `BROWSER_TOKEN`     | Any non-empty value; shared with the browserless container |
 
-`APP_VERSION` and `GIT_SHA` are optional — they only feed the version indicator in
-the UI. `DATABASE_URL` must embed the same password you set in `POSTGRES_PASSWORD`;
-they are two separate variables and nothing cross-checks them.
+`GH_ORG` is not marked required only because Compose cannot express it there, but
+without it the image name resolves to `ghcr.io//scraper-api` and the pull fails. Set
+it.
+
+**There is no `DATABASE_URL` to set.** The app assembles the connection string from
+`POSTGRES_HOST` (`postgres`), `POSTGRES_PORT` (`5432`), `POSTGRES_USER` (`scraper`),
+`POSTGRES_DB` (`scraper`) and `POSTGRES_PASSWORD`. Only the password has no default,
+and it is the same variable the `postgres` service itself uses — **one password, one
+place.** Redis is assembled the same way from `REDIS_HOST`/`PORT`/`DB` and an
+optional `REDIS_PASSWORD`.
+
+This replaced a genuine failure, not just a duplication: the recommended
+`openssl rand -base64 32` produces passwords containing `+`, `/` and `=`, which
+change where a URL's host begins. Pasted into the old `DATABASE_URL` they produced a
+connection error that pointed nowhere near the cause. The parts are percent-encoded
+on assembly, so any password works.
+
+Set `DATABASE_URL` or `REDIS_URL` **only** for a managed Postgres or Redis that hands
+you a complete connection string. An explicit value overrides the parts.
+
+If you set `REDIS_PASSWORD`, the bundled Redis picks it up automatically —
+`--requirepass` and the healthcheck's `-a` flag are both wired from the same
+variable, so you do not have to touch the compose file.
+
+**Email is optional.** Leave `MAIL_FROM` unset and the stack starts normally;
+`/api/v1/meta` then reports `emailAvailable: false` and the UI hides email channels
+rather than offering a delivery that would silently fail. To enable it you need
+`MAIL_FROM` **and** a transport: `SMTP_HOST` (plus the other `SMTP_*`) on the default
+`smtp` driver, or `RESEND_API_KEY` with `MAIL_DRIVER=resend`. Setting one without the
+other leaves email unavailable.
+
+**Have working defaults — do not set unless you are changing them:** `WEB_PORT`
+(`8080`), `API_URL` (`/api/v1`), `POSTGRES_USER`/`POSTGRES_DB` (`scraper`), and
+everything in the optional block of `stack.env.example`.
+
+One that still catches people:
+
+- **`ENCRYPTION_KEY` is effectively permanent.** It encrypts notification channel
+  secrets and there is no rotation tooling yet, so changing it makes every stored
+  secret unreadable. Back it up where you will not lose it.
+
+`APP_VERSION` and `GIT_SHA` are optional and only feed the UI's version indicator.
+
+### 3a. Variables that do NOT reach the containers
+
+`docker-compose.yml` forwards a fixed list through its `x-app-environment` anchor.
+**A variable outside that list is silently ignored** — Portainer accepts it, Compose
+uses it while parsing, and it never becomes container environment. These 23 appear in
+`docs/11-ENVIRONMENT.md` and `deploy/.env.example` but are **not** forwarded:
+
+```
+ALLOW_ROBOTS_OVERRIDE   API_HOST                  API_PORT
+ARGON2_MEMORY_KIB       ARGON2_TIME_COST          BODY_LIMIT_BYTES
+BROWSER_BLOCK_RESOURCES CHANNEL_FAILURE_LIMIT     DATABASE_POOL_IDLE_TIMEOUT
+JOB_BACKOFF_BASE_MS     JOB_PREFIX                MAX_CONCURRENT_RUNS_PER_USER
+PASSWORD_BREACH_CHECK   SCRAPE_MAX_ATTEMPTS       SCRAPE_MAX_BYTES
+SCREENSHOT_RETENTION_DAYS  SESSION_ABSOLUTE_TTL_SECONDS  SESSION_COOKIE_NAME
+S3_ACCESS_KEY_ID        S3_BUCKET                 S3_ENDPOINT
+S3_REGION               S3_SECRET_ACCESS_KEY
+```
+
+Two consequences worth calling out:
+
+- **`STORAGE_DRIVER=s3` cannot be configured from Portainer.** The driver name is
+  forwarded but none of the five `S3_*` credentials are, so selecting it gives you a
+  storage driver with no endpoint or key. Stay on `local` until the anchor gains
+  them.
+- `API_PORT`/`API_HOST` being absent is deliberate — `nginx.conf` and the compose
+  healthcheck hardcode `9300`, so changing them would break the proxy rather than
+  move the port.
+
+To make one of these settable, add it to the `x-app-environment` anchor **as a bare
+name**, not as `NAME=${NAME:-}`. The bare form lets Compose omit an unset variable so
+the app's own default applies; the assignment form sets an empty string, which looks
+configured and overrides that default.
 
 ### 4. Deploy
 
@@ -148,9 +218,39 @@ Bind mounts would only be accessible via the host filesystem.
 
 - `postgres` and `redis` must be healthy before `api` starts
 - `api` must be healthy before `worker` starts
-- `api` must be healthy before `web` starts
+- `web` starts once `api` has started — it does **not** wait for health
 
-If a dependent service won't start, check the service's logs — it's waiting for a dependency to become healthy.
+If a dependent service won't start, check the service's logs — it's waiting for a
+dependency to become healthy.
+
+> ### ⚠️ Known blocker: the `api` and `worker` health checks cannot pass
+>
+> `Dockerfile.api`, `Dockerfile.worker` and `docker-compose.yml` all run
+> `bun run healthcheck.ts`, but **no such file exists in the repository** —
+> `git ls-files | grep healthcheck` returns nothing, and nothing in the build creates
+> it. Bun exits non-zero on the missing module, so both containers stay `unhealthy`
+> forever.
+>
+> The practical effect: `worker` declares `depends_on: api: {condition:
+service_healthy}`, so **the worker never starts**. The API and web UI come up and
+> look fine, but nothing is ever scraped.
+>
+> Fixing it means adding the file and copying it into both images. For `api` it is
+> unambiguous — probe the readiness endpoint:
+>
+> ```ts
+> const response = await fetch("http://localhost:9300/api/v1/ready")
+> process.exit(response.ok ? 0 : 1)
+> ```
+>
+> For `worker` it is a real design question, because the worker runs no HTTP server
+> and so has nothing to probe. It needs either a minimal health listener or a
+> different check (for example asserting its BullMQ connection is live). That choice
+> has not been made yet, which is why this is documented rather than patched.
+>
+> **Workaround until then:** remove the `condition: service_healthy` from `worker`'s
+> `depends_on` so it starts alongside the API, or drop the `HEALTHCHECK` lines. Both
+> trade a real signal for a starting stack — make the change deliberately.
 
 ### Logs and stdout
 
@@ -200,21 +300,21 @@ Or use Portainer's volume backup feature.
 
 ### Monitoring
 
-Metrics are available at `http://api:9300/metrics` (Prometheus format) if `METRICS_ENABLED=true`.
+Metrics are available at `http://api:9300/api/v1/metrics` (Prometheus format) if `METRICS_ENABLED=true`.
 
 A Prometheus/Grafana overlay is Phase-3 work (stream O) and does not exist yet.
-Scrape `api:9300/metrics` from an existing Prometheus if you have one.
+Scrape `api:9300/api/v1/metrics` from an existing Prometheus if you have one.
 
 ## Troubleshooting
 
-| Problem                                   | Check                                                                                   |
-| ----------------------------------------- | --------------------------------------------------------------------------------------- |
-| Services keep restarting                  | View service logs; check required env vars are set                                      |
-| API won't start after deploy              | Check `DATABASE_URL` format and postgres health                                         |
-| Workers idle, no scrapes running          | Check `BROWSER_WS_ENDPOINT` and browser service logs                                    |
-| Browser segfaults with concurrency errors | Increase `shm_size` on browser service (minimum 1GB)                                    |
-| Login fails / session cookies missing     | Check `MAIL_FROM` and SMTP config; verify same-origin (web proxies /api to api service) |
-| Old sessions still valid after deploying  | `SESSION_SECRET` rotation invalidates all sessions; users re-login (acceptable)         |
+| Problem                                   | Check                                                                                 |
+| ----------------------------------------- | ------------------------------------------------------------------------------------- |
+| Services keep restarting                  | View service logs; check required env vars are set                                    |
+| API won't start after deploy              | Check `POSTGRES_PASSWORD` reached the container and postgres is healthy               |
+| Workers idle, no scrapes running          | Check `BROWSER_WS_ENDPOINT` and browser service logs                                  |
+| Browser segfaults with concurrency errors | Increase `shm_size` on browser service (minimum 1GB)                                  |
+| Login fails / session cookies missing     | Verify same-origin: `API_URL` must be the relative `/api/v1`, not a container address |
+| Old sessions still valid after deploying  | `SESSION_SECRET` rotation invalidates all sessions; users re-login (acceptable)       |
 
 ## Health Check Endpoints
 

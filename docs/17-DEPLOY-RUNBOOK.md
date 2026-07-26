@@ -96,7 +96,7 @@ docker buildx imagetools inspect ghcr.io/$GH_ORG/scraper-api:$IMAGE_TAG
 
 ## 3. Environment
 
-Eight variables have no default and fail the stack immediately if unset — that is
+Six variables have no default and fail the stack immediately if unset — that is
 deliberate, so Portainer gives a clear message instead of a crash-looping container:
 
 | Variable            | Notes                                                       |
@@ -104,11 +104,25 @@ deliberate, so Portainer gives a clear message instead of a crash-looping contai
 | `IMAGE_TAG`         | Must name an image you pushed in step 2                     |
 | `APP_URL`           | Public URL, e.g. `https://scraper.example.com`              |
 | `POSTGRES_PASSWORD` | `openssl rand -base64 32`                                   |
-| `DATABASE_URL`      | Must embed the **same** password                            |
 | `ENCRYPTION_KEY`    | `openssl rand -base64 32` — rotating it orphans stored data |
 | `SESSION_SECRET`    | `openssl rand -base64 32` — rotating it logs everyone out   |
 | `BROWSER_TOKEN`     | Any value, but required                                     |
-| `MAIL_FROM`         | e.g. `Scraper <alerts@example.com>`                         |
+
+**There is no `DATABASE_URL` to set.** The connection string is assembled from
+`POSTGRES_HOST`/`PORT`/`USER`/`DB`/`PASSWORD`, all of which default to the compose
+service except the password. That removes the old trap where `DATABASE_URL` had to
+embed the same password as `POSTGRES_PASSWORD` with nothing checking that it did —
+and it fixes a real failure, because a `base64` password contains `+`, `/` and `=`,
+which change the meaning of a hand-written URL. Redis works the same way and needs no
+password at all on the bundled instance.
+
+Set `DATABASE_URL` or `REDIS_URL` only for a managed provider that hands you a
+complete connection string; an explicit value overrides the parts.
+
+**Email is optional.** With no `MAIL_FROM` (and no `SMTP_HOST` or `RESEND_API_KEY`)
+the stack starts normally and `/api/v1/meta` reports `emailAvailable: false`, so the
+UI hides email channels instead of offering a delivery that would fail. Configure it
+when you want notifications.
 
 `GH_ORG` is needed too — without it the image names resolve to `ghcr.io//scraper-api`.
 
@@ -141,7 +155,7 @@ health endpoint. The production stack publishes **only** `web`, so this has to r
 inside the network:
 
 ```bash
-docker compose exec api wget -qO- http://localhost:9300/health
+docker compose exec api wget -qO- http://localhost:9300/api/v1/health
 # {"status":"ok","version":"0.3.0","commit":"a1b2c3d","time":"..."}
 ```
 
@@ -150,44 +164,38 @@ value here means step 2 published an older image than you think.
 
 Note that `curl http://localhost:8080/health` hits **nginx's own** static probe in
 `deploy/nginx.conf`, which returns the literal string `ok` and never touches the
-API. It tells you the web container is up, nothing more.
+API. It tells you the web container is up, nothing more. The API through the proxy
+is `curl http://localhost:8080/api/v1/health`.
 
-## 4a. Known blocker — the browser cannot reach the API
+## 4a. The API base path
 
-**Verified against the code on `main`, not a suspicion.** Three components each
-assume a different contract for the same request path, and no two agree:
+Everything the browser calls is same-origin under **`/api/v1`**, which is
+`ROUTE.apiBase` in `packages/core/src/constants/http.ts`. Five things have to agree,
+and they now do:
 
-| Component                  | Where                        | Assumes the API lives at       |
-| -------------------------- | ---------------------------- | ------------------------------ |
-| Web app fallback           | `apps/web/src/lib/config.ts` | `/api/v1` — same origin        |
-| nginx proxy                | `deploy/nginx.conf`          | upstream serves `/api/*`       |
-| Compose / `Dockerfile.web` | `API_URL=http://api:9300`    | browser can resolve `api:9300` |
+| Component            | Where                              | Value                          |
+| -------------------- | ---------------------------------- | ------------------------------ |
+| Elysia mount         | `apps/api/src/app.ts`              | routes grouped under `apiBase` |
+| OpenAPI `servers`    | `apps/api/src/plugins/openapi.ts`  | `/api/v1`                      |
+| Generated client     | `apps/web/src/api/generated`       | `baseUrl: '/api/v1'`           |
+| Web runtime fallback | `apps/web/src/lib/config.ts`       | `/api/v1`                      |
+| Proxies              | `deploy/nginx.conf`, `vite.config` | `/api` → `api:9300`, path kept |
 
-What the API actually serves, per `apps/api/openapi.json`, is `/health`, `/ready`,
-`/metrics`, `/meta` — **at the root, with no prefix at all.**
+**The document's paths stay relative** (`/health`, not `/api/v1/health`) because
+`servers` already carries the base. That is why `pnpm gen:openapi` generates from
+`createApiRoutes`, the unprefixed instance, rather than from the mounted `createApp`
+— generating from the mounted app would prefix the paths a second time on top of
+`servers` and send the client to `/api/v1/api/v1/health`.
 
-The consequences compound:
+Consequences of the base path that are easy to trip over:
 
-- `proxy_pass http://api:9300/api` keeps the `/api` prefix on the upstream path, so
-  a same-origin `GET /api/health` arrives at the API as `/api/health` and 404s.
-- `API_URL=http://api:9300` is written into `config.js`, which is read by the
-  **browser**. `api` is a Docker network hostname, so it does not resolve for a
-  user, and would be cross-origin if it did — defeating the same-origin design that
-  `10-DEPLOYMENT` §2 describes.
-- The app's own fallback, `/api/v1`, adds a `v1` segment that exists nowhere else.
-
-This has gone unnoticed because `createApp` currently mounts only `systemRoutes` —
-the feature routes in `ROUTE` are declared but not wired up, so nothing in the UI
-depends on a working API path yet.
-
-**Fixing it is a design decision, not a typo**, which is why it is documented here
-rather than patched: someone has to choose whether the API mounts under `/api/v1`,
-or nginx strips the prefix (`proxy_pass http://api:9300/;` — the trailing slash is
-what strips it), and `API_URL` has to become a browser-resolvable value, almost
-certainly the relative `/api/v1`. Pick one contract and make all three agree.
-
-Until then the stack starts and the UI serves, but any real API call from the
-browser will fail.
+- **Swagger UI is at `/api/v1/docs`**, not `/docs`.
+- **Prometheus scrapes `api:9300/api/v1/metrics`.**
+- **`API_URL` is browser-visible.** It is written into `config.js` by the web
+  container's entrypoint and read by the user's browser, so it must be a relative
+  same-origin path. It defaults to `/api/v1`. Setting it to `http://api:9300` — as
+  it was before 0.3.1 — points the browser at a Docker network hostname it cannot
+  resolve, and would be cross-origin if it could.
 
 ## 5. First run
 

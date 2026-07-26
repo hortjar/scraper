@@ -6,6 +6,99 @@ All notable changes to this project are documented here. The format follows
 
 This file starts at 0.2.0. For anything earlier, see the git history.
 
+## [0.4.0] - 2026-07-26
+
+### ⚠️ BREAKING — the API is served at `/api/v1`, and the environment changed
+
+Three related contract changes. Each removes a case where two parts of the system
+disagreed and nothing caught it.
+
+#### The API now serves the base path it always advertised
+
+`ROUTE.apiBase` (`/api/v1`) has been in the constants, the OpenAPI `servers` entry,
+the generated client's `baseUrl` and the web app's fallback since the start — but the
+Elysia app mounted its routes at the root, so **every browser call 404'd.** The app
+is now mounted under the base path.
+
+- `GET /health` → **`GET /api/v1/health`**, same for `/ready`, `/metrics`, `/meta`.
+- Swagger UI moves from `/docs` to **`/api/v1/docs`**.
+- Prometheus should scrape **`api:9300/api/v1/metrics`**.
+- The OpenAPI document is unchanged: its paths stay relative because `servers`
+  carries the base. `pnpm gen:openapi` therefore generates from the new
+  `createApiRoutes` export rather than the mounted `createApp` — generating from the
+  mounted app would prefix the paths a second time and send clients to
+  `/api/v1/api/v1/…`.
+
+`API_URL` also defaulted to `http://api:9300`, a Docker network hostname written
+into `config.js` and read by the **user's browser**, where it cannot resolve. It now
+defaults to the relative `/api/v1`.
+
+#### Database and Redis URLs are assembled from parts
+
+`DATABASE_URL` is no longer required and is no longer the place credentials live.
+The connection string is built from `POSTGRES_HOST` (`postgres`), `POSTGRES_PORT`
+(`5432`), `POSTGRES_USER` (`scraper`), `POSTGRES_DB` (`scraper`) and
+`POSTGRES_PASSWORD` — the same password variable the `postgres` service already
+uses, so it is written once. Redis is built the same way from `REDIS_HOST`,
+`REDIS_PORT`, `REDIS_DB` and an optional `REDIS_PASSWORD`.
+
+This fixes a real failure, not just duplication. The deployment docs tell you to
+generate secrets with `openssl rand -base64 32`, which produces `+`, `/` and `=` —
+characters that change where a URL's host begins. Pasted into the old `DATABASE_URL`
+they produced a connection error pointing nowhere near the cause. The parts are
+percent-encoded on assembly, so any password works.
+
+Setting `DATABASE_URL` or `REDIS_URL` explicitly still wins, for a managed provider
+that issues one connection string. Existing deployments and the CI integration job
+keep working unchanged through that path.
+
+Setting `REDIS_PASSWORD` now also configures the bundled Redis: `--requirepass` and
+the healthcheck's `-a` flag are both derived from it, so the probe cannot fail with
+`NOAUTH` while the server demands a password.
+
+**To migrate:** replace `DATABASE_URL` with `POSTGRES_PASSWORD` in your stack
+variables, or keep `DATABASE_URL` and change nothing.
+
+#### Email is optional
+
+`MAIL_FROM` is no longer required. An instance with no mail configuration starts
+normally and reports `emailAvailable: false` from `/api/v1/meta`, so the UI can hide
+email channels instead of offering a delivery that would fail.
+
+Email counts as available when `MAIL_FROM` is set **and** a transport is: `SMTP_HOST`
+on the `smtp` driver, `RESEND_API_KEY` on `resend`. The `console` driver needs only
+the sender. Whitespace counts as unset.
+
+### Added
+
+- `emailAvailable` on the `/api/v1/meta` response.
+- `packages/core/src/config/schema.test.ts` — 17 tests covering URL assembly,
+  percent-encoding, the explicit-URL escape hatch and every mail-availability branch.
+- `docs/17-DEPLOY-RUNBOOK.md` §4a documents the base path and the five components
+  that have to agree on it.
+
+### Fixed
+
+- **`verify-generated` had been failing on every CI run since 0.2.0.**
+  `deploy/.env.example` embeds the name of the file it was generated from, and that
+  name changed when `env-spec.ts` became `environment-spec.ts` during the 0.3.0 lint
+  sweep. The example was never regenerated, so `git diff --exit-code` found a
+  one-line drift every time. No variable was affected.
+- Three stale `env-spec.ts` references in `packages/core/README.md`.
+
+### Known gaps
+
+- **`bun run healthcheck.ts` does not exist.** Both Dockerfiles and the compose file
+  reference it; nothing in the repo creates it. Both containers therefore stay
+  `unhealthy`, and because `worker` waits on `condition: service_healthy`, **the
+  worker never starts.** For the API the fix is a one-line probe against
+  `/api/v1/ready`; for the worker it is a design question, since it runs no HTTP
+  server. Documented in `deploy/portainer/STACK.md`.
+- **`STORAGE_DRIVER=s3` cannot be configured from Portainer.** The driver name is
+  forwarded to the containers but none of the five `S3_*` credentials are. 23
+  documented variables are absent from the compose anchor; they are listed in
+  `STACK.md` §3a.
+
 ## [0.3.0] - 2026-07-26
 
 ### ⚠️ BREAKING — CI no longer builds or publishes images

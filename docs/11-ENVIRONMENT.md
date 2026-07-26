@@ -39,24 +39,33 @@ Legend: **R** = required (no default, boot fails without it) · secrets are mark
 
 ## Database
 
-| Variable                     | Default  | Notes                                                           |
-| ---------------------------- | -------- | --------------------------------------------------------------- |
-| `DATABASE_URL`               | **R** 🔒 | `postgres://user:pass@postgres:5432/scraper`                    |
-| `DATABASE_POOL_MAX`          | `10`     | Per process. `api` replicas × this ≤ Postgres `max_connections` |
-| `DATABASE_POOL_IDLE_TIMEOUT` | `30`     | seconds                                                         |
-| `DATABASE_SSL`               | `false`  | `true` for managed Postgres                                     |
-| `RUN_MIGRATIONS_ON_BOOT`     | `true`   | API runs them; workers wait                                     |
+| Variable                     | Default      | Notes                                                           |
+| ---------------------------- | ------------ | --------------------------------------------------------------- |
+| `POSTGRES_PASSWORD`          | **R** 🔒     | The only credential you set; the URL is assembled from it       |
+| `POSTGRES_HOST`              | `postgres`   | Compose service name                                            |
+| `POSTGRES_PORT`              | `5432`       | Container port, not the published one                           |
+| `POSTGRES_USER`              | `scraper`    |                                                                 |
+| `POSTGRES_DB`                | `scraper`    |                                                                 |
+| `DATABASE_URL`               | _(empty)_ 🔒 | Escape hatch: a full string overrides every part above          |
+| `DATABASE_POOL_MAX`          | `10`         | Per process. `api` replicas × this ≤ Postgres `max_connections` |
+| `DATABASE_POOL_IDLE_TIMEOUT` | `30`         | seconds                                                         |
+| `DATABASE_SSL`               | `false`      | `true` for managed Postgres                                     |
+| `RUN_MIGRATIONS_ON_BOOT`     | `true`       | API runs them; workers wait                                     |
 
 ## Redis / queues
 
-| Variable              | Default   | Notes                                     |
-| --------------------- | --------- | ----------------------------------------- |
-| `REDIS_URL`           | **R** 🔒  | `redis://redis:6379/0`                    |
-| `JOB_PREFIX`          | `scraper` | Namespace so environments can share Redis |
-| `WORKER_CONCURRENCY`  | `5`       | Simultaneous scrapes per worker replica   |
-| `NOTIFY_CONCURRENCY`  | `20`      |                                           |
-| `SCRAPE_MAX_ATTEMPTS` | `3`       |                                           |
-| `JOB_BACKOFF_BASE_MS` | `30000`   | Exponential base                          |
+| Variable              | Default      | Notes                                                        |
+| --------------------- | ------------ | ------------------------------------------------------------ |
+| `REDIS_PASSWORD`      | _(empty)_ 🔒 | Unset on the bundled Redis; setting it wires `--requirepass` |
+| `REDIS_HOST`          | `redis`      | Compose service name                                         |
+| `REDIS_PORT`          | `6379`       | Container port, not the published one                        |
+| `REDIS_DB`            | `0`          | Logical database index                                       |
+| `REDIS_URL`           | _(empty)_ 🔒 | Escape hatch: overrides every part above                     |
+| `JOB_PREFIX`          | `scraper`    | Namespace so environments can share Redis                    |
+| `WORKER_CONCURRENCY`  | `5`          | Simultaneous scrapes per worker replica                      |
+| `NOTIFY_CONCURRENCY`  | `20`         |                                                              |
+| `SCRAPE_MAX_ATTEMPTS` | `3`          |                                                              |
+| `JOB_BACKOFF_BASE_MS` | `30000`      | Exponential base                                             |
 
 ## Security 🔒
 
@@ -114,15 +123,15 @@ Generate secrets: `openssl rand -base64 32`.
 
 ## Email
 
-| Variable                     | Default | Notes                                            |
-| ---------------------------- | ------- | ------------------------------------------------ |
-| `MAIL_DRIVER`                | `smtp`  | `smtp` \| `resend` \| `console` (dev)            |
-| `MAIL_FROM`                  | **R**   | `Scraper <alerts@example.com>`                   |
-| `SMTP_HOST`, `SMTP_PORT`     | —       |                                                  |
-| `SMTP_USER`, `SMTP_PASSWORD` | 🔒      |                                                  |
-| `SMTP_SECURE`                | `true`  |                                                  |
-| `RESEND_API_KEY`             | 🔒      |                                                  |
-| `CHANNEL_FAILURE_LIMIT`      | `10`    | Auto-disable a channel after N terminal failures |
+| Variable                     | Default   | Notes                                            |
+| ---------------------------- | --------- | ------------------------------------------------ |
+| `MAIL_DRIVER`                | `smtp`    | `smtp` \| `resend` \| `console` (dev)            |
+| `MAIL_FROM`                  | _(empty)_ | Unset disables email entirely                    |
+| `SMTP_HOST`, `SMTP_PORT`     | —         | `SMTP_HOST` is what enables the `smtp` driver    |
+| `SMTP_USER`, `SMTP_PASSWORD` | 🔒        |                                                  |
+| `SMTP_SECURE`                | `true`    |                                                  |
+| `RESEND_API_KEY`             | 🔒        |                                                  |
+| `CHANNEL_FAILURE_LIMIT`      | `10`      | Auto-disable a channel after N terminal failures |
 
 ## Frontend (build-time, `VITE_` prefix)
 
@@ -161,10 +170,19 @@ and offers a reload when the API is newer ([04-FRONTEND §8](./04-FRONTEND.md)).
 
 ```env
 APP_URL=https://scraper.example.com
-DATABASE_URL=postgres://scraper:CHANGEME@postgres:5432/scraper
-REDIS_URL=redis://redis:6379/0
+POSTGRES_PASSWORD=<openssl rand -base64 32>
 ENCRYPTION_KEY=<openssl rand -base64 32>
 SESSION_SECRET=<openssl rand -base64 32>
+BROWSER_TOKEN=<openssl rand -base64 32>
+```
+
+That is genuinely all of it. Postgres and Redis URLs are assembled from their parts,
+which default to the compose services, and email is optional — an instance with no
+mail configuration starts and reports `emailAvailable: false`.
+
+Add a transport when you want notifications to leave the box:
+
+```env
 MAIL_FROM=Scraper <alerts@example.com>
 SMTP_HOST=smtp.example.com
 SMTP_USER=alerts@example.com

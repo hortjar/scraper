@@ -1,8 +1,7 @@
 # Deployment — Docker, Compose & Portainer
 
 > Looking for the commands rather than the reasoning? See
-> [17-DEPLOY-RUNBOOK](./17-DEPLOY-RUNBOOK.md), which also records a **known blocker
-> in the browser → API path** that affects any real deployment.
+> [17-DEPLOY-RUNBOOK](./17-DEPLOY-RUNBOOK.md).
 
 Design goal: **one `docker-compose.yml` plus one set of environment variables is a
 complete deployment.** Those variables come from Portainer's stack editor in
@@ -27,8 +26,8 @@ the same time without a single collision.
 **Published ports are not container ports.** Inside the compose network Postgres
 still listens on `5432`, Redis on `6379` and browserless on `3000` — those are the
 images' own ports and nothing rewrites them. Only the left-hand side of the dev
-`ports:` mapping moved, which is why `DATABASE_URL` reads `postgres:5432` in a
-container and `localhost:9302` from a shell on the dev machine.
+`ports:` mapping moved, which is why `POSTGRES_PORT` is `5432` in a container and
+`9302` from a shell on the dev machine.
 
 `API_PORT` is the exception: the API is ours, so it listens on `9300` in the
 container too. `nginx.conf`, `Dockerfile.web` and the production stack all proxy to
@@ -97,9 +96,11 @@ services:
 
   redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes --maxmemory ${REDIS_MAXMEMORY:-512mb} --maxmemory-policy noeviction
+    command: redis-server --appendonly yes --maxmemory ${REDIS_MAXMEMORY:-512mb}
+      --maxmemory-policy noeviction ${REDIS_PASSWORD:+--requirepass ${REDIS_PASSWORD}}
     volumes: [redisdata:/data]
-    healthcheck: { test: ["CMD", "redis-cli", "ping"], interval: 10s, retries: 5 }
+    # -a is wired from the same variable, or the probe fails with NOAUTH
+    healthcheck: { test: ["CMD-SHELL", "redis-cli ${REDIS_PASSWORD:+-a ${REDIS_PASSWORD} --no-auth-warning} ping | grep -q PONG"], interval: 10s, retries: 5 }
     restart: unless-stopped
 
   browser:
@@ -135,7 +136,7 @@ services:
   web:
     image: ghcr.io/${GH_ORG}/scraper-web:${IMAGE_TAG:?required}
     environment:
-      API_URL: http://api:9300
+      API_URL: ${API_URL:-/api/v1}   # browser-visible, same origin
       APP_TITLE: ${APP_TITLE:-Scraper}
     ports: ["${WEB_PORT:-8080}:80"]
     depends_on: [api]
@@ -170,7 +171,7 @@ window.__APP_CONFIG__ = {
 any environment — which is what Portainer users expect.
 
 `APP_VERSION` and `GIT_SHA` are the exception: they are **build args**, baked into
-all three images via Vite `define` and the API's `/health` response. They identify
+all three images via Vite `define` and the API's `/api/v1/health` response. They identify
 the artifact, so they must not be runtime-overridable — that's what lets the client
 detect a version skew after a rolling deploy and offer a reload
 ([04-FRONTEND §8](./04-FRONTEND.md)).
