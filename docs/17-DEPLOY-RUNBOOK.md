@@ -24,7 +24,7 @@ SESSION_SECRET=<openssl rand -base64 32>
 BROWSER_TOKEN=<openssl rand -base64 32>
 EOF
 
-docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+docker compose up -d --build
 ```
 
 That is the whole thing. Five variables, one command, no `GH_ORG`, no `IMAGE_TAG`,
@@ -87,8 +87,8 @@ export APP_VERSION=0.5.0
 export GIT_SHA=$(git rev-parse --short HEAD)
 
 cd deploy
-docker compose -f docker-compose.yml -f docker-compose.build.yml build
-docker compose -f docker-compose.yml -f docker-compose.build.yml push
+docker compose build
+docker compose push
 ```
 
 Three images come out: `scraper-api`, `scraper-worker`, `scraper-web`, each tagged

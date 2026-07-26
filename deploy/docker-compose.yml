@@ -111,6 +111,13 @@ services:
 
   api:
     image: ${IMAGE_REGISTRY:-local}/scraper-api:${IMAGE_TAG:-dev}
+    pull_policy: ${IMAGE_PULL_POLICY:-build}
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.api
+      args:
+        APP_VERSION: ${APP_VERSION:-dev}
+        GIT_SHA: ${GIT_SHA:-local}
     env_file:
       - path: .env
         required: false
@@ -131,6 +138,13 @@ services:
 
   worker:
     image: ${IMAGE_REGISTRY:-local}/scraper-worker:${IMAGE_TAG:-dev}
+    pull_policy: ${IMAGE_PULL_POLICY:-build}
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.worker
+      args:
+        APP_VERSION: ${APP_VERSION:-dev}
+        GIT_SHA: ${GIT_SHA:-local}
     env_file:
       - path: .env
         required: false
@@ -147,6 +161,13 @@ services:
 
   web:
     image: ${IMAGE_REGISTRY:-local}/scraper-web:${IMAGE_TAG:-dev}
+    pull_policy: ${IMAGE_PULL_POLICY:-build}
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.web
+      args:
+        APP_VERSION: ${APP_VERSION:-dev}
+        GIT_SHA: ${GIT_SHA:-local}
     environment:
       APP_VERSION: ${APP_VERSION:-}
       GIT_SHA: ${GIT_SHA:-}

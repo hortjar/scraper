@@ -6,9 +6,9 @@
 - Portainer CE installed and running
 
 **No registry access is required.** Portainer clones this repository for a Git-backed
-stack, so Compose can build the three app images from the working tree. Add
-`deploy/docker-compose.build.yml` as a second compose path and leave `IMAGE_REGISTRY`
-and `IMAGE_TAG` unset — they default to `local` and `dev`.
+stack, and `deploy/docker-compose.yml` carries the `build:` config, so Compose builds
+the three app images from the clone. One compose path, nothing extra to configure —
+`IMAGE_REGISTRY` and `IMAGE_TAG` default to `local` and `dev`.
 
 Pulling pre-built images from `ghcr.io/<org>/scraper-*` is the alternative, not the
 requirement. It buys pinned tags and instant rollback at the cost of publishing them
@@ -24,8 +24,10 @@ In Portainer:
 2. Select **Repository** (enables GitOps and "Pull and redeploy")
 3. Paste repository URL: `https://github.com/your-org/scraper`
 4. Set compose path: `deploy/docker-compose.yml`
-   - To build from source, add a second path: `deploy/docker-compose.build.yml`
 5. Click **Deploy the stack**
+
+The first deploy builds three images and takes a few minutes. Later deploys reuse
+the layer cache unless the lockfile changed.
 
 ### 2. Configure Environment Variables
 
@@ -109,6 +111,18 @@ One that still catches people:
   secret unreadable. Back it up where you will not lose it.
 
 `APP_VERSION` and `GIT_SHA` are optional and only feed the UI's version indicator.
+
+### 3b. Pulling published images instead of building
+
+The default is to build. To deploy pinned images from a registry, add
+`deploy/docker-compose.registry.yml` as a second compose path (or set
+`IMAGE_PULL_POLICY=always`) and set `IMAGE_REGISTRY` and `IMAGE_TAG`.
+
+Without that overlay the stack builds even when `IMAGE_REGISTRY` is set, because the
+base file declares `pull_policy: build`. That default is deliberate: a single-compose-path
+Git stack — which is how Portainer deploys — must work without extra configuration,
+and the failure mode of the opposite default is
+`pull access denied for local/scraper-api`.
 
 ### 3a. Variables that do NOT reach the containers
 

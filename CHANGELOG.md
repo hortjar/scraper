@@ -6,6 +6,36 @@ All notable changes to this project are documented here. The format follows
 
 This file starts at 0.2.0. For anything earlier, see the git history.
 
+## [0.5.1] - 2026-07-26
+
+### Fixed
+
+- **`pull access denied for local/scraper-api` when deploying from Portainer.**
+  0.5.0 put the `build:` config in a separate `docker-compose.build.yml`, but a
+  Portainer Git stack points at **one** compose path. Running
+  `deploy/docker-compose.yml` alone therefore tried to pull `local/scraper-api:dev`,
+  a name no registry serves.
+
+  The build config now lives in `docker-compose.yml` itself, with
+  `pull_policy: ${IMAGE_PULL_POLICY:-build}`. A single-path deploy builds from the
+  clone with nothing extra to configure. `docker-compose.build.yml` is **removed**;
+  `docker compose up -d --build` needs no `-f` flags at all.
+
+  Pulling published images is now the overlay: `docker-compose.registry.yml` sets
+  `pull_policy: always`, or set `IMAGE_PULL_POLICY=always`.
+
+- **The `web` container reported `unhealthy` while serving fine.** Its `HEALTHCHECK`
+  probed `http://localhost:80/health`, and the image's `/etc/hosts` maps `localhost`
+  to both `127.0.0.1` and `::1`. busybox `wget` tried `::1` first, while
+  `nginx.conf` declares only `listen 80` — IPv4 — so every probe got connection
+  refused. Now probes `127.0.0.1` explicitly. Nothing depends on `web` being healthy,
+  so this was cosmetic in Compose but red in Portainer and actionable in any
+  orchestrator that reacts to health.
+
+Verified by deleting all three images and running `docker compose up -d` against the
+base file alone: it built from scratch and every service reached `healthy`, with
+`/api/v1/health`, `/api/v1/ready`, `/api/v1/meta` and `/` all 200.
+
 ## [0.5.0] - 2026-07-26
 
 ### ⚠️ BREAKING — the stack builds from source, and no image variable is required
@@ -14,7 +44,7 @@ This file starts at 0.2.0. For anything earlier, see the git history.
 `local` and `dev`, so nothing about images has to be configured:
 
 ```bash
-cd deploy && docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+cd deploy && docker compose up -d --build
 ```
 
 Five variables and one command. Previously `${IMAGE_TAG:?required}` failed during

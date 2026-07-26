@@ -1,0 +1,15 @@
+# Overlay for deploying PUBLISHED images instead of building from source.
+#
+#   IMAGE_REGISTRY=ghcr.io/<org> IMAGE_TAG=v0.5.0 \
+#     docker compose -f docker-compose.yml -f docker-compose.registry.yml up -d
+#
+# The base file builds by default so a single-compose-path deploy (Portainer's
+# Git stacks) works with no extra configuration. This flips that around: pull the
+# pinned tag and never build. Equivalent to setting IMAGE_PULL_POLICY=always.
+services:
+  api:
+    pull_policy: always
+  worker:
+    pull_policy: always
+  web:
+    pull_policy: always
