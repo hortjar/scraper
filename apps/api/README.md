@@ -9,7 +9,7 @@ rule this app is built around.
 ```
 src/
   runtime.ts              ManagedRuntime built from AppLayer (config, logger, translator, Database)
-  app.ts                  composition root — createApp(options) chains plugins and route modules
+  app.ts                  createApiRoutes (paths at root) + createApp (mounted at /api/v1)
   main.ts                 entry point: boot, listen, graceful shutdown
   plugins/
     effect.ts              the Effect ↔ Elysia bridge: decorates `runFx`
@@ -30,8 +30,8 @@ scripts/
 
 Feature modules from `@scraper/server` (auth, monitors, runs, channels, rules) are
 not built yet. When they land, `app.ts` grows by one `.use(xRoutes(runtime))` line
-per module, appended after `systemRoutes` — the chain itself is the insertion
-point, deliberately without a comment marker.
+per module, appended after `systemRoutes` in **`createApiRoutes`** — the chain
+itself is the insertion point, deliberately without a comment marker.
 
 ## Two app factories, and why
 
@@ -118,13 +118,12 @@ DATABASE_URL=postgres://scraper:scraper@localhost:9302/scraper \
 REDIS_URL=redis://localhost:9303 \
 ENCRYPTION_KEY=dev-encryption-key \
 SESSION_SECRET=dev-session-secret \
-MAIL_FROM=noreply@example.com \
 bun run src/main.ts
 ```
 
 `pnpm --filter @scraper/api gen:openapi` regenerates `openapi.json` (committed,
 diffed in CI) — it needs the same env as above since it boots the real app to
-read `/docs/json`, but never binds a port or touches Redis/Postgres beyond
+read `/docs/json` on the unprefixed instance, but never binds a port or touches Redis/Postgres beyond
 constructing lazy clients.
 
 ## Graceful shutdown
