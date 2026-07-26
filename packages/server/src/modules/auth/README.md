@@ -58,12 +58,14 @@ contain an underscore — which is most of the time — and authentication then 
 for that key and no other. `parseApiKey` uses a capture group on
 `PATTERN.apiKeyFormat` instead of `String.split`. `api-keys.parse.test.ts` pins it.
 
-### A `Date` parameter in a postgres.js tagged template throws under Bun
+### A Date parameter in a postgres.js tagged template throws under Bun
 
-`sql\`… set last_used_at = ${now}\``fails with`ERR_INVALID_ARG_TYPE … Received an
-instance of Date`. Drizzle serializes dates itself, so ORM paths are fine and only
-this module's raw SQL is affected. Every timestamp parameter goes through
-`sqlTimestamp()`from`auth.database.ts`, which hands postgres an ISO string.
+Interpolating a `Date` into a tagged-template query fails with
+`ERR_INVALID_ARG_TYPE … Received an instance of Date`. Drizzle serializes dates
+itself, so ORM paths are fine and only this module's raw SQL is affected — every
+session touch, key revocation and token consumption was a 500. Timestamp parameters
+go through `sqlTimestamp()` from `auth.database.ts`, which hands postgres an ISO
+string.
 
 ## Bootstrap
 
