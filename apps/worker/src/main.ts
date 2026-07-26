@@ -1,6 +1,6 @@
 import process from "node:process"
 
-import { AppConfig } from "@scraper/core/config"
+import { AppConfig, readPackageVersion } from "@scraper/core/config"
 import { Effect } from "effect"
 
 import { makeConnection } from "./connection.js"
@@ -10,6 +10,8 @@ import { createDigestWorker } from "./workers/digest.worker.js"
 import { createMaintenanceWorker } from "./workers/maintenance.worker.js"
 import { createNotifyWorker } from "./workers/notify.worker.js"
 import { createScrapeWorker } from "./workers/scrape.worker.js"
+
+process.env.APP_VERSION ??= readPackageVersion(new URL("../package.json", import.meta.url))
 
 const runtime = makeRuntime()
 

@@ -71,6 +71,19 @@ error. `encodedUserInfo` is what makes an arbitrary password safe to carry.
 Setting `DATABASE_URL` or `REDIS_URL` explicitly still wins. That escape hatch
 exists for managed providers that issue one connection string and no parts.
 
+### The app version comes from package.json
+
+`readPackageVersion` reads the calling app's own `package.json`, and `main.ts` in
+both `api` and `worker` seeds `APP_VERSION` from it when the variable is unset. The
+web build does the same in `vite.config.ts` for `__APP_VERSION__`. Nobody has to pass
+a version at build time for `/api/v1/health` and the UI to report the real one.
+
+An explicit `APP_VERSION` still wins, and a missing or malformed `package.json`
+returns `undefined` rather than throwing, so the config default applies instead of
+the process failing to start.
+
+`GIT_SHA` has no such source and stays a build arg, defaulting to `local`.
+
 ### Mail is optional, and absence is a first-class state
 
 `mailConfig.isAvailable` reports whether a transport is actually configured:

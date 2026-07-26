@@ -1,12 +1,14 @@
 import process from "node:process"
 
-import { AppConfig } from "@scraper/core/config"
+import { AppConfig, readPackageVersion } from "@scraper/core/config"
 import { TIMEOUT } from "@scraper/core/constants"
 import { Effect } from "effect"
 
 import { createApp } from "./app.js"
 import { makeRedisProbe } from "./health/redis-probe.js"
 import { makeRuntime } from "./runtime.js"
+
+process.env.APP_VERSION ??= readPackageVersion(new URL("../package.json", import.meta.url))
 
 const runtime = makeRuntime()
 

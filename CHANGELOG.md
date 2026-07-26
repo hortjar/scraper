@@ -6,6 +6,21 @@ All notable changes to this project are documented here. The format follows
 
 This file starts at 0.2.0. For anything earlier, see the git history.
 
+## [0.6.0] - 2026-07-26
+
+### Changed
+
+- **The app version is read from `package.json`.** `apps/api` and `apps/worker` seed
+  `APP_VERSION` from their own `package.json` at startup, and `apps/web` bakes it into
+  `__APP_VERSION__` at build time from the same source. `/api/v1/health` and the UI
+  now report the real version without anyone passing a build arg — previously an
+  unset `APP_VERSION` meant the images reported `dev`.
+
+  An explicit `APP_VERSION` still overrides. A missing or malformed `package.json`
+  yields `undefined` rather than throwing, so the config default applies instead of
+  the process failing to boot. `GIT_SHA` has no equivalent source and remains a build
+  arg defaulting to `local`.
+
 ## [0.5.1] - 2026-07-26
 
 ### Fixed

@@ -1,4 +1,5 @@
 /* eslint import-x/no-cycle: ["error", { maxDepth: 6, ignoreExternal: true }] */
+import { readFileSync } from "node:fs"
 import { env } from "node:process"
 import { fileURLToPath, URL } from "node:url"
 
@@ -7,7 +8,13 @@ import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
-const DEV_VERSION = "0.0.0-dev"
+const packageVersion = (): string => {
+  const parsed: unknown = JSON.parse(readFileSync(new URL("package.json", import.meta.url), "utf8"))
+  const version = (parsed as { version?: unknown }).version
+  return typeof version === "string" ? version : "0.0.0-dev"
+}
+
+const DEV_VERSION = packageVersion()
 const DEV_SHA = "local"
 
 const API_PROXY_TARGET = env.VITE_API_PROXY ?? "http://localhost:9300"
