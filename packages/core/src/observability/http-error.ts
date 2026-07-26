@@ -64,7 +64,34 @@ export const toHttpFailure: (error: AppError) => HttpFailure = Match.type<AppErr
     ChannelNotFound: (error) => notFound(MSG.errors.channelNotFound, error.id),
     RuleNotFound: (error) => notFound(MSG.errors.ruleNotFound, error.id),
     ExtractorNotFound: (error) => notFound(MSG.errors.extractorNotFound, error.id),
+    SessionNotFound: (error) => notFound(MSG.errors.sessionNotFound, error.id),
+    ApiKeyNotFound: (error) => notFound(MSG.errors.apiKeyNotFound, error.id),
     UserNotFound: () => notFound(MSG.errors.userNotFound),
+    RegistrationClosed: () =>
+      failure(HTTP_STATUS.forbidden, ERROR_CODE.forbidden, MSG.errors.registrationClosed),
+    LocalAuthDisabled: (error) =>
+      failure(HTTP_STATUS.forbidden, ERROR_CODE.forbidden, MSG.errors.localAuthDisabled, {
+        operation: error.operation,
+      }),
+    ApiKeyNotAllowed: (error) =>
+      failure(HTTP_STATUS.forbidden, ERROR_CODE.forbidden, MSG.errors.apiKeyNotAllowed, {
+        action: error.action,
+      }),
+    InsufficientScope: (error) =>
+      failure(HTTP_STATUS.forbidden, ERROR_CODE.forbidden, MSG.errors.insufficientScope, {
+        required: error.required,
+      }),
+    PasswordRejected: (error) =>
+      invalid(
+        error.reason === "breached" ? MSG.errors.passwordBreached : MSG.errors.passwordTooShort,
+        { min: error.minLength },
+      ),
+    IdentityProviderUnavailable: () =>
+      failure(
+        HTTP_STATUS.serviceUnavailable,
+        ERROR_CODE.serviceUnavailable,
+        MSG.errors.identityProviderUnavailable,
+      ),
     TokenInvalid: (error) =>
       failure(HTTP_STATUS.badRequest, ERROR_CODE.validationFailed, MSG.errors.tokenInvalid, {
         purpose: error.purpose,

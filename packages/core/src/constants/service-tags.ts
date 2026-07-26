@@ -13,17 +13,21 @@ export const SERVICE_TAG = {
   ApiKeys: "app/ApiKeys",
   PasswordHasher: "app/PasswordHasher",
   AuditLog: "app/AuditLog",
+  UniversalAuth: "app/UniversalAuth",
 
   Monitors: "app/Monitors",
   Extractors: "app/Extractors",
   MonitorRepository: "app/MonitorRepository",
   UserRepository: "app/UserRepository",
   SessionRepository: "app/SessionRepository",
+  ApiKeyRepository: "app/ApiKeyRepository",
+  VerificationTokenRepository: "app/VerificationTokenRepository",
   RunRepository: "app/RunRepository",
   ChangeRepository: "app/ChangeRepository",
   ChannelRepository: "app/ChannelRepository",
   RuleRepository: "app/RuleRepository",
   DeliveryRepository: "app/DeliveryRepository",
+  Channels: "app/Channels",
 
   StrategyRegistry: "app/StrategyRegistry",
   HttpStrategy: "app/HttpStrategy",
@@ -46,6 +50,7 @@ export const SERVICE_TAG = {
   JobProducer: "app/JobProducer",
   QueueRegistry: "app/QueueRegistry",
   RedisClient: "app/RedisClient",
+  NotifyRunner: "app/NotifyRunner",
 } as const
 
 export type ServiceTag = (typeof SERVICE_TAG)[keyof typeof SERVICE_TAG]

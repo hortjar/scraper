@@ -9,8 +9,9 @@ file gets fixed.
 
 ## Auth is the next feature, and it is not started
 
-`packages/server/src/modules/` is empty — there is no auth code, and
-`RUN_MIGRATIONS_ON_BOOT` is read by nothing, so a deployed database has no tables.
+`packages/server/src/modules/` is empty — there is no auth code. Migrations now run
+on boot (`RUN_MIGRATIONS_ON_BOOT`, see `docs/18-AUTH-HANDOFF.md` §3.1), so the schema
+exists once the API is up.
 **Read [docs/18-AUTH-HANDOFF.md](./docs/18-AUTH-HANDOFF.md) before starting.** It
 records the verified state, the traps, and the build order, and it supersedes
 `docs/08-AUTH.md` on anything about current state.

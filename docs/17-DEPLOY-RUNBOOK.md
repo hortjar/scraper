@@ -94,10 +94,15 @@ docker compose push
 Three images come out: `scraper-api`, `scraper-worker`, `scraper-web`, each tagged
 `$IMAGE_REGISTRY/scraper-<app>:$IMAGE_TAG`.
 
-`APP_VERSION` and `GIT_SHA` are **build args, baked into the image** — they are not
-runtime-overridable, because they identify the artifact and are what lets the web
-client notice a version skew after a rolling deploy. Set them at build time or the
-UI reports `dev`/`local`.
+`APP_VERSION` and `GIT_SHA` are **build args, baked into the image** — they identify
+the artifact, which is what lets the web client notice a version skew after a rolling
+deploy.
+
+Setting `APP_VERSION` is optional: each app falls back to its own `package.json`
+version, so leaving it unset still reports the real number. `GIT_SHA` has no such
+source and reports `local` unless you pass it. Do **not** set either to a placeholder
+like `dev` — the app cannot tell a placeholder from a real answer, which is exactly
+how every deployment came to report `dev` in the UI.
 
 ### The architecture trap
 
@@ -197,8 +202,8 @@ docker compose exec api wget -qO- http://localhost:9300/api/v1/health
 # {"status":"ok","version":"0.5.0","commit":"a1b2c3d","time":"..."}
 ```
 
-`version` and `commit` come from the `APP_VERSION`/`GIT_SHA` build args, so a stale
-value here means step 2 published an older image than you think.
+`version` defaults to the API's own `package.json` and `commit` to the `GIT_SHA`
+build arg, so a stale value here means step 2 published an older image than you think.
 
 Note that `curl http://localhost:8080/health` hits **nginx's own** static probe in
 `deploy/nginx.conf`, which returns the literal string `ok` and never touches the
@@ -256,11 +261,11 @@ makes rollback guesswork.
 
 ## Troubleshooting
 
-| Symptom                                        | Cause                                                                                                                                                  |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `manifest unknown` on pull                     | Step 2 was skipped, or `IMAGE_TAG`/`GH_ORG` disagrees with what you pushed                                                                             |
-| `exec format error` in a container             | Single-arch image built on a machine that does not match the target                                                                                    |
-| Stack fails at parse with `env file not found` | `deploy/.env` is gitignored; `env_file` is `required: false` for that reason — do not make it required                                                 |
-| A stack variable never reaches the app         | Portainer stack variables are the environment Compose is _parsed_ in. Only names listed in the `x-app-environment` anchor become container environment |
-| UI shows version `dev`                         | `APP_VERSION`/`GIT_SHA` not passed as build args in step 2                                                                                             |
-| Chromium crashes immediately                   | `shm_size: 1gb` missing on the `browser` service                                                                                                       |
+| Symptom                                        | Cause                                                                                                                                                                                                             |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `manifest unknown` on pull                     | Step 2 was skipped, or `IMAGE_TAG`/`GH_ORG` disagrees with what you pushed                                                                                                                                        |
+| `exec format error` in a container             | Single-arch image built on a machine that does not match the target                                                                                                                                               |
+| Stack fails at parse with `env file not found` | `deploy/.env` is gitignored; `env_file` is `required: false` for that reason — do not make it required                                                                                                            |
+| A stack variable never reaches the app         | Portainer stack variables are the environment Compose is _parsed_ in. Only names listed in the `x-app-environment` anchor become container environment                                                            |
+| UI shows version `dev` or `unknown`            | Fixed in 0.7.0. A build arg or compose default set a placeholder, which beat the `package.json` fallback. If you still see it, you are running an image built before 0.7.0, or you set `APP_VERSION=dev` yourself |
+| Chromium crashes immediately                   | `shm_size: 1gb` missing on the `browser` service                                                                                                                                                                  |

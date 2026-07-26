@@ -5,6 +5,8 @@ interface AppRuntimeConfig {
   readonly apiUrl?: string
   readonly appTitle?: string
   readonly defaultLocale?: string
+  readonly appVersion?: string
+  readonly gitSha?: string
 }
 
 declare var __APP_CONFIG__: AppRuntimeConfig | undefined

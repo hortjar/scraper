@@ -25,6 +25,7 @@ export const HEADER = {
   acceptLanguage: "accept-language",
   retryAfter: "retry-after",
   userAgent: "user-agent",
+  cookie: "cookie",
   ifModifiedSince: "if-modified-since",
   ifNoneMatch: "if-none-match",
   lastModified: "last-modified",

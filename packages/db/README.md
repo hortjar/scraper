@@ -10,8 +10,9 @@ src/schema/     one file per feature area, barrel-exported
   columns.ts    shared column builders (primaryId, citext, bytea, timestamps)
   enums.ts      every pgEnum, built FROM @scraper/core constants
 src/client.ts   the Database service: query, transaction, health
+src/migrator.ts boot-time migration runner: applies migrations/*.sql, advisory-locked
 src/repository.ts  decode helpers, constraint mapping, cursor pagination
-migrations/     SQL, applied by drizzle-kit
+migrations/     SQL, authored by drizzle-kit, applied by src/migrator.ts at boot
 ```
 
 ## Enums come from constants
@@ -70,7 +71,7 @@ would either be swallowed into a defect or would commit the transaction. Do not
 
 ```bash
 pnpm db:generate    # drizzle-kit diff against the schema
-pnpm db:migrate     # apply
+pnpm db:migrate     # apply, via drizzle-kit — for local/manual use
 pnpm db:reset       # drop and recreate the public schema (refuses in production)
 pnpm db:seed        # dev user plus three demo monitors
 ```
@@ -84,6 +85,48 @@ not track matviews, `generate` will not try to drop it.
 
 Migrations are **additive and backward compatible within a release** — expand,
 deploy, backfill, contract later. That is what makes a rolling restart safe.
+
+### Boot-time migrations (`src/migrator.ts`)
+
+`apps/api/src/main.ts` calls `runMigrations()` before `app.listen`, gated on
+`config.database.runMigrationsOnBoot` (`RUN_MIGRATIONS_ON_BOOT`, default `true`).
+This is the path that actually provisions a fresh deployment — `pnpm db:migrate`
+above is for local/manual use only.
+
+The runner does **not** shell out to `drizzle-kit`. It:
+
+1. **Reserves a single pooled connection** (`sql.reserve()`) and does everything on
+   it, releasing it in every path via `Effect.acquireUseRelease`.
+2. Acquires a Postgres session-level advisory lock (`pg_advisory_lock`) using the
+   fixed key `DATABASE_LOCK.migrations` from `@scraper/core/constants`, so that N
+   API replicas booting at once serialize instead of racing on DDL. The lock is
+   released in every path, including failure, via `Effect.ensuring`.
+
+   **The reservation in step 1 is what makes step 2 correct, and it is not
+   optional.** `Database.client` is a _pool_, but advisory locks are scoped to a
+   _session_: `pg_advisory_unlock` only works when it runs on the same connection
+   that took the lock. Issued against the pool, the lock and the unlock can land on
+   different connections — the unlock then returns `false` and does nothing, and the
+   lock survives as long as the holding connection stays in the pool, which is the
+   life of the process. Every replica that boots afterwards blocks on
+   `pg_advisory_lock` forever. A failed unlock is also logged rather than swallowed,
+   because the symptom otherwise appears much later and somewhere else.
+
+3. Creates a `schema_migrations(filename text primary key, applied_at timestamptz)`
+   tracking table if it does not already exist.
+4. Reads `migrations/*.sql`, sorted lexically by filename — hence the zero-padded
+   `NNNN_` prefix convention — and applies whichever filenames are not yet in
+   `schema_migrations`.
+5. Applies each file and records it in the same Postgres transaction
+   (`sql.begin`), so a mid-file failure cannot leave a migration half-applied but
+   unrecorded — the next boot would then try to re-run `CREATE TYPE`/`CREATE TABLE`
+   statements that lack `IF NOT EXISTS` and fail loudly instead of silently drifting.
+
+A migration failure fails the effect with `DatabaseError`; `main.ts` logs
+`db.migrate.failed` and calls `process.exit(1)` before the server ever starts
+listening, so a broken schema never serves traffic. Pure ordering/idempotency logic
+(`sortMigrationFiles`, `selectPendingMigrations`) is covered by
+`src/migrator.test.ts` without a live database.
 
 The seed user's `password_hash` is `!`, which no hash verifier accepts. That is on
 purpose: register through the API rather than seeding a real credential.

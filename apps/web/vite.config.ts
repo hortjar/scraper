@@ -8,14 +8,19 @@ import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
+const blankToUndefined = (value: string | undefined): string | undefined => {
+  const trimmed = value?.trim()
+  return trimmed === undefined || trimmed === "" ? undefined : trimmed
+}
+
 const packageVersion = (): string => {
   const parsed: unknown = JSON.parse(readFileSync(new URL("package.json", import.meta.url), "utf8"))
   const version = (parsed as { version?: unknown }).version
-  return typeof version === "string" ? version : "0.0.0-dev"
+  return (typeof version === "string" ? blankToUndefined(version) : undefined) ?? "0.0.0-dev"
 }
 
-const DEV_VERSION = packageVersion()
-const DEV_SHA = "local"
+const PACKAGE_VERSION = packageVersion()
+const DEFAULT_SHA = "local"
 
 const API_PROXY_TARGET = env.VITE_API_PROXY ?? "http://localhost:9300"
 
@@ -38,8 +43,8 @@ export default defineConfig({
     },
   },
   define: {
-    __APP_VERSION__: JSON.stringify(env.APP_VERSION ?? DEV_VERSION),
-    __GIT_SHA__: JSON.stringify(env.GIT_SHA ?? DEV_SHA),
+    __APP_VERSION__: JSON.stringify(blankToUndefined(env.APP_VERSION) ?? PACKAGE_VERSION),
+    __GIT_SHA__: JSON.stringify(blankToUndefined(env.GIT_SHA) ?? DEFAULT_SHA),
   },
   server: {
     port: 9301,

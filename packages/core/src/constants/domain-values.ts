@@ -126,4 +126,6 @@ export const APP_ENV = {
   test: "test",
   production: "production",
 } as const
+export const AUTH_MODE = { local: "local", universal: "universal" } as const
+export type AuthMode = (typeof AUTH_MODE)[keyof typeof AUTH_MODE]
 export const LOCALE = { en: "en", cs: "cs" } as const

@@ -1,18 +1,41 @@
 import process from "node:process"
 
-import { AppConfig, readPackageVersion } from "@scraper/core/config"
-import { TIMEOUT } from "@scraper/core/constants"
-import { Effect } from "effect"
+import { AppConfig, seedAppVersion } from "@scraper/core/config"
+import { LOG_FIELD, TIMEOUT } from "@scraper/core/constants"
+import { runMigrations } from "@scraper/db/migrator"
+import { Cause, Effect, Exit } from "effect"
 
 import { createApp } from "./app.js"
 import { makeRedisProbe } from "./health/redis-probe.js"
 import { makeRuntime } from "./runtime.js"
 
-process.env.APP_VERSION ??= readPackageVersion(new URL("../package.json", import.meta.url))
+seedAppVersion(new URL("../package.json", import.meta.url))
 
 const runtime = makeRuntime()
 
 const config = await runtime.runPromise(AppConfig)
+
+const migrationEffect = config.database.runMigrationsOnBoot
+  ? Effect.logInfo("db.migrate.start").pipe(
+      Effect.zipRight(runMigrations()),
+      Effect.tap((result) =>
+        Effect.logInfo("db.migrate.finish").pipe(
+          Effect.annotateLogs({ [LOG_FIELD.migrationsApplied]: result.applied.length }),
+        ),
+      ),
+    )
+  : Effect.logInfo("db.migrate.skip")
+
+const migrationFailureEffect = (cause: Cause.Cause<unknown>) =>
+  Effect.logError("db.migrate.failed").pipe(Effect.annotateLogs({ cause: Cause.pretty(cause) }))
+
+const migrationExit = await runtime.runPromiseExit(migrationEffect)
+
+if (Exit.isFailure(migrationExit)) {
+  await runtime.runPromise(migrationFailureEffect(migrationExit.cause))
+  await runtime.dispose()
+  process.exit(1)
+}
 
 const redisProbe = makeRedisProbe(config.redis)
 

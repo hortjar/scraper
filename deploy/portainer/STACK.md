@@ -111,6 +111,9 @@ One that still catches people:
   secret unreadable. Back it up where you will not lose it.
 
 `APP_VERSION` and `GIT_SHA` are optional and only feed the UI's version indicator.
+Leave them unset: each app reports its own `package.json` version, and `GIT_SHA`
+falls back to `local`. Setting `APP_VERSION` to a placeholder like `dev` actively
+makes things worse — the app cannot distinguish it from a real version.
 
 ### 3b. Pulling published images instead of building
 

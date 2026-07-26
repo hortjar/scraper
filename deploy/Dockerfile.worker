@@ -37,8 +37,8 @@ RUN pnpm deploy --filter @scraper/worker --prod /app
 
 FROM oven/bun:1-debian
 
-ARG APP_VERSION=unknown
-ARG GIT_SHA=unknown
+ARG APP_VERSION=""
+ARG GIT_SHA=""
 
 WORKDIR /app
 

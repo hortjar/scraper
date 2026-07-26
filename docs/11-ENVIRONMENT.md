@@ -12,17 +12,17 @@ Legend: **R** = required (no default, boot fails without it) · secrets are mark
 
 ## Core
 
-| Variable            | Default       | Notes                                                                                |
-| ------------------- | ------------- | ------------------------------------------------------------------------------------ |
-| `APP_ENV`           | `production`  | `development` \| `test` \| `production`                                              |
-| `APP_URL`           | **R**         | Public URL, e.g. `https://scraper.example.com`. Used in emails, links, Origin checks |
-| `LOG_LEVEL`         | `info`        | `trace`…`error`                                                                      |
-| `LOG_FORMAT`        | `json`        | `json` \| `pretty`                                                                   |
-| `TZ`                | `UTC`         | Container timezone; user schedules use their own tz regardless                       |
-| `APP_VERSION`       | _(build arg)_ | Semver, baked at build. Returned by `/health` and shown in the UI                    |
-| `GIT_SHA`           | _(build arg)_ | Short commit, shown next to the version                                              |
-| `DEFAULT_LOCALE`    | `en`          | Fallback when a user has none and `Accept-Language` doesn't match                    |
-| `SUPPORTED_LOCALES` | `en,cs`       | Comma-separated; drives `/meta` and the language picker                              |
+| Variable            | Default          | Notes                                                                                                                |
+| ------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `APP_ENV`           | `production`     | `development` \| `test` \| `production`                                                                              |
+| `APP_URL`           | **R**            | Public URL, e.g. `https://scraper.example.com`. Used in emails, links, Origin checks                                 |
+| `LOG_LEVEL`         | `info`           | `trace`…`error`                                                                                                      |
+| `LOG_FORMAT`        | `json`           | `json` \| `pretty`                                                                                                   |
+| `TZ`                | `UTC`            | Container timezone; user schedules use their own tz regardless                                                       |
+| `APP_VERSION`       | _(package.json)_ | Semver. Defaults to the app's own `package.json`; set it only to override. Returned by `/health` and shown in the UI |
+| `GIT_SHA`           | `local`          | Short commit, shown next to the version. Build arg only — no other source                                            |
+| `DEFAULT_LOCALE`    | `en`             | Fallback when a user has none and `Accept-Language` doesn't match                                                    |
+| `SUPPORTED_LOCALES` | `en,cs`          | Comma-separated; drives `/meta` and the language picker                                                              |
 
 ## API
 
@@ -101,13 +101,14 @@ Generate secrets: `openssl rand -base64 32`.
 
 ## Browser
 
-| Variable                  | Default            | Notes                                                    |
-| ------------------------- | ------------------ | -------------------------------------------------------- |
-| `BROWSER_WS_ENDPOINT`     | _(empty)_          | `ws://browser:3000` — empty = launch chromium in-process |
-| `BROWSER_TIMEOUT_MS`      | `45000`            |                                                          |
-| `BROWSER_MAX_CONTEXTS`    | `4`                | Per worker replica                                       |
-| `BROWSER_BLOCK_RESOURCES` | `image,media,font` | Default blocklist                                        |
-| `SCREENSHOTS_ENABLED`     | `true`             |                                                          |
+| Variable                  | Default            | Notes                                                           |
+| ------------------------- | ------------------ | --------------------------------------------------------------- |
+| `BROWSER_WS_ENDPOINT`     | _(empty)_          | `ws://browser:3000` — empty = launch chromium in-process        |
+| `BROWSER_TOKEN`           | 🔒 required        | Auth token for the browserless container, appended as `?token=` |
+| `BROWSER_TIMEOUT_MS`      | `45000`            |                                                                 |
+| `BROWSER_MAX_CONTEXTS`    | `4`                | Per worker replica                                              |
+| `BROWSER_BLOCK_RESOURCES` | `image,media,font` | Default blocklist                                               |
+| `SCREENSHOTS_ENABLED`     | `true`             |                                                                 |
 
 ## Storage
 
@@ -148,9 +149,13 @@ it is where `vite.config.ts` proxies `/api`, and it defaults to
 `http://localhost:9300` — the API's port from
 [10-DEPLOYMENT §0](./10-DEPLOYMENT.md). The dev server itself listens on `9301`.
 
-`__APP_VERSION__` and `__GIT_SHA__` are Vite `define` constants sourced from
-`APP_VERSION`/`GIT_SHA` at build time. The client compares them against `/health`
-and offers a reload when the API is newer ([04-FRONTEND §8](./04-FRONTEND.md)).
+`__APP_VERSION__` and `__GIT_SHA__` are Vite `define` constants. `__APP_VERSION__`
+comes from `apps/web/package.json` unless a **non-blank** `APP_VERSION` overrides it;
+`__GIT_SHA__` comes from `GIT_SHA` and falls back to `local`. The blank check matters:
+Compose interpolates an unset variable to an empty string, and treating that as a real
+value is what made the UI report `dev`. The client compares the result against
+`/health` and offers a reload when the API is newer
+([04-FRONTEND §8](./04-FRONTEND.md)).
 
 > Vite inlines these at **build** time. To make them runtime-configurable in
 > Portainer, `web`'s entrypoint rewrites a `/config.js` from env before nginx

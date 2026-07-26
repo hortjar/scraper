@@ -116,8 +116,8 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile.api
       args:
-        APP_VERSION: ${APP_VERSION:-dev}
-        GIT_SHA: ${GIT_SHA:-local}
+        APP_VERSION: ${APP_VERSION:-}
+        GIT_SHA: ${GIT_SHA:-}
     env_file:
       - path: .env
         required: false
@@ -143,8 +143,8 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile.worker
       args:
-        APP_VERSION: ${APP_VERSION:-dev}
-        GIT_SHA: ${GIT_SHA:-local}
+        APP_VERSION: ${APP_VERSION:-}
+        GIT_SHA: ${GIT_SHA:-}
     env_file:
       - path: .env
         required: false
@@ -166,8 +166,8 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile.web
       args:
-        APP_VERSION: ${APP_VERSION:-dev}
-        GIT_SHA: ${GIT_SHA:-local}
+        APP_VERSION: ${APP_VERSION:-}
+        GIT_SHA: ${GIT_SHA:-}
     environment:
       APP_VERSION: ${APP_VERSION:-}
       GIT_SHA: ${GIT_SHA:-}

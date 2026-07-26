@@ -226,10 +226,11 @@ in the sidebar footer (console) and the page footer (landing).
   v1.4.2 · a3f9c21       ← client version · commit, tooltip shows the API's version
 ```
 
-- **Version**: build-time `__APP_VERSION__` / `__GIT_SHA__` injected by Vite from
-  `APP_VERSION`, compared against the API's version from `/health`. **On mismatch,
-  a non-blocking banner offers "Reload to update"** — the classic stale-SPA-after-deploy
-  problem, solved cheaply.
+- **Version**: `__APP_VERSION__` / `__GIT_SHA__` injected by Vite — the version from
+  `apps/web/package.json` unless a non-blank `APP_VERSION` overrides it, and further
+  overridable at runtime through `/config.js`. Compared against the API's version
+  from `/health`. **On mismatch, a non-blocking banner offers "Reload to update"** —
+  the classic stale-SPA-after-deploy problem, solved cheaply.
 - **Connection**: derived, not polled by hand — `useIsOnline` (browser events)
   combined with the Query client's error/fetching state and a low-frequency
   `/health` query. Three states: connected, reconnecting (retries in flight or

@@ -9,6 +9,14 @@ export const en = {
   "errors.ruleNotFound": "That rule no longer exists.",
   "errors.userNotFound": "That account no longer exists.",
   "errors.extractorNotFound": "That field no longer exists.",
+  "errors.sessionNotFound": "That session is already signed out.",
+  "errors.apiKeyNotFound": "That API key no longer exists.",
+  "errors.registrationClosed": "This instance is not accepting new accounts.",
+  "errors.localAuthDisabled":
+    "Accounts are managed by the identity provider, so {operation} is unavailable here.",
+  "errors.apiKeyNotAllowed": "An API key cannot be used to {action}. Sign in instead.",
+  "errors.insufficientScope": "This API key is missing the {required} scope.",
+  "errors.identityProviderUnavailable": "The identity provider could not be reached.",
   "errors.conflict": "A {resource} with that {field} already exists.",
   "errors.planLimitExceeded":
     "You have reached your limit of {limit, plural, one {# monitor} other {# monitors}}.",
@@ -79,6 +87,15 @@ export const en = {
   "channels.discordDescription": "Post to a Discord channel with a webhook URL.",
   "channels.telegramName": "Telegram",
   "channels.telegramDescription": "Send messages through a Telegram bot.",
+
+  "channels.fields.to": "Email address",
+  "channels.fields.url": "URL",
+  "channels.fields.method": "HTTP method",
+  "channels.fields.secret": "Signing secret",
+  "channels.fields.headers": "Custom headers (JSON)",
+  "channels.fields.webhookUrl": "Webhook URL",
+  "channels.fields.botToken": "Bot token",
+  "channels.fields.chatId": "Chat ID",
 } as const
 
 export type Catalog = Record<keyof typeof en, string>

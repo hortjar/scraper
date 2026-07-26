@@ -46,25 +46,22 @@ are the entire API surface.
 
 Each of these was verified this session, not inferred.
 
-### 3.1 Migrations never run — the deployed database is empty
+### 3.1 Migrations now run on boot — resolved
 
-`RUN_MIGRATIONS_ON_BOOT` is declared in `databaseConfig`… and read by nothing.
+`RUN_MIGRATIONS_ON_BOOT` is read by `apps/api/src/main.ts`, which calls
+`runMigrations` from `@scraper/db/migrator` before `app.listen`. The runner applies
+`packages/db/migrations/*.sql` in lexical order, idempotently, tracking applied
+filenames in a `schema_migrations` table it creates itself, under a fixed Postgres
+advisory lock (`DATABASE_LOCK.migrations` in `@scraper/core/constants`) so multiple
+API replicas booting together don't race. A migration failure exits the process
+non-zero before it ever calls `app.listen`, so a broken schema can't serve traffic.
+See [packages/db/src/migrator.ts](../packages/db/src/migrator.ts) and
+[10-DEPLOYMENT §4](./10-DEPLOYMENT.md).
 
-```bash
-grep -rn "runMigrationsOnBoot" --include="*.ts" apps packages   # config + spec only
-```
-
-[10-DEPLOYMENT §4](./10-DEPLOYMENT.md) claims the API runs `drizzle-kit migrate` on
-boot under a Postgres advisory lock. **That is not implemented.** The migration SQL
-exists but nothing applies it in the container, so a freshly deployed stack has a
-database with **no tables**.
-
-This is invisible today because `/api/v1/ready` only checks connectivity — the stack
-reports healthy against an empty schema. Auth is the first feature that touches a
-table, so **this must be fixed first or nothing will work.**
-
-Either implement the documented boot-time migration, or change the doc. Do not leave
-them disagreeing.
+`/api/v1/ready` still only checks connectivity, not schema presence — that gap is
+now harmless because the schema is guaranteed to exist by the time the API accepts
+traffic, but keep it in mind if you ever bypass boot migrations
+(`RUN_MIGRATIONS_ON_BOOT=false`) without applying them another way.
 
 ### 3.2 The seed user cannot log in, by design
 
@@ -130,8 +127,7 @@ on `createApp` would prefix the document's paths a second time on top of its
 Each step should land green — `pnpm lint && pnpm typecheck && pnpm test` — before the
 next.
 
-1. **Run migrations on boot.** §3.1. Blocks everything. Advisory lock so replicas
-   cannot race, per the existing doc.
+1. ~~**Run migrations on boot.**~~ Done — §3.1.
 2. **Resolve the `auth-client` question.** §3.3. Shapes step 6.
 3. **Password hashing.** Add argon2, wire `securityConfig.argon2MemoryKib` /
    `argon2TimeCost`. Keep it behind a small service so `universal` mode can skip it.

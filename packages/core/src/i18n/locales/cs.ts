@@ -11,6 +11,14 @@ export const cs: Catalog = {
   "errors.ruleNotFound": "Toto pravidlo už neexistuje.",
   "errors.userNotFound": "Tento účet už neexistuje.",
   "errors.extractorNotFound": "Toto pole už neexistuje.",
+  "errors.sessionNotFound": "Toto přihlášení je již ukončeno.",
+  "errors.apiKeyNotFound": "Tento API klíč už neexistuje.",
+  "errors.registrationClosed": "Tato instance nepřijímá nové účty.",
+  "errors.localAuthDisabled":
+    "Účty spravuje poskytovatel identity, takže {operation} zde není k dispozici.",
+  "errors.apiKeyNotAllowed": "API klíčem nelze {action}. Přihlaste se prosím.",
+  "errors.insufficientScope": "Tomuto API klíči chybí oprávnění {required}.",
+  "errors.identityProviderUnavailable": "Poskytovatele identity se nepodařilo kontaktovat.",
   "errors.conflict": "{resource} s tímto {field} už existuje.",
   "errors.planLimitExceeded":
     "Dosáhli jste limitu {limit, plural, one {# monitoru} few {# monitorů} other {# monitorů}}.",
@@ -82,4 +90,13 @@ export const cs: Catalog = {
   "channels.discordDescription": "Posílat do Discord kanálu přes webhook URL.",
   "channels.telegramName": "Telegram",
   "channels.telegramDescription": "Posílat zprávy přes Telegram bota.",
+
+  "channels.fields.to": "E-mailová adresa",
+  "channels.fields.url": "URL adresa",
+  "channels.fields.method": "HTTP metoda",
+  "channels.fields.secret": "Podpisový klíč",
+  "channels.fields.headers": "Vlastní hlavičky (JSON)",
+  "channels.fields.webhookUrl": "Webhook URL",
+  "channels.fields.botToken": "Token bota",
+  "channels.fields.chatId": "ID chatu",
 }

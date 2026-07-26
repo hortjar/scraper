@@ -1,6 +1,8 @@
+import { hostname } from "node:os"
 import process from "node:process"
 
-import { AppConfig, readPackageVersion } from "@scraper/core/config"
+import { AppConfig, seedAppVersion } from "@scraper/core/config"
+import { JobProducer } from "@scraper/server/modules/jobs"
 import { Effect } from "effect"
 
 import { makeConnection } from "./connection.js"
@@ -11,7 +13,7 @@ import { createMaintenanceWorker } from "./workers/maintenance.worker.js"
 import { createNotifyWorker } from "./workers/notify.worker.js"
 import { createScrapeWorker } from "./workers/scrape.worker.js"
 
-process.env.APP_VERSION ??= readPackageVersion(new URL("../package.json", import.meta.url))
+seedAppVersion(new URL("../package.json", import.meta.url))
 
 const runtime = makeRuntime()
 
@@ -19,7 +21,7 @@ const config = await runtime.runPromise(AppConfig)
 
 const connection = makeConnection(config.redis)
 
-const workerId = crypto.randomUUID()
+const workerId = hostname()
 
 const workers = [
   createScrapeWorker(runtime, connection, config.redis),
@@ -29,6 +31,16 @@ const workers = [
 ] as const
 
 const heartbeat = startHeartbeat(connection, workerId)
+
+runtime.runFork(
+  Effect.flatMap(JobProducer, (producer) => producer.ensureMaintenanceSchedules()).pipe(
+    Effect.catchAll((error) =>
+      Effect.logError("worker.maintenanceSchedules.failed").pipe(
+        Effect.annotateLogs({ error: String(error) }),
+      ),
+    ),
+  ),
+)
 
 runtime.runFork(
   Effect.logInfo("worker.listening").pipe(

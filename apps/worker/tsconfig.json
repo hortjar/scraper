@@ -1,6 +1,6 @@
 {
   "extends": "@scraper/tooling/tsconfig/bun.json",
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "scripts/**/*.ts"],
   "compilerOptions": {
     "rootDir": "."
   }

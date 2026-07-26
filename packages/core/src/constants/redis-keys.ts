@@ -13,6 +13,8 @@ export const REDIS_KEY = {
   userRateLimit: (userId: string, bucket: string) =>
     `${KEY_PREFIX.rateLimit}:user:${userId}:${bucket}`,
   ipRateLimit: (ip: string, bucket: string) => `${KEY_PREFIX.rateLimit}:ip:${ip}:${bucket}`,
+  authRateLimit: (bucket: string, identity: string) =>
+    `${KEY_PREFIX.rateLimit}:auth:${bucket}:${identity}`,
   userConcurrency: (userId: string) => `${KEY_PREFIX.rateLimit}:concurrency:${userId}`,
   notifyDedupe: (ruleId: string, messageHash: string) =>
     `${KEY_PREFIX.dedupe}:notify:${ruleId}:${messageHash}`,

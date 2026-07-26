@@ -1,9 +1,23 @@
 import { Config, Option, Redacted } from "effect"
 
 import { RETRY, TIMEOUT } from "../constants/defaults.js"
-import { APP_ENV, MAIL_DRIVER, STORAGE_DRIVER } from "../constants/domain-values.js"
+import { APP_ENV, AUTH_MODE, MAIL_DRIVER, STORAGE_DRIVER } from "../constants/domain-values.js"
+
+import { blankToUndefined } from "./package-version.js"
 
 const NO_SECRET = Redacted.make("")
+
+const blankable = (name: string, fallback: string) =>
+  Config.string(name).pipe(
+    Config.map((value) => blankToUndefined(value) ?? fallback),
+    Config.withDefault(fallback),
+  )
+
+const blankableSecret = (name: string) =>
+  Config.string(name).pipe(
+    Config.map((value) => Redacted.make(blankToUndefined(value) ?? "")),
+    Config.withDefault(NO_SECRET),
+  )
 
 const csv = (name: string, fallback: readonly string[]) =>
   Config.string(name).pipe(
@@ -110,6 +124,23 @@ export const securityConfig = Config.all({
   rateLimitEnabled: Config.boolean("RATE_LIMIT_ENABLED").pipe(Config.withDefault(true)),
 })
 
+export const authConfig = Config.all({
+  mode: blankable("AUTH_MODE", AUTH_MODE.local).pipe(
+    Config.map((value) => (value === AUTH_MODE.universal ? AUTH_MODE.universal : AUTH_MODE.local)),
+  ),
+  universalUrl: blankable("UNIVERSAL_AUTH_URL", ""),
+  universalIssuer: blankable("UNIVERSAL_AUTH_ISSUER", ""),
+  universalApp: blankable("UNIVERSAL_AUTH_APP", "scraper"),
+  universalApiKey: blankableSecret("UNIVERSAL_AUTH_API_KEY"),
+  adminEmail: blankable("ADMIN_EMAIL", ""),
+  adminPassword: blankableSecret("ADMIN_PASSWORD"),
+}).pipe(
+  Config.map((auth) => ({
+    ...auth,
+    issuer: auth.universalIssuer === "" ? auth.universalUrl : auth.universalIssuer,
+  })),
+)
+
 export const scrapingConfig = Config.all({
   minIntervalSeconds: Config.integer("MIN_SCRAPE_INTERVAL_SECONDS").pipe(Config.withDefault(300)),
   maxMonitorsPerUser: Config.integer("MAX_MONITORS_PER_USER").pipe(Config.withDefault(100)),
@@ -130,6 +161,7 @@ export const scrapingConfig = Config.all({
 
 export const browserConfig = Config.all({
   wsEndpoint: Config.string("BROWSER_WS_ENDPOINT").pipe(Config.withDefault("")),
+  token: Config.redacted("BROWSER_TOKEN"),
   timeoutMs: Config.integer("BROWSER_TIMEOUT_MS").pipe(Config.withDefault(TIMEOUT.browserScrapeMs)),
   maxContexts: Config.integer("BROWSER_MAX_CONTEXTS").pipe(Config.withDefault(4)),
   blockResources: csv("BROWSER_BLOCK_RESOURCES", ["image", "media", "font"]),
@@ -200,6 +232,7 @@ export const rootConfig = Config.all({
   database: databaseConfig,
   redis: redisConfig,
   security: securityConfig,
+  auth: authConfig,
   scraping: scrapingConfig,
   browser: browserConfig,
   storage: storageConfig,

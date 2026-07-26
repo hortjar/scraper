@@ -1,0 +1,44 @@
+{
+  "name": "@scraper/server",
+  "version": "0.6.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./modules/auth": "./src/modules/auth/index.ts",
+    "./modules/monitors": "./src/modules/monitors/index.ts",
+    "./modules/scraping": "./src/modules/scraping/index.ts",
+    "./modules/notifications": "./src/modules/notifications/index.ts",
+    "./modules/jobs": "./src/modules/jobs/index.ts",
+    "./modules/runs": "./src/modules/runs/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@node-rs/argon2": "^2.0.2",
+    "@scraper/core": "workspace:*",
+    "@scraper/db": "workspace:*",
+    "bullmq": "^5.81.2",
+    "diff": "^9.0.0",
+    "drizzle-orm": "^0.45.2",
+    "effect": "^3.22.0",
+    "elysia": "^1.4.0",
+    "ioredis": "^5.11.1",
+    "jose": "^6.2.4",
+    "linkedom": "^0.18.13",
+    "nodemailer": "^9.0.3",
+    "playwright-core": "^1.62.0"
+  },
+  "devDependencies": {
+    "@effect/vitest": "^0.30.0",
+    "@scraper/tooling": "workspace:*",
+    "@standard-schema/spec": "^1.1.0",
+    "@types/bun": "^1.3.14",
+    "@types/nodemailer": "^8.0.1",
+    "typescript": "^6.0.3",
+    "vitest": "^3.2.7"
+  }
+}

@@ -13,6 +13,7 @@
   "dependencies": {
     "@scraper/core": "workspace:*",
     "@scraper/db": "workspace:*",
+    "@scraper/server": "workspace:*",
     "bullmq": "^5.81.2",
     "effect": "^3.22.0",
     "ioredis": "^5.11.1"

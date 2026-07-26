@@ -179,24 +179,39 @@ window.__APP_CONFIG__ = {
 `window.__APP_CONFIG__` with `import.meta.env` as the dev fallback. One image,
 any environment — which is what Portainer users expect.
 
-`APP_VERSION` and `GIT_SHA` are the exception: they are **build args**, baked into
-all three images via Vite `define` and the API's `/api/v1/health` response. They identify
-the artifact, so they must not be runtime-overridable — that's what lets the client
+`APP_VERSION` and `GIT_SHA` are partly an exception: they are baked into all three
+images — via Vite `define` for the web bundle, and via `seedAppVersion` for the API's
+`/api/v1/health` response. They identify the artifact, which is what lets the client
 detect a version skew after a rolling deploy and offer a reload
 ([04-FRONTEND §8](./04-FRONTEND.md)).
 
+**You do not have to pass them.** Each app falls back to its own `package.json`
+version, so an unset `APP_VERSION` still reports the real number. Both the build args
+and the compose defaults are `""` rather than a placeholder like `dev` — a placeholder
+is indistinguishable from a real answer once it reaches the app, which is precisely
+how the UI came to report `dev` on every deployment. A non-blank `APP_VERSION` is
+honoured as an operator override, at build time or (for `web`, through
+`entrypoint.sh` and `/config.js`) at runtime.
+
 ## 4. Migrations
 
-> ⚠️ **Not implemented.** `RUN_MIGRATIONS_ON_BOOT` is declared in config and read by
-> nothing — `grep -rn runMigrationsOnBoot` finds only the config and the spec. The
-> migration SQL in `packages/db/migrations/` exists but nothing applies it in the
-> container, so a freshly deployed stack has **no tables**. `/api/v1/ready` only
-> checks connectivity, which is why the stack still reports healthy. See
-> [18-AUTH-HANDOFF §3.1](./18-AUTH-HANDOFF.md).
+`apps/api/src/main.ts` runs `runMigrations` from `@scraper/db/migrator` before it
+starts listening, gated on `RUN_MIGRATIONS_ON_BOOT` (default `true`). The runner
+holds a Postgres advisory lock (`pg_advisory_lock`, fixed key
+`DATABASE_LOCK.migrations` in `@scraper/core/constants`) for the duration, so N
+replicas starting at once serialize rather than race. It applies the `.sql` files in
+`packages/db/migrations/` in lexical filename order, each inside its own
+transaction, and records applied filenames in a `schema_migrations` table it creates
+on first boot if absent — so reruns are a no-op. The lock is released in every path,
+including failure.
 
-The intent, once implemented: `api` runs `drizzle-kit migrate` on boot when
-`RUN_MIGRATIONS_ON_BOOT=true`, holding a Postgres advisory lock so N replicas can't
-race. Workers wait for the API's health check.
+If a migration fails, the process logs `db.migrate.failed` and exits non-zero rather
+than serving traffic against a broken schema — it never reaches
+`app.listen`. Workers wait for the API's health check, so they never race an
+API replica that is still migrating.
+
+Set `RUN_MIGRATIONS_ON_BOOT=false` to disable this (for example, to run migrations
+as a separate release step) — the boot sequence then only logs `db.migrate.skip`.
 
 Rules: migrations are **additive and backward-compatible within a release** —
 expand, deploy, backfill, contract in a later release. That's what makes a rolling

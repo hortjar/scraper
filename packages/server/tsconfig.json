@@ -1,0 +1,7 @@
+{
+  "extends": "@scraper/tooling/tsconfig/bun.json",
+  "include": ["src/**/*.ts", "vitest.config.ts"],
+  "compilerOptions": {
+    "rootDir": "."
+  }
+}

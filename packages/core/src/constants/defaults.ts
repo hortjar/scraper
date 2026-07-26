@@ -58,3 +58,7 @@ export const STALE_TIME_MS = {
   activeRun: 5000,
   meta: 300_000,
 } as const
+
+export const DATABASE_LOCK = {
+  migrations: 194_722_881,
+} as const

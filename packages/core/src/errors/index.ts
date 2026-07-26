@@ -59,9 +59,42 @@ export class ExtractorNotFound extends Data.TaggedError("ExtractorNotFound")<{
   readonly id: string
 }> {}
 
+export class SessionNotFound extends Data.TaggedError("SessionNotFound")<{
+  readonly id: string
+}> {}
+
+export class ApiKeyNotFound extends Data.TaggedError("ApiKeyNotFound")<{
+  readonly id: string
+}> {}
+
 export class InvalidCredentials extends Data.TaggedError("InvalidCredentials")<
   Record<string, never>
 > {}
+
+export class RegistrationClosed extends Data.TaggedError("RegistrationClosed")<
+  Record<string, never>
+> {}
+
+export class LocalAuthDisabled extends Data.TaggedError("LocalAuthDisabled")<{
+  readonly operation: string
+}> {}
+
+export class PasswordRejected extends Data.TaggedError("PasswordRejected")<{
+  readonly reason: "too_short" | "breached"
+  readonly minLength: number
+}> {}
+
+export class ApiKeyNotAllowed extends Data.TaggedError("ApiKeyNotAllowed")<{
+  readonly action: string
+}> {}
+
+export class InsufficientScope extends Data.TaggedError("InsufficientScope")<{
+  readonly required: string
+}> {}
+
+export class IdentityProviderUnavailable extends Data.TaggedError("IdentityProviderUnavailable")<{
+  readonly detail: string
+}> {}
 
 export class TokenInvalid extends Data.TaggedError("TokenInvalid")<{
   readonly purpose: string
@@ -170,7 +203,15 @@ export type AppError =
   | ChannelNotFound
   | RuleNotFound
   | ExtractorNotFound
+  | SessionNotFound
+  | ApiKeyNotFound
   | InvalidCredentials
+  | RegistrationClosed
+  | LocalAuthDisabled
+  | PasswordRejected
+  | ApiKeyNotAllowed
+  | InsufficientScope
+  | IdentityProviderUnavailable
   | TokenInvalid
   | EmailNotVerified
   | InvalidUrl

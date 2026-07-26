@@ -73,16 +73,27 @@ exists for managed providers that issue one connection string and no parts.
 
 ### The app version comes from package.json
 
-`readPackageVersion` reads the calling app's own `package.json`, and `main.ts` in
-both `api` and `worker` seeds `APP_VERSION` from it when the variable is unset. The
-web build does the same in `vite.config.ts` for `__APP_VERSION__`. Nobody has to pass
-a version at build time for `/api/v1/health` and the UI to report the real one.
+`readPackageVersion` reads the calling app's own `package.json`. `seedAppVersion`
+combines it with any `APP_VERSION` override and is called once from `main.ts` in both
+`api` and `worker`; the web build does the equivalent in `vite.config.ts` for
+`__APP_VERSION__`. Nobody has to pass a version at build time for `/api/v1/health`
+and the UI to report the real one.
 
-An explicit `APP_VERSION` still wins, and a missing or malformed `package.json`
-returns `undefined` rather than throwing, so the config default applies instead of
-the process failing to start.
+**A blank override counts as unset**, which is the whole point. Docker Compose
+interpolates an unset `${APP_VERSION:-}` to an **empty string**, so `??` and `??=`
+accept it as a real value — the web UI reported `dev` and the API reported `unknown`
+for exactly this reason. `blankToUndefined` is what makes the fallback fire. The
+Dockerfiles default their `APP_VERSION`/`GIT_SHA` build args to `""` rather than a
+placeholder for the same reason: a placeholder is indistinguishable from a real
+answer once it reaches the app.
 
-`GIT_SHA` has no such source and stays a build arg, defaulting to `local`.
+An explicit non-blank `APP_VERSION` still wins, so an operator can pin a version
+without rebuilding — `deploy/entrypoint.sh` writes it into the web bundle's runtime
+`config.js`, and `appConfig` prefers it over the baked value. A missing or malformed
+`package.json` returns `undefined` rather than throwing, so the config default
+applies instead of the process failing to start.
+
+`GIT_SHA` has no such source and stays a build arg, falling back to `local`.
 
 ### Mail is optional, and absence is a first-class state
 

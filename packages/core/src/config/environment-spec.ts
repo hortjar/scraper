@@ -93,6 +93,15 @@ export const ENV_SPEC: readonly EnvironmentVariable[] = [
     optional("PASSWORD_BREACH_CHECK", "false", "Check passwords against HIBP ranges"),
     optional("RATE_LIMIT_ENABLED", "true", "Enable request rate limiting"),
   ]),
+  ...group("Identity", [
+    optional("AUTH_MODE", "local", "local owns users here | universal delegates to the IdP"),
+    optional("UNIVERSAL_AUTH_URL", "", "Identity provider base URL, required in universal mode"),
+    optional("UNIVERSAL_AUTH_ISSUER", "", "Expected token issuer, defaults to UNIVERSAL_AUTH_URL"),
+    optional("UNIVERSAL_AUTH_APP", "scraper", "App slug, the expected token audience"),
+    optional("UNIVERSAL_AUTH_API_KEY", "", "Key this app presents to the identity provider", true),
+    optional("ADMIN_EMAIL", "", "Bootstrap admin account, local mode only"),
+    optional("ADMIN_PASSWORD", "", "Bootstrap admin password, local mode only", true),
+  ]),
   ...group("Scraping", [
     optional("MIN_SCRAPE_INTERVAL_SECONDS", "300", "Floor for user schedules"),
     optional("MAX_MONITORS_PER_USER", "100", "Per user monitor cap"),
@@ -108,6 +117,7 @@ export const ENV_SPEC: readonly EnvironmentVariable[] = [
   ]),
   ...group("Browser", [
     optional("BROWSER_WS_ENDPOINT", "", "ws://browser:3000, empty launches locally"),
+    required("BROWSER_TOKEN", "Auth token for the browserless container", true),
     optional("BROWSER_TIMEOUT_MS", "45000", "Browser strategy timeout"),
     optional("BROWSER_MAX_CONTEXTS", "4", "Concurrent contexts per worker"),
     optional("BROWSER_BLOCK_RESOURCES", "image,media,font", "Resource types to block"),
