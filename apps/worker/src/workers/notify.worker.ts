@@ -17,6 +17,7 @@ export const createNotifyWorker = (
     queue: QUEUE.notify,
     schema: NotifyJobPayload,
     connection,
+    prefix: redisConfig.jobPrefix,
     concurrency: redisConfig.notifyConcurrency,
     runtime,
     span: SPAN.jobs.notify,

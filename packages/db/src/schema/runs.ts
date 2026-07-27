@@ -9,6 +9,7 @@ import {
   numeric,
   pgTable,
   text,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core"
 
@@ -111,5 +112,8 @@ export const changes = pgTable(
   (table) => [
     index("changes_monitor_created_idx").on(table.monitorId, table.createdAt),
     index("changes_run_idx").on(table.runId),
+    unique("changes_run_key_kind_key")
+      .on(table.runId, table.extractorKey, table.changeKind)
+      .nullsNotDistinct(),
   ],
 )

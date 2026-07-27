@@ -1,3 +1,4 @@
+import { PATTERN } from "@scraper/core/constants"
 import { parseHTML } from "linkedom"
 
 export interface DomElement {
@@ -28,11 +29,26 @@ export interface ParsedFragment {
   readonly body: DomElement
 }
 
-export const parseFragment = (html: string): ParsedFragment => {
+const parseInShell = (html: string): ParsedFragment => {
   const { document } = parseHTML(EMPTY_HTML_SHELL) as unknown as { document: ParsedDocument }
   const { body } = document
   body.innerHTML = html
   return { document, body }
+}
+
+const bodyOf = (document: ParsedDocument): DomElement | null => {
+  try {
+    return document.body
+  } catch {
+    return null
+  }
+}
+
+export const parseFragment = (html: string): ParsedFragment => {
+  if (!PATTERN.htmlDocumentStart.test(html)) return parseInShell(html)
+  const { document } = parseHTML(html) as unknown as { document: ParsedDocument }
+  const body = bodyOf(document)
+  return body === null ? parseInShell(html) : { document, body }
 }
 
 export const queryAll = (root: DomElement, selector: string): readonly DomElement[] =>

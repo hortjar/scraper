@@ -17,9 +17,11 @@ export const createScrapeWorker = (
     queue: QUEUE.scrape,
     schema: ScrapeJobPayload,
     connection,
+    prefix: redisConfig.jobPrefix,
     concurrency: redisConfig.workerConcurrency,
     runtime,
     span: SPAN.jobs.scrape,
     annotate: (payload) => ({ [LOG_FIELD.monitorId]: payload.monitorId }),
-    handle: (payload) => Effect.flatMap(ScrapeRunner, (runner) => runner.execute(payload)),
+    handle: (payload, jobId) =>
+      Effect.flatMap(ScrapeRunner, (runner) => runner.execute(payload, jobId)),
   })

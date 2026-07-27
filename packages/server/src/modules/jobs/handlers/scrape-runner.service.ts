@@ -5,7 +5,10 @@ import { Effect } from "effect"
 import type { ScrapeJobPayload } from "../jobs.schema.js"
 
 export interface ScrapeRunnerShape {
-  readonly execute: (payload: ScrapeJobPayload) => Effect.Effect<void, AppError>
+  readonly execute: (
+    payload: ScrapeJobPayload,
+    jobId: string | null,
+  ) => Effect.Effect<void, AppError>
 }
 
 export class ScrapeRunner extends Effect.Service<ScrapeRunner>()(SERVICE_TAG.ScrapeRunner, {

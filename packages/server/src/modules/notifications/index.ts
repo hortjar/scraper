@@ -8,9 +8,11 @@ import { CryptoLive } from "./crypto/crypto.service.js"
 import { DeliveryRepositoryLive } from "./delivery.repository.js"
 import { NotificationDispatcherLive } from "./dispatcher/notification-dispatcher.service.js"
 import { MailerLive } from "./mailer/mailer.service.js"
+import { RuleRepositoryLive } from "./rule.repository.js"
 import { TemplateRendererLive } from "./template/template-renderer.service.js"
 
 export { ChannelRepository, ChannelRepositoryLive } from "./channel.repository.js"
+export { RuleRepository, RuleRepositoryLive, type ActiveRule } from "./rule.repository.js"
 export { DeliveryRepository, DeliveryRepositoryLive } from "./delivery.repository.js"
 
 export {
@@ -44,4 +46,5 @@ export const NotificationsLayer = Layer.mergeAll(
   NotificationDispatcherLive,
   ChannelRepositoryLive,
   DeliveryRepositoryLive,
+  RuleRepositoryLive,
 ).pipe(Layer.provideMerge(ChannelSetLive))

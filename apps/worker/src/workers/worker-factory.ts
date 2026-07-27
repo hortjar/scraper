@@ -11,11 +11,12 @@ export interface QueueWorkerOptions<A, I, E> {
   readonly queue: string
   readonly schema: Schema.Schema<A, I>
   readonly connection: ConnectionOptions
+  readonly prefix: string
   readonly concurrency: number
   readonly runtime: WorkerRuntime
   readonly span: string
   readonly annotate: (payload: A) => Readonly<Record<string, string>>
-  readonly handle: (payload: A) => Effect.Effect<void, E, WorkerServices>
+  readonly handle: (payload: A, jobId: string | null) => Effect.Effect<void, E, WorkerServices>
 }
 
 const isRateLimited = (error: unknown): error is RateLimited =>
@@ -44,7 +45,7 @@ export const createQueueWorker = <A, I, E>(options: QueueWorkerOptions<A, I, E>)
 
       const exit = await options.runtime.runPromiseExit(
         options
-          .handle(payload)
+          .handle(payload, job.id ?? null)
           .pipe(Effect.annotateLogs(annotations), Effect.withSpan(options.span)),
       )
 
@@ -75,5 +76,5 @@ export const createQueueWorker = <A, I, E>(options: QueueWorkerOptions<A, I, E>)
 
       throw Cause.squash(exit.cause)
     },
-    { connection: options.connection, concurrency: options.concurrency },
+    { connection: options.connection, concurrency: options.concurrency, prefix: options.prefix },
   )

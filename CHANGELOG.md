@@ -23,9 +23,35 @@ This file starts at 0.2.0. For anything earlier, see the git history.
   filters, SSRF-guarded URLs, interval floor and plan limits enforced in the service.
 - **Boot-time migrations**, which `RUN_MIGRATIONS_ON_BOOT` had promised since 0.2.0
   and nothing implemented.
+- **Runs — the change-detection pipeline.** The 14 steps of 07-SCHEDULING §4: guards,
+  per-domain rate limiting, robots, the run row, fetch, normalize, the cheap
+  unchanged-hash exit, field persistence, diffing, rule evaluation and monitor state.
+  Diffing covers number/price deltas, boolean and list set-difference, word-level text
+  diffs with context, and whole-page diffs for monitors with no extractors. All eleven
+  notification triggers are implemented, with throttle, quiet hours in the rule's own
+  timezone, digest routing and a dedupe key. `ScrapeRunner` is now the real
+  implementation rather than the logging stub, and runs are keyed by BullMQ job id so a
+  redelivered job resumes instead of duplicating.
+- **Runs HTTP surface**: a monitor's runs and changes with cursor pagination, a run
+  with its field values, and queueing a run on demand.
 
 ### Fixed
 
+- **No queued job was ever processed.** BullMQ's `prefix` was set on the producer's
+  queues from `JOB_PREFIX` but not on the workers, so the API wrote to
+  `scraper:scrape` while the workers listened on `bull:scrape`. Nothing errored —
+  jobs simply accumulated in a queue nobody read.
+- **`parseFragment` corrupted every complete HTML document.** It assigned the input to
+  an empty shell's `innerHTML`, which linkedom handles for fragments but which leaves a
+  broken node list for a full document: `querySelectorAll` walked into a null node and
+  threw, so extraction failed on every real page. Documents now parse directly and only
+  fragments go through the shell.
+- **A `Date` in a raw drizzle `sql` template threw under Bun**, breaking the runs and
+  monitors cursor queries. The cast has to sit in the SQL text — inside the
+  interpolation it becomes part of the parameter and Postgres rejects it.
+- **`changes` had no unique constraint** for the `ON CONFLICT DO NOTHING` the spec
+  requires, and could not have one by default because `extractor_key` is null for
+  whole-page changes. Added as `UNIQUE NULLS NOT DISTINCT`.
 - **A deployed stack answered 502 because `BROWSER_TOKEN` had no default.** The
   scraping module made it a required config key, but compose's `x-app-environment`
   anchor — the complete allowlist of names that reach the containers — only

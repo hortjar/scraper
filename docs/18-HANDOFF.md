@@ -4,7 +4,7 @@
 that cost real time, and what is left. Where it disagrees with another doc about
 current state, this page is right.
 
-Last verified **2026-07-26**, workspace green: 0 lint, 0 typecheck, 432 tests, CI
+Last verified **2026-07-27**, workspace green: 0 lint, 0 typecheck, 508 tests, CI
 passing on `main`.
 
 ## 1. What exists
@@ -17,12 +17,13 @@ passing on `main`.
 | `packages/server/src/modules/notifications` | ✅ 5 channels, encryption, templates, dispatcher                 |
 | `packages/server/src/modules/jobs`          | ✅ queues, schedulers, rate limits, maintenance, worker liveness |
 | `packages/server/src/modules/monitors`      | ✅ built, **mounted**, CRUD verified over HTTP                   |
-| `packages/server/src/modules/runs`          | ❌ **not started** — see §4                                      |
+| `packages/server/src/modules/runs`          | ✅ built, mounted, verified end to end against a live stack      |
 | Notification channel routes                 | ❌ services exist, no HTTP surface                               |
 | `apps/web` features                         | ❌ not started; shell, design system and generated client ready  |
 
-The API serves **19 paths**: `/health`, `/ready`, `/metrics`, `/meta`, 13 under
-`/auth`, and 5 under `/monitors`.
+The API serves **23 paths**: `/health`, `/ready`, `/metrics`, `/meta`, 13 under
+`/auth`, 5 under `/monitors`, 3 more under `/monitors` for runs and changes, and one
+`/runs/:runId`.
 
 ### Auth is finished
 
@@ -47,18 +48,22 @@ Each of these typechecked and passed unit tests. Only booting the stack found th
 **Run the API against real Postgres and Redis before believing a feature works** —
 see §5.
 
-| Trap                                                                                 | Documented in                             |
-| ------------------------------------------------------------------------------------ | ----------------------------------------- |
-| `ReservedSql` has no `.begin()`, so transactions must run on the pool                | `packages/db/README.md`                   |
-| A `Date` in a postgres.js tagged template throws under Bun; use `sqlTimestamp()`     | `modules/auth/README.md`                  |
-| API-key secrets are base64url and contain `_`, so never `String.split` them          | `modules/auth/README.md`                  |
-| `Schema.Int` emits `$ref: #/$defs/Int`, which Elysia drops and the client crashes on | use `Schema.Number.pipe(Schema.int(), …)` |
-| A pre-existing schema must be baselined, not re-migrated, or boot exits and you 502  | `packages/db/README.md`                   |
-| Advisory lock and unlock must share one session, or later replicas block forever     | `packages/db/README.md`                   |
-| Routes go on `createApiRoutes`, never `createApp`, which double-prefixes the paths   | `docs/09-API.md`                          |
-| A bare `Schema.Struct` response is silently ignored; wrap in `standardSchemaV1(…)`   | `docs/09-API.md` §3                       |
-| Compose interpolates unset vars to `""`, so use `blankToUndefined`, never `??`       | `packages/core/README.md`                 |
-| A config key with no default must also be added to compose's `x-app-environment`     | `docs/17-DEPLOY-RUNBOOK.md`               |
+| Trap                                                                                          | Documented in                             |
+| --------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `ReservedSql` has no `.begin()`, so transactions must run on the pool                         | `packages/db/README.md`                   |
+| A `Date` in a postgres.js tagged template throws under Bun; use `sqlTimestamp()`              | `modules/auth/README.md`                  |
+| API-key secrets are base64url and contain `_`, so never `String.split` them                   | `modules/auth/README.md`                  |
+| `Schema.Int` emits `$ref: #/$defs/Int`, which Elysia drops and the client crashes on          | use `Schema.Number.pipe(Schema.int(), …)` |
+| A pre-existing schema must be baselined, not re-migrated, or boot exits and you 502           | `packages/db/README.md`                   |
+| Advisory lock and unlock must share one session, or later replicas block forever              | `packages/db/README.md`                   |
+| Routes go on `createApiRoutes`, never `createApp`, which double-prefixes the paths            | `docs/09-API.md`                          |
+| A bare `Schema.Struct` response is silently ignored; wrap in `standardSchemaV1(…)`            | `docs/09-API.md` §3                       |
+| Compose interpolates unset vars to `""`, so use `blankToUndefined`, never `??`                | `packages/core/README.md`                 |
+| A config key with no default must also be added to compose's `x-app-environment`              | `docs/17-DEPLOY-RUNBOOK.md`               |
+| BullMQ's `prefix` must be set on **workers** too, or no job is ever picked up                 | `modules/runs/README.md`                  |
+| A `Date` in a raw drizzle `sql` template throws under Bun; cast in the SQL, not the parameter | `modules/runs/README.md`                  |
+| `ON CONFLICT` on nullable columns needs `UNIQUE NULLS NOT DISTINCT`                           | `modules/runs/README.md`                  |
+| Assigning a full HTML document to `innerHTML` corrupts linkedom's node list                   | `modules/scraping/dom.types.ts`           |
 
 ## 3. How a module is wired
 
@@ -81,19 +86,14 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **`modules/runs` — the change-detection pipeline.** Phase 2 stream G, the largest
-   remaining piece and the one that makes the product work: the 14-step run pipeline
-   from [05-SCRAPING](./05-SCRAPING.md) and [07-SCHEDULING](./07-SCHEDULING.md),
-   diffing, change persistence, the 11 rule triggers, throttle, quiet hours, digest
-   and dedupe. The jobs module already defines the injectable `ScrapeRunner` and
-   `NotifyRunner` interfaces it must implement — that is the seam to build against.
-2. **Notification channel routes.** Services, registry and adapters are done; there
+1. **Notification channel routes.** Services, registry and adapters are done; there
    is no channel CRUD over HTTP yet.
-3. **Web features** — `web/features/auth`, `monitors`, `runs`, `channels`. The design
-   system, layouts, router and generated client are all in place.
-4. **Integration checkpoint I1**: create a monitor, watch a scheduled run write a row
-   in `runs`.
-5. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
+2. **Web features** — `web/features/auth`, `monitors`, `runs`, `channels`. The design
+   system, layouts, router and generated client are all in place. This is now the
+   critical path: the whole backend works and nothing in the UI reaches it.
+3. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
+   suppression is recorded but never delivered — `modules/runs/README.md` §Known gaps.
+4. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
    Portainer — 23 documented variables are absent from the compose
    `x-app-environment` anchor, listed in `deploy/portainer/STACK.md` §3a.
 
@@ -114,6 +114,11 @@ BROWSER_TOKEN=dev-browser-token \
 
 curl -s localhost:9300/api/v1/health
 ```
+
+The worker is the same environment plus `RUN_MIGRATIONS_ON_BOOT=false`, run as
+`bun apps/worker/src/main.ts` from the repo root. With both up, `POST
+/api/v1/monitors/:id/run` queues a job the worker picks up and turns into a row in
+`runs` — that is integration checkpoint **I1**, and it passes.
 
 `pnpm dev:down` tears it back down. A stale `pgdata` volume causes `password
 authentication failed`, because Postgres only applies `POSTGRES_PASSWORD` when

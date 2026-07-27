@@ -23,6 +23,7 @@ export { ContentNormalizer } from "./normalize/content-normalizer.service.js"
 export { normalizeContent, type NormalizeResult } from "./normalize/content-normalizer.js"
 
 export { previewScrape } from "./preview/preview-scrape.js"
+export { hasRequiredMissing, scrapeAndExtract, type ScrapeOutcome } from "./scrape-and-extract.js"
 
 export { RobotsCache } from "./robots/robots-cache.service.js"
 export { evaluateRobots, parseRobotsTxt } from "./robots/robots.parser.js"

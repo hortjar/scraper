@@ -16,6 +16,7 @@ export const SERVICE_TAG = {
   UniversalAuth: "app/UniversalAuth",
 
   Monitors: "app/Monitors",
+  Runs: "app/Runs",
   Extractors: "app/Extractors",
   MonitorRepository: "app/MonitorRepository",
   UserRepository: "app/UserRepository",

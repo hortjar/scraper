@@ -10,11 +10,13 @@ import { createQueueWorker } from "./worker-factory.js"
 export const createMaintenanceWorker = (
   runtime: WorkerRuntime,
   connection: ConnectionOptions,
+  prefix: string,
 ): Worker =>
   createQueueWorker({
     queue: QUEUE.maintenance,
     schema: MaintenanceJobPayload,
     connection,
+    prefix,
     concurrency: QUEUE_CONCURRENCY_DEFAULT.maintenance,
     runtime,
     span: SPAN.jobs.maintenance,

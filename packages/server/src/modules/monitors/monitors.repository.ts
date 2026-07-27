@@ -21,6 +21,7 @@ import { and, arrayContains, asc, desc, eq, ilike, isNull, or, sql } from "drizz
 import { Effect } from "effect"
 
 import { EXTRACTOR_ENTITY, MONITOR_ENTITY } from "./monitors.constants.js"
+import { isoTimestamp } from "./monitors.rows.js"
 import type { ExtractorInput } from "./monitors.schema.js"
 
 const decodeMonitor = decodeRow(Monitor, MONITOR_ENTITY)
@@ -110,7 +111,7 @@ export class MonitorRepository extends Effect.Service<MonitorRepository>()(
         }
         if (cursor !== null) {
           conditions.push(
-            sql`(${schema.monitors.createdAt}, ${schema.monitors.id}) < (${new Date(cursor.at)}, ${cursor.id})`,
+            sql`(${schema.monitors.createdAt}, ${schema.monitors.id}) < (${isoTimestamp(new Date(cursor.at))}::timestamptz, ${cursor.id})`,
           )
         }
 
@@ -209,6 +210,27 @@ export class MonitorRepository extends Effect.Service<MonitorRepository>()(
           .pipe(Effect.mapError((error) => constraintFailure(error, EXTRACTOR_ENTITY)))
       })
 
+      const findAnyById = Effect.fn(SPAN.monitors.findById)(function* (id: MonitorId) {
+        const rows = yield* database.query((executor) =>
+          executor.select().from(schema.monitors).where(eq(schema.monitors.id, id)).limit(1),
+        )
+        const row = rows[0]
+        if (row === undefined) return yield* new MonitorNotFound({ id })
+        return yield* decodeMonitor(toDomainRow(row))
+      })
+
+      const recordRunOutcome = Effect.fn(SPAN.monitors.update)(function* (
+        id: MonitorId,
+        values: Record<string, unknown>,
+      ) {
+        yield* database.query((executor) =>
+          executor
+            .update(schema.monitors)
+            .set(values as never)
+            .where(eq(schema.monitors.id, id)),
+        )
+      })
+
       const countActive = Effect.fn(SPAN.monitors.list)(function* (userId: UserId) {
         const rows = yield* database.query((executor) =>
           executor
@@ -221,6 +243,8 @@ export class MonitorRepository extends Effect.Service<MonitorRepository>()(
 
       return {
         findById,
+        findAnyById,
+        recordRunOutcome,
         listExtractors,
         list,
         insert,

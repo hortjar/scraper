@@ -2,6 +2,7 @@ import type { RootConfig } from "@scraper/core/config"
 import { ROUTE } from "@scraper/core/constants"
 import { authRoutes } from "@scraper/server/modules/auth"
 import { monitorRoutes } from "@scraper/server/modules/monitors"
+import { runRoutes } from "@scraper/server/modules/runs"
 import { Elysia } from "elysia"
 
 import type { HealthProbe } from "./health/health-probe.js"
@@ -29,6 +30,7 @@ export const createApiRoutes = ({ runtime, redisProbe, config }: CreateAppOption
     .use(systemRoutes(runtime, redisProbe))
     .use(authRoutes({ runtime, config }))
     .use(monitorRoutes({ runtime, config }))
+    .use(runRoutes({ runtime, config }))
 
 export const createApp = (options: CreateAppOptions) =>
   new Elysia().group(ROUTE.apiBase, (api) => api.use(createApiRoutes(options)))

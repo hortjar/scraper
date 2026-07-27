@@ -3,7 +3,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateApiKeyData, CreateApiKeyErrors, CreateApiKeyResponses, CreateMonitorData, CreateMonitorErrors, CreateMonitorResponses, DeleteMonitorData, DeleteMonitorErrors, DeleteMonitorResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetHealthData, GetHealthResponses, GetMetaData, GetMetaResponses, GetMetricsData, GetMetricsResponses, GetMonitorData, GetMonitorErrors, GetMonitorResponses, GetReadinessData, GetReadinessErrors, GetReadinessResponses, ListApiKeysData, ListApiKeysErrors, ListApiKeysResponses, ListMonitorsData, ListMonitorsErrors, ListMonitorsResponses, ListSessionsData, ListSessionsErrors, ListSessionsResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, RegisterData, RegisterErrors, RegisterResponses, RequestEmailVerificationData, RequestEmailVerificationErrors, RequestEmailVerificationResponses, RequestPasswordResetData, RequestPasswordResetErrors, RequestPasswordResetResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllSessionsData, RevokeAllSessionsErrors, RevokeAllSessionsResponses, RevokeApiKeyData, RevokeApiKeyErrors, RevokeApiKeyResponses, RevokeSessionData, RevokeSessionErrors, RevokeSessionResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UpdateMonitorData, UpdateMonitorErrors, UpdateMonitorResponses, VerifyEmailData, VerifyEmailErrors, VerifyEmailResponses } from './types.gen';
+import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateApiKeyData, CreateApiKeyErrors, CreateApiKeyResponses, CreateMonitorData, CreateMonitorErrors, CreateMonitorResponses, DeleteMonitorData, DeleteMonitorErrors, DeleteMonitorResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetHealthData, GetHealthResponses, GetMetaData, GetMetaResponses, GetMetricsData, GetMetricsResponses, GetMonitorData, GetMonitorErrors, GetMonitorResponses, GetReadinessData, GetReadinessErrors, GetReadinessResponses, GetRunData, GetRunErrors, GetRunResponses, ListApiKeysData, ListApiKeysErrors, ListApiKeysResponses, ListChangesData, ListChangesErrors, ListChangesResponses, ListMonitorsData, ListMonitorsErrors, ListMonitorsResponses, ListRunsData, ListRunsErrors, ListRunsResponses, ListSessionsData, ListSessionsErrors, ListSessionsResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, RegisterData, RegisterErrors, RegisterResponses, RequestEmailVerificationData, RequestEmailVerificationErrors, RequestEmailVerificationResponses, RequestPasswordResetData, RequestPasswordResetErrors, RequestPasswordResetResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllSessionsData, RevokeAllSessionsErrors, RevokeAllSessionsResponses, RevokeApiKeyData, RevokeApiKeyErrors, RevokeApiKeyResponses, RevokeSessionData, RevokeSessionErrors, RevokeSessionResponses, RunMonitorNowData, RunMonitorNowErrors, RunMonitorNowResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UpdateMonitorData, UpdateMonitorErrors, UpdateMonitorResponses, VerifyEmailData, VerifyEmailErrors, VerifyEmailResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -210,6 +210,26 @@ export const updateMonitor = <ThrowOnError extends boolean = false>(options: Opt
 });
 
 /**
+ * List a monitor's changes
+ */
+export const listChanges = <ThrowOnError extends boolean = false>(options: Options<ListChangesData, ThrowOnError>): RequestResult<ListChangesResponses, ListChangesErrors, ThrowOnError> => (options.client ?? client).get<ListChangesResponses, ListChangesErrors, ThrowOnError>({ url: '/monitors/{monitorId}/changes', ...options });
+
+/**
+ * Queue a run now
+ */
+export const runMonitorNow = <ThrowOnError extends boolean = false>(options: Options<RunMonitorNowData, ThrowOnError>): RequestResult<RunMonitorNowResponses, RunMonitorNowErrors, ThrowOnError> => (options.client ?? client).post<RunMonitorNowResponses, RunMonitorNowErrors, ThrowOnError>({ url: '/monitors/{monitorId}/run', ...options });
+
+/**
+ * List a monitor's runs
+ */
+export const listRuns = <ThrowOnError extends boolean = false>(options: Options<ListRunsData, ThrowOnError>): RequestResult<ListRunsResponses, ListRunsErrors, ThrowOnError> => (options.client ?? client).get<ListRunsResponses, ListRunsErrors, ThrowOnError>({ url: '/monitors/{monitorId}/runs', ...options });
+
+/**
  * Readiness probe
  */
 export const getReadiness = <ThrowOnError extends boolean = false>(options?: Options<GetReadinessData, ThrowOnError>): RequestResult<GetReadinessResponses, GetReadinessErrors, ThrowOnError> => (options?.client ?? client).get<GetReadinessResponses, GetReadinessErrors, ThrowOnError>({ url: '/ready', ...options });
+
+/**
+ * Get a run
+ */
+export const getRun = <ThrowOnError extends boolean = false>(options: Options<GetRunData, ThrowOnError>): RequestResult<GetRunResponses, GetRunErrors, ThrowOnError> => (options.client ?? client).get<GetRunResponses, GetRunErrors, ThrowOnError>({ url: '/runs/{runId}', ...options });

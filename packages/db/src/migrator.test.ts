@@ -29,7 +29,11 @@ describe("sortMigrationFiles", () => {
 
   it("matches the real migrations directory in lexical apply order", () => {
     const entries = readdirSync(MIGRATIONS_DIR_URL)
-    expect(sortMigrationFiles(entries)).toEqual(["0000_init.sql", "0001_monitor_stats.sql"])
+    expect(sortMigrationFiles(entries)).toEqual([
+      "0000_init.sql",
+      "0001_monitor_stats.sql",
+      "0002_change_dedupe.sql",
+    ])
   })
 })
 

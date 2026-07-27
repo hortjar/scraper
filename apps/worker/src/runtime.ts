@@ -8,15 +8,18 @@ import {
   QueueRegistry,
   RateLimiter,
   RedisClient,
-  ScrapeRunnerLive,
 } from "@scraper/server/modules/jobs"
+import { MonitorsLayer } from "@scraper/server/modules/monitors"
+import { NotificationsLayer } from "@scraper/server/modules/notifications"
+import { RunsLayer, RunsScrapeRunnerLive } from "@scraper/server/modules/runs"
+import { ScrapingLayer } from "@scraper/server/modules/scraping"
 import { Effect, Layer, ManagedRuntime } from "effect"
 
 const LoggerLive = Layer.unwrapEffect(
   Effect.map(appConfig, (config) => loggerLayer(config.logFormat, config.logLevel)),
 )
 
-export const WorkerLayer = Layer.mergeAll(
+const WorkerBaseLayer = Layer.mergeAll(
   AppConfigLive,
   LoggerLive,
   TranslatorLive,
@@ -25,8 +28,14 @@ export const WorkerLayer = Layer.mergeAll(
   QueueRegistry.Default,
   RateLimiter.Default,
   JobProducer.Default,
-  ScrapeRunnerLive,
-  NotifyRunnerLive,
+  ScrapingLayer,
+  MonitorsLayer,
+  NotificationsLayer,
+  RunsLayer,
+)
+
+export const WorkerLayer = Layer.mergeAll(RunsScrapeRunnerLive, NotifyRunnerLive).pipe(
+  Layer.provideMerge(WorkerBaseLayer),
 )
 
 export type WorkerLayer = typeof WorkerLayer

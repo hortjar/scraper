@@ -26,8 +26,8 @@ const workerId = hostname()
 const workers = [
   createScrapeWorker(runtime, connection, config.redis),
   createNotifyWorker(runtime, connection, config.redis),
-  createDigestWorker(runtime, connection),
-  createMaintenanceWorker(runtime, connection),
+  createDigestWorker(runtime, connection, config.redis.jobPrefix),
+  createMaintenanceWorker(runtime, connection, config.redis.jobPrefix),
 ] as const
 
 const heartbeat = startHeartbeat(connection, workerId)

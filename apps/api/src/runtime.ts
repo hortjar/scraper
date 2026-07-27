@@ -6,6 +6,7 @@ import { AuthLayer } from "@scraper/server/modules/auth"
 import { JobsLayer } from "@scraper/server/modules/jobs"
 import { MonitorsLayer } from "@scraper/server/modules/monitors"
 import { NotificationsLayer } from "@scraper/server/modules/notifications"
+import { RunsLayer } from "@scraper/server/modules/runs"
 import { ScrapingLayer } from "@scraper/server/modules/scraping"
 import { Effect, Layer, ManagedRuntime } from "effect"
 
@@ -21,6 +22,7 @@ export const AppLayer = Layer.mergeAll(
   ScrapingLayer,
   MonitorsLayer,
   NotificationsLayer,
+  RunsLayer,
   AuthLayer,
 )
 

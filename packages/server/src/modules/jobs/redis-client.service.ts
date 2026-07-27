@@ -11,6 +11,10 @@ export const BULLMQ_CONNECTION_OPTIONS = {
   enableReadyCheck: true,
 } satisfies Partial<RedisOptions>
 
+const PRESENCE_VALUE = "1"
+const SET_EXPIRY = "EX"
+const SET_IF_ABSENT = "NX"
+
 const guard = <A>(operation: () => Promise<A>): Effect.Effect<A, QueueUnavailable> =>
   Effect.tryPromise({
     try: operation,
@@ -71,6 +75,14 @@ export class RedisClient extends Effect.Service<RedisClient>()(SERVICE_TAG.Redis
 
     const readSetMembers = (key: string) => guard(() => client.smembers(key))
 
+    const addSetMember = (key: string, member: string) => guard(() => client.sadd(key, member))
+
+    const setIfAbsent = (key: string, ttlSeconds: number) =>
+      guard(
+        async () =>
+          (await client.set(key, PRESENCE_VALUE, SET_EXPIRY, ttlSeconds, SET_IF_ABSENT)) !== null,
+      )
+
     return {
       client,
       get,
@@ -81,6 +93,8 @@ export class RedisClient extends Effect.Service<RedisClient>()(SERVICE_TAG.Redis
       recordSlidingWindowHit,
       scanKeys,
       readSetMembers,
+      addSetMember,
+      setIfAbsent,
     } as const
   }),
   dependencies: [AppConfig.Default],

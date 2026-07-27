@@ -3,6 +3,7 @@ export const PATTERN = {
   ianaTimezone: /^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$/,
   cronFiveField:
     /^(\*|[0-5]?\d)(\/\d+)?(,(\*|[0-5]?\d))*\s+(\*|1?\d|2[0-3])(\/\d+)?(,(\*|1?\d|2[0-3]))*\s+(\*|[12]?\d|3[01])(\/\d+)?\s+(\*|[1-9]|1[0-2])(\/\d+)?\s+(\*|[0-6])(\/\d+)?$/,
+  htmlDocumentStart: /^\s*(?:<!doctype\s+html|<html[\s>])/iu,
   quietHourTime: /^([01]\d|2[0-3]):([0-5]\d)$/,
   hexColor: /^#[0-9a-fA-F]{6}$/,
   privateIpv4:
