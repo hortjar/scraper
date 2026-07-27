@@ -9,17 +9,20 @@ passing on `main`.
 
 ## 1. What exists
 
-| Area                                        | State                                                            |
-| ------------------------------------------- | ---------------------------------------------------------------- |
-| `packages/core`, `packages/db`              | ✅ contracts, schema, migrations, boot-time migrator             |
-| `packages/server/src/modules/auth`          | ✅ built, **mounted**, verified over HTTP against a live stack   |
-| `packages/server/src/modules/scraping`      | ✅ strategies, extraction, transforms, robots, SSRF guard        |
-| `packages/server/src/modules/notifications` | ✅ 5 channels, encryption, templates, dispatcher                 |
-| `packages/server/src/modules/jobs`          | ✅ queues, schedulers, rate limits, maintenance, worker liveness |
-| `packages/server/src/modules/monitors`      | ✅ built, **mounted**, CRUD verified over HTTP                   |
-| `packages/server/src/modules/runs`          | ✅ built, mounted, verified end to end against a live stack      |
-| Notification channel routes                 | ❌ services exist, no HTTP surface                               |
-| `apps/web` features                         | ❌ not started; shell, design system and generated client ready  |
+| Area                                        | State                                                                     |
+| ------------------------------------------- | ------------------------------------------------------------------------- |
+| `packages/core`, `packages/db`              | ✅ contracts, schema, migrations, boot-time migrator                      |
+| `packages/server/src/modules/auth`          | ✅ built, **mounted**, verified over HTTP against a live stack            |
+| `packages/server/src/modules/scraping`      | ✅ strategies, extraction, transforms, robots, SSRF guard                 |
+| `packages/server/src/modules/notifications` | ✅ 5 channels, encryption, templates, dispatcher                          |
+| `packages/server/src/modules/jobs`          | ✅ queues, schedulers, rate limits, maintenance, worker liveness          |
+| `packages/server/src/modules/monitors`      | ✅ built, **mounted**, CRUD verified over HTTP                            |
+| `packages/server/src/modules/runs`          | ✅ built, mounted, verified end to end against a live stack               |
+| Notification channel routes                 | ❌ services exist, no HTTP surface                                        |
+| `apps/web/src/features/auth`                | ✅ login, register, password reset, profile, password, sessions, API keys |
+| `apps/web/src/features/monitors`            | ✅ list, create, edit, detail, delete, run now                            |
+| `apps/web/src/features/runs`                | ✅ runs and changes panels, run detail, diff renderer                     |
+| `apps/web` channels feature                 | ❌ blocked on the channel routes above                                    |
 
 The API serves **23 paths**: `/health`, `/ready`, `/metrics`, `/meta`, 13 under
 `/auth`, 5 under `/monitors`, 3 more under `/monitors` for runs and changes, and one
@@ -88,12 +91,13 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 1. **Notification channel routes.** Services, registry and adapters are done; there
    is no channel CRUD over HTTP yet.
-2. **Web features** — `web/features/auth`, `monitors`, `runs`, `channels`. The design
-   system, layouts, router and generated client are all in place. This is now the
-   critical path: the whole backend works and nothing in the UI reaches it.
-3. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
+2. **Remaining API operations.** `docs/09-API.md` specifies roughly 50; 23 are
+   served. Missing: channels, rules, deliveries, monitor preview/enable/disable/
+   duplicate/extractors/export/import, and run diff/snapshot/series.
+3. **`web/features/channels`**, blocked on item 1.
+4. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
    suppression is recorded but never delivered — `modules/runs/README.md` §Known gaps.
-4. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
+5. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
    Portainer — 23 documented variables are absent from the compose
    `x-app-environment` anchor, listed in `deploy/portainer/STACK.md` §3a.
 
