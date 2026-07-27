@@ -68,6 +68,11 @@ missing one fails the deploy immediately, naming the variable:
 | `SESSION_SECRET`    | `openssl rand -base64 32`                                  |
 | `BROWSER_TOKEN`     | Any non-empty value; shared with the browserless container |
 
+`BROWSER_TOKEN` is required by **Compose**, not by the app: it is what the bundled
+browserless container authenticates against, and it is interpolated into
+`BROWSER_WS_ENDPOINT`. The app itself treats an empty token as "the endpoint already
+carries one".
+
 **No image variables are required.** `IMAGE_REGISTRY` and `IMAGE_TAG` default to
 `local` and `dev`, which is what lets the build path run with no image configuration
 at all. Set them only when pulling published images — and then `IMAGE_TAG` must name

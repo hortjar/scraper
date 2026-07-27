@@ -17,7 +17,6 @@ const PLACEHOLDERS: readonly (readonly [string, string])[] = [
   ["ENCRYPTION_KEY", "openapi-placeholder-key-000000000"],
   ["SESSION_SECRET", "openapi-placeholder-secret-000000"],
   ["POSTGRES_PASSWORD", "openapi-placeholder-password"],
-  ["BROWSER_TOKEN", "openapi-placeholder-token"],
 ]
 
 for (const [name, value] of PLACEHOLDERS) {

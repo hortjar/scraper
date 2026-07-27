@@ -21,9 +21,11 @@ export interface BrowserStrategyDependencies {
   readonly blockedHostPatterns: readonly string[]
 }
 
-const buildEndpoint = (wsEndpoint: string, token: Redacted.Redacted): string => {
+export const buildEndpoint = (wsEndpoint: string, token: Redacted.Redacted): string => {
+  const value = Redacted.value(token)
+  if (value === "") return wsEndpoint
   const url = new URL(wsEndpoint)
-  url.searchParams.set(BROWSER_TOKEN_PARAMETER, Redacted.value(token))
+  url.searchParams.set(BROWSER_TOKEN_PARAMETER, value)
   return url.href
 }
 

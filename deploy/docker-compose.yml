@@ -15,6 +15,7 @@ x-app-environment: &app-environment
   - SESSION_SECRET=${SESSION_SECRET:?required}
   - MAIL_FROM
   - BROWSER_WS_ENDPOINT=ws://browser:3000?token=${BROWSER_TOKEN:?required}
+  - BROWSER_TOKEN
   - APP_VERSION
   - GIT_SHA
   - APP_ENV

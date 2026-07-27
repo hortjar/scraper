@@ -173,6 +173,26 @@ Start from `deploy/portainer/stack.env.example`. The full reference, including e
 optional variable, is [11-ENVIRONMENT](./11-ENVIRONMENT.md), generated from
 `packages/core/src/config/environment-spec.ts`.
 
+### The anchor is an allowlist
+
+`x-app-environment` in `deploy/docker-compose.yml` is the **complete** list of names
+that reach the API and worker containers. A variable set in the stack environment but
+absent from the anchor is visible to Compose — it interpolates `${VAR}` — and invisible
+to the app.
+
+This is how a config key with no default takes production down. Adding one to
+`packages/core/src/config/schema.ts` without adding its name to the anchor makes every
+container exit at boot with `Missing data at <VAR>`, and because nginx keeps serving the
+static web bundle, the only symptom is a 502 on `/api/v1` while the site itself looks
+fine. `BROWSER_TOKEN` did exactly this in 0.6.0.
+
+**So: a new required config key is a two-file change.** The check is one command, and
+it catches the whole class:
+
+```bash
+docker compose run --rm --no-deps api bun -e 'console.log(process.env.YOUR_NEW_VAR)'
+```
+
 ## 4. Deploy
 
 Portainer → **Stacks → Add stack → Repository**, path `deploy/docker-compose.yml`,
@@ -267,5 +287,6 @@ makes rollback guesswork.
 | `exec format error` in a container             | Single-arch image built on a machine that does not match the target                                                                                                                                               |
 | Stack fails at parse with `env file not found` | `deploy/.env` is gitignored; `env_file` is `required: false` for that reason — do not make it required                                                                                                            |
 | A stack variable never reaches the app         | Portainer stack variables are the environment Compose is _parsed_ in. Only names listed in the `x-app-environment` anchor become container environment                                                            |
+| `/api/v1/health` returns 502, web returns 200  | nginx is up and the API is not. `docker compose logs api` — a `Missing data at <VAR>` line means config parsing failed and the process exited. See [the anchor is an allowlist](#the-anchor-is-an-allowlist)      |
 | UI shows version `dev` or `unknown`            | Fixed in 0.7.0. A build arg or compose default set a placeholder, which beat the `package.json` fallback. If you still see it, you are running an image built before 0.7.0, or you set `APP_VERSION=dev` yourself |
 | Chromium crashes immediately                   | `shm_size: 1gb` missing on the `browser` service                                                                                                                                                                  |

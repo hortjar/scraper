@@ -161,7 +161,7 @@ export const scrapingConfig = Config.all({
 
 export const browserConfig = Config.all({
   wsEndpoint: Config.string("BROWSER_WS_ENDPOINT").pipe(Config.withDefault("")),
-  token: Config.redacted("BROWSER_TOKEN"),
+  token: Config.redacted("BROWSER_TOKEN").pipe(Config.withDefault(NO_SECRET)),
   timeoutMs: Config.integer("BROWSER_TIMEOUT_MS").pipe(Config.withDefault(TIMEOUT.browserScrapeMs)),
   maxContexts: Config.integer("BROWSER_MAX_CONTEXTS").pipe(Config.withDefault(4)),
   blockResources: csv("BROWSER_BLOCK_RESOURCES", ["image", "media", "font"]),

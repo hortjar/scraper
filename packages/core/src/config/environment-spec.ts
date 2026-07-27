@@ -117,7 +117,12 @@ export const ENV_SPEC: readonly EnvironmentVariable[] = [
   ]),
   ...group("Browser", [
     optional("BROWSER_WS_ENDPOINT", "", "ws://browser:3000, empty launches locally"),
-    required("BROWSER_TOKEN", "Auth token for the browserless container", true),
+    optional(
+      "BROWSER_TOKEN",
+      "",
+      "Appended to BROWSER_WS_ENDPOINT as ?token=. Leave empty when the endpoint already carries one",
+      true,
+    ),
     optional("BROWSER_TIMEOUT_MS", "45000", "Browser strategy timeout"),
     optional("BROWSER_MAX_CONTEXTS", "4", "Concurrent contexts per worker"),
     optional("BROWSER_BLOCK_RESOURCES", "image,media,font", "Resource types to block"),

@@ -26,6 +26,14 @@ This file starts at 0.2.0. For anything earlier, see the git history.
 
 ### Fixed
 
+- **A deployed stack answered 502 because `BROWSER_TOKEN` had no default.** The
+  scraping module made it a required config key, but compose's `x-app-environment`
+  anchor — the complete allowlist of names that reach the containers — only
+  interpolates it into `BROWSER_WS_ENDPOINT` and never passes the name through. Every
+  API and worker container exited at boot with `Missing data at BROWSER_TOKEN` while
+  nginx kept serving the web bundle, so the site looked healthy and only `/api/v1`
+  was down. The token is now optional: empty means the endpoint already carries one,
+  which is exactly how the bundled stack has always been wired.
 - **A deployed stack answered 502 after boot migrations landed.** A database already
   migrated by drizzle-kit has no rows in `schema_migrations`, so boot re-ran
   `0000_init.sql` — of whose 60 `CREATE` statements only 2 are `IF NOT EXISTS` — and

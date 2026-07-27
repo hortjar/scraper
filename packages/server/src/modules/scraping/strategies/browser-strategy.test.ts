@@ -4,7 +4,7 @@ import { describe, expect } from "vitest"
 
 import type { ScrapeRequest } from "../scraping.schema.js"
 
-import { makeBrowserStrategy } from "./browser-strategy.js"
+import { buildEndpoint, makeBrowserStrategy } from "./browser-strategy.js"
 
 const dependencies = {
   wsEndpoint: "",
@@ -20,6 +20,26 @@ const request: ScrapeRequest = {
   request: {},
   browserOptions: {},
 }
+
+describe("buildEndpoint", () => {
+  it("appends the token when one is configured", () => {
+    expect(buildEndpoint("ws://browser:3000", Redacted.make("secret"))).toBe(
+      "ws://browser:3000/?token=secret",
+    )
+  })
+
+  it("leaves an endpoint that already carries a token untouched when no token is configured", () => {
+    expect(buildEndpoint("ws://browser:3000?token=embedded", Redacted.make(""))).toBe(
+      "ws://browser:3000?token=embedded",
+    )
+  })
+
+  it("overrides an embedded token with the configured one", () => {
+    expect(buildEndpoint("ws://browser:3000?token=embedded", Redacted.make("secret"))).toBe(
+      "ws://browser:3000/?token=secret",
+    )
+  })
+})
 
 describe("makeBrowserStrategy", () => {
   it("reports its kind and refuses to handle when no endpoint is configured", () => {

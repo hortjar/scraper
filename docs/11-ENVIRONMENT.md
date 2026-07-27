@@ -101,14 +101,14 @@ Generate secrets: `openssl rand -base64 32`.
 
 ## Browser
 
-| Variable                  | Default            | Notes                                                           |
-| ------------------------- | ------------------ | --------------------------------------------------------------- |
-| `BROWSER_WS_ENDPOINT`     | _(empty)_          | `ws://browser:3000` — empty = launch chromium in-process        |
-| `BROWSER_TOKEN`           | 🔒 required        | Auth token for the browserless container, appended as `?token=` |
-| `BROWSER_TIMEOUT_MS`      | `45000`            |                                                                 |
-| `BROWSER_MAX_CONTEXTS`    | `4`                | Per worker replica                                              |
-| `BROWSER_BLOCK_RESOURCES` | `image,media,font` | Default blocklist                                               |
-| `SCREENSHOTS_ENABLED`     | `true`             |                                                                 |
+| Variable                  | Default            | Notes                                                        |
+| ------------------------- | ------------------ | ------------------------------------------------------------ |
+| `BROWSER_WS_ENDPOINT`     | _(empty)_          | `ws://browser:3000` — empty = launch chromium in-process     |
+| `BROWSER_TOKEN`           | _(empty)_          | Appended to the endpoint as `?token=`. Empty leaves it as-is |
+| `BROWSER_TIMEOUT_MS`      | `45000`            |                                                              |
+| `BROWSER_MAX_CONTEXTS`    | `4`                | Per worker replica                                           |
+| `BROWSER_BLOCK_RESOURCES` | `image,media,font` | Default blocklist                                            |
+| `SCREENSHOTS_ENABLED`     | `true`             |                                                              |
 
 ## Storage
 

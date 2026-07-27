@@ -58,6 +58,7 @@ see §5.
 | Routes go on `createApiRoutes`, never `createApp`, which double-prefixes the paths   | `docs/09-API.md`                          |
 | A bare `Schema.Struct` response is silently ignored; wrap in `standardSchemaV1(…)`   | `docs/09-API.md` §3                       |
 | Compose interpolates unset vars to `""`, so use `blankToUndefined`, never `??`       | `packages/core/README.md`                 |
+| A config key with no default must also be added to compose's `x-app-environment`     | `docs/17-DEPLOY-RUNBOOK.md`               |
 
 ## 3. How a module is wired
 
