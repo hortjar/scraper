@@ -12,5 +12,62 @@
   "account": {
     "title": "Účet",
     "description": "E-mail, heslo a aktivní relace."
+  },
+  "profile": {
+    "title": "Profil",
+    "timezoneLabel": "Časové pásmo",
+    "timezonePlaceholder": "Europe/Prague",
+    "localeLabel": "Jazyk profilu",
+    "save": "Uložit profil",
+    "saving": "Ukládání…",
+    "saved": "Uloženo."
+  },
+  "password": {
+    "title": "Heslo",
+    "currentLabel": "Současné heslo",
+    "newLabel": "Nové heslo",
+    "save": "Změnit heslo",
+    "saving": "Ukládání…",
+    "saved": "Heslo bylo změněno."
+  },
+  "sessions": {
+    "title": "Relace",
+    "description": "Všude, kde jste aktuálně přihlášeni.",
+    "emptyTitle": "Žádné aktivní relace",
+    "deviceHeader": "Zařízení",
+    "lastSeenHeader": "Naposledy aktivní",
+    "statusHeader": "Stav",
+    "actionsHeader": "Akce",
+    "current": "Toto zařízení",
+    "revoke": "Odvolat",
+    "revokeAll": "Odhlásit se všude",
+    "unknownDevice": "Neznámé zařízení",
+    "unknownLocation": "Neznámé umístění",
+    "tableCaption": "Aktivní relace"
+  },
+  "apiKeys": {
+    "title": "API klíče",
+    "description": "Klíče pro skripty a integrace volající API vaším jménem.",
+    "emptyTitle": "Zatím žádné API klíče",
+    "nameHeader": "Název",
+    "lastUsedHeader": "Naposledy použit",
+    "actionsHeader": "Akce",
+    "neverUsed": "Nikdy nepoužit",
+    "revoke": "Odvolat",
+    "tableCaption": "API klíče",
+    "nameLabel": "Název",
+    "namePlaceholder": "např. deploy skript",
+    "scopesLabel": "Rozsahy",
+    "create": "Vytvořit klíč",
+    "creating": "Vytváření…",
+    "revealTitle": "Váš nový API klíč",
+    "revealDescription": "Tento klíč se zobrazí pouze jednou. Zkopírujte si ho teď — znovu ho už neuvidíte.",
+    "revealAcknowledge": "Klíč jsem si uložil/a",
+    "scopes": {
+      "monitorsRead": "Čtení monitorů",
+      "monitorsWrite": "Správa monitorů",
+      "runsRead": "Čtení běhů",
+      "channelsWrite": "Správa kanálů"
+    }
   }
 }

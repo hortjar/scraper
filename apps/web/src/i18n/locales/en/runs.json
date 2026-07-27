@@ -12,13 +12,81 @@
     "duration": "Duration",
     "size": "Payload",
     "status": "Status",
-    "changed": "Changed"
+    "changed": "Changed",
+    "trigger": "Trigger",
+    "strategy": "Strategy",
+    "httpStatus": "HTTP",
+    "error": "Error",
+    "attempt": "Attempt"
+  },
+  "status": {
+    "running": "Running",
+    "success": "Success",
+    "failed": "Failed",
+    "skipped": "Skipped"
+  },
+  "trigger": {
+    "schedule": "Schedule",
+    "manual": "Manual",
+    "retry": "Retry",
+    "test": "Test"
+  },
+  "changedState": {
+    "yes": "Changed",
+    "no": "No change"
+  },
+  "error": {
+    "title": "Error",
+    "unknownKind": "Unknown error"
+  },
+  "detail": {
+    "title": "Run",
+    "subtitle": "What the check saw and what it changed.",
+    "summaryTitle": "Summary",
+    "finishedAt": "Finished",
+    "errorTitle": "What went wrong"
+  },
+  "fields": {
+    "title": "Extracted fields",
+    "extractorKey": "Field",
+    "value": "Value",
+    "missing": "Missing",
+    "present": "Present",
+    "true": "True",
+    "false": "False",
+    "empty": "No value",
+    "emptyTitle": "Nothing extracted",
+    "emptyDescription": "This run has no field values to show."
   },
   "diff": {
     "title": "What changed",
     "added": "Added",
     "removed": "Removed",
     "unchanged": "No change",
-    "changedOnly": "Changed only"
+    "changedOnly": "Changed only",
+    "empty": "Nothing to show for this filter.",
+    "wholePage": "Whole page"
+  },
+  "changes": {
+    "title": "Changes",
+    "subtitle": "Every detected change, with its diff.",
+    "list": {
+      "emptyTitle": "No changes yet",
+      "emptyDescription": "Changes appear here once a run finds something different.",
+      "errorTitle": "Changes did not load"
+    },
+    "missingMonitorTitle": "No monitor selected",
+    "missingMonitorDescription": "Open changes from a monitor to see its history here.",
+    "delta": {
+      "absoluteLabel": "Change",
+      "percentLabel": "Percent change"
+    }
+  },
+  "changeKind": {
+    "appeared": "Appeared",
+    "disappeared": "Disappeared",
+    "modified": "Modified",
+    "increased": "Increased",
+    "decreased": "Decreased"
   }
 }

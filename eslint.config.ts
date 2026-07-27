@@ -105,6 +105,16 @@ const architecture: ConfigArray = [
     files: ["apps/web/src/components/**/*.tsx", "apps/web/src/landing/**/*.tsx"],
     rules: { "max-lines": ["error", { max: 150, skipBlankLines: true }] },
   },
+  {
+    name: "scraper/web-router-redirects",
+    files: ["apps/web/src/routes/**/*.tsx"],
+    rules: { "@typescript-eslint/only-throw-error": "off" },
+  },
+  {
+    name: "scraper/declaration-merging",
+    files: ["**/*.d.ts"],
+    rules: { "@typescript-eslint/no-empty-object-type": "off" },
+  },
 ]
 
 export default defineConfig(

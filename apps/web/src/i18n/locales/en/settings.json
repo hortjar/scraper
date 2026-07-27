@@ -12,5 +12,62 @@
   "account": {
     "title": "Account",
     "description": "Email, password, and active sessions."
+  },
+  "profile": {
+    "title": "Profile",
+    "timezoneLabel": "Timezone",
+    "timezonePlaceholder": "Europe/Prague",
+    "localeLabel": "Profile language",
+    "save": "Save profile",
+    "saving": "Saving…",
+    "saved": "Saved."
+  },
+  "password": {
+    "title": "Password",
+    "currentLabel": "Current password",
+    "newLabel": "New password",
+    "save": "Change password",
+    "saving": "Saving…",
+    "saved": "Password changed."
+  },
+  "sessions": {
+    "title": "Sessions",
+    "description": "Everywhere you're currently signed in.",
+    "emptyTitle": "No active sessions",
+    "deviceHeader": "Device",
+    "lastSeenHeader": "Last seen",
+    "statusHeader": "Status",
+    "actionsHeader": "Actions",
+    "current": "This device",
+    "revoke": "Revoke",
+    "revokeAll": "Log out everywhere",
+    "unknownDevice": "Unknown device",
+    "unknownLocation": "Unknown location",
+    "tableCaption": "Active sessions"
+  },
+  "apiKeys": {
+    "title": "API keys",
+    "description": "Keys for scripts and integrations to call the API on your behalf.",
+    "emptyTitle": "No API keys yet",
+    "nameHeader": "Name",
+    "lastUsedHeader": "Last used",
+    "actionsHeader": "Actions",
+    "neverUsed": "Never used",
+    "revoke": "Revoke",
+    "tableCaption": "API keys",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. deploy script",
+    "scopesLabel": "Scopes",
+    "create": "Create key",
+    "creating": "Creating…",
+    "revealTitle": "Your new API key",
+    "revealDescription": "This key is shown once. Copy it now — you won't be able to see it again.",
+    "revealAcknowledge": "I've saved this key",
+    "scopes": {
+      "monitorsRead": "Read monitors",
+      "monitorsWrite": "Manage monitors",
+      "runsRead": "Read runs",
+      "channelsWrite": "Manage channels"
+    }
   }
 }

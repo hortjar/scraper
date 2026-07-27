@@ -35,3 +35,5 @@ export const createQueryClient = (): QueryClient =>
       },
     },
   })
+
+export const queryClient: QueryClient = createQueryClient()

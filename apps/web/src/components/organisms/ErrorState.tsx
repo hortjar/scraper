@@ -9,7 +9,7 @@ export interface ErrorStateProperties {
   readonly error: unknown
   readonly title?: string
   readonly onRetry?: () => void
-  readonly className?: string
+  readonly className?: string | undefined
 }
 
 export const ErrorState = ({ error, title, onRetry, className }: ErrorStateProperties) => {

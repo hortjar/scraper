@@ -9,7 +9,7 @@ export {
   issuesByPath,
   networkError,
 } from "./errors"
-export { REFETCH_INTERVAL, STALE_TIME, createQueryClient } from "./query-client"
+export { REFETCH_INTERVAL, STALE_TIME, createQueryClient, queryClient } from "./query-client"
 export {
   type ErrorEnvelope,
   type MessageParameters,

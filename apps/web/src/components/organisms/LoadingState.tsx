@@ -7,7 +7,7 @@ const DEFAULT_ROWS = 5
 
 export interface LoadingStateProperties {
   readonly rows?: number
-  readonly className?: string
+  readonly className?: string | undefined
 }
 
 export const LoadingState = ({ rows = DEFAULT_ROWS, className }: LoadingStateProperties) => {

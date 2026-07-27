@@ -12,13 +12,81 @@
     "duration": "Trvání",
     "size": "Objem dat",
     "status": "Stav",
-    "changed": "Změněno"
+    "changed": "Změněno",
+    "trigger": "Spouštěč",
+    "strategy": "Strategie",
+    "httpStatus": "HTTP",
+    "error": "Chyba",
+    "attempt": "Pokus"
+  },
+  "status": {
+    "running": "Probíhá",
+    "success": "Úspěch",
+    "failed": "Selhalo",
+    "skipped": "Přeskočeno"
+  },
+  "trigger": {
+    "schedule": "Plán",
+    "manual": "Ručně",
+    "retry": "Opakování",
+    "test": "Test"
+  },
+  "changedState": {
+    "yes": "Změněno",
+    "no": "Beze změny"
+  },
+  "error": {
+    "title": "Chyba",
+    "unknownKind": "Neznámá chyba"
+  },
+  "detail": {
+    "title": "Kontrola",
+    "subtitle": "Co kontrola viděla a co změnila.",
+    "summaryTitle": "Souhrn",
+    "finishedAt": "Dokončeno",
+    "errorTitle": "Co se pokazilo"
+  },
+  "fields": {
+    "title": "Extrahovaná pole",
+    "extractorKey": "Pole",
+    "value": "Hodnota",
+    "missing": "Chybí",
+    "present": "Přítomno",
+    "true": "Ano",
+    "false": "Ne",
+    "empty": "Bez hodnoty",
+    "emptyTitle": "Nic nebylo extrahováno",
+    "emptyDescription": "Tato kontrola nemá žádné hodnoty polí k zobrazení."
   },
   "diff": {
     "title": "Co se změnilo",
     "added": "Přidáno",
     "removed": "Odebráno",
     "unchanged": "Beze změny",
-    "changedOnly": "Jen změny"
+    "changedOnly": "Jen změny",
+    "empty": "Pro tento filtr není co zobrazit.",
+    "wholePage": "Celá stránka"
+  },
+  "changes": {
+    "title": "Změny",
+    "subtitle": "Každá zjištěná změna i s rozdílem.",
+    "list": {
+      "emptyTitle": "Zatím žádné změny",
+      "emptyDescription": "Změny se zde objeví, jakmile kontrola najde něco jiného.",
+      "errorTitle": "Změny se nenačetly"
+    },
+    "missingMonitorTitle": "Není vybrán žádný monitor",
+    "missingMonitorDescription": "Historii změn zobrazíte otevřením z monitoru.",
+    "delta": {
+      "absoluteLabel": "Změna",
+      "percentLabel": "Procentuální změna"
+    }
+  },
+  "changeKind": {
+    "appeared": "Objevilo se",
+    "disappeared": "Zmizelo",
+    "modified": "Upraveno",
+    "increased": "Zvýšeno",
+    "decreased": "Sníženo"
   }
 }

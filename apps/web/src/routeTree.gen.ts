@@ -12,9 +12,19 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as AppChangesRouteImport } from './routes/_app/changes'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppMonitorsRouteImport } from './routes/_app/monitors'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
+import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
+import { Route as AppMonitorsIndexRouteImport } from './routes/_app/monitors.index'
+import { Route as AppMonitorsMonitorIdRouteImport } from './routes/_app/monitors.$monitorId'
+import { Route as AppMonitorsNewRouteImport } from './routes/_app/monitors.new'
+import { Route as AppRunsRunIdRouteImport } from './routes/_app/runs.$runId'
+import { Route as AppMonitorsMonitorIdEditRouteImport } from './routes/_app/monitors.$monitorId.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,10 +39,30 @@ const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppChangesRoute = AppChangesRouteImport.update({
+  id: '/changes',
+  path: '/changes',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AppRoute,
+} as any)
+const AppMonitorsRoute = AppMonitorsRouteImport.update({
+  id: '/monitors',
+  path: '/monitors',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/login',
@@ -44,41 +74,138 @@ const AuthRegisterRoute = AuthRegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AppMonitorsIndexRoute = AppMonitorsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppMonitorsRoute,
+} as any)
+const AppMonitorsMonitorIdRoute = AppMonitorsMonitorIdRouteImport.update({
+  id: '/$monitorId',
+  path: '/$monitorId',
+  getParentRoute: () => AppMonitorsRoute,
+} as any)
+const AppMonitorsNewRoute = AppMonitorsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppMonitorsRoute,
+} as any)
+const AppRunsRunIdRoute = AppRunsRunIdRouteImport.update({
+  id: '/runs/$runId',
+  path: '/runs/$runId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMonitorsMonitorIdEditRoute =
+  AppMonitorsMonitorIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => AppMonitorsMonitorIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/changes': typeof AppChangesRoute
   '/dashboard': typeof AppDashboardRoute
+  '/monitors': typeof AppMonitorsRouteWithChildren
+  '/settings': typeof AppSettingsRoute
+  '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/reset-password': typeof AuthResetPasswordRoute
+  '/monitors/$monitorId': typeof AppMonitorsMonitorIdRouteWithChildren
+  '/monitors/new': typeof AppMonitorsNewRoute
+  '/runs/$runId': typeof AppRunsRunIdRoute
+  '/monitors/': typeof AppMonitorsIndexRoute
+  '/monitors/$monitorId/edit': typeof AppMonitorsMonitorIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/changes': typeof AppChangesRoute
   '/dashboard': typeof AppDashboardRoute
+  '/settings': typeof AppSettingsRoute
+  '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/reset-password': typeof AuthResetPasswordRoute
+  '/monitors/$monitorId': typeof AppMonitorsMonitorIdRouteWithChildren
+  '/monitors/new': typeof AppMonitorsNewRoute
+  '/runs/$runId': typeof AppRunsRunIdRoute
+  '/monitors': typeof AppMonitorsIndexRoute
+  '/monitors/$monitorId/edit': typeof AppMonitorsMonitorIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
+  '/_app/changes': typeof AppChangesRoute
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/monitors': typeof AppMonitorsRouteWithChildren
+  '/_app/settings': typeof AppSettingsRoute
+  '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
+  '/_auth/reset-password': typeof AuthResetPasswordRoute
+  '/_app/monitors/$monitorId': typeof AppMonitorsMonitorIdRouteWithChildren
+  '/_app/monitors/new': typeof AppMonitorsNewRoute
+  '/_app/runs/$runId': typeof AppRunsRunIdRoute
+  '/_app/monitors/': typeof AppMonitorsIndexRoute
+  '/_app/monitors/$monitorId/edit': typeof AppMonitorsMonitorIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/register'
+  fullPaths:
+    | '/'
+    | '/changes'
+    | '/dashboard'
+    | '/monitors'
+    | '/settings'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/monitors/$monitorId'
+    | '/monitors/new'
+    | '/runs/$runId'
+    | '/monitors/'
+    | '/monitors/$monitorId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/register'
+  to:
+    | '/'
+    | '/changes'
+    | '/dashboard'
+    | '/settings'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/monitors/$monitorId'
+    | '/monitors/new'
+    | '/runs/$runId'
+    | '/monitors'
+    | '/monitors/$monitorId/edit'
   id:
     | '__root__'
     | '/'
     | '/_app'
     | '/_auth'
+    | '/_app/changes'
     | '/_app/dashboard'
+    | '/_app/monitors'
+    | '/_app/settings'
+    | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/register'
+    | '/_auth/reset-password'
+    | '/_app/monitors/$monitorId'
+    | '/_app/monitors/new'
+    | '/_app/runs/$runId'
+    | '/_app/monitors/'
+    | '/_app/monitors/$monitorId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -110,12 +237,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/changes': {
+      id: '/_app/changes'
+      path: '/changes'
+      fullPath: '/changes'
+      preLoaderRoute: typeof AppChangesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/_app/monitors': {
+      id: '/_app/monitors'
+      path: '/monitors'
+      fullPath: '/monitors'
+      preLoaderRoute: typeof AppMonitorsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_auth/forgot-password': {
+      id: '/_auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_auth/login': {
       id: '/_auth/login'
@@ -131,27 +286,108 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRegisterRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/reset-password': {
+      id: '/_auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_app/monitors/': {
+      id: '/_app/monitors/'
+      path: '/'
+      fullPath: '/monitors/'
+      preLoaderRoute: typeof AppMonitorsIndexRouteImport
+      parentRoute: typeof AppMonitorsRoute
+    }
+    '/_app/monitors/$monitorId': {
+      id: '/_app/monitors/$monitorId'
+      path: '/$monitorId'
+      fullPath: '/monitors/$monitorId'
+      preLoaderRoute: typeof AppMonitorsMonitorIdRouteImport
+      parentRoute: typeof AppMonitorsRoute
+    }
+    '/_app/monitors/new': {
+      id: '/_app/monitors/new'
+      path: '/new'
+      fullPath: '/monitors/new'
+      preLoaderRoute: typeof AppMonitorsNewRouteImport
+      parentRoute: typeof AppMonitorsRoute
+    }
+    '/_app/runs/$runId': {
+      id: '/_app/runs/$runId'
+      path: '/runs/$runId'
+      fullPath: '/runs/$runId'
+      preLoaderRoute: typeof AppRunsRunIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/monitors/$monitorId/edit': {
+      id: '/_app/monitors/$monitorId/edit'
+      path: '/edit'
+      fullPath: '/monitors/$monitorId/edit'
+      preLoaderRoute: typeof AppMonitorsMonitorIdEditRouteImport
+      parentRoute: typeof AppMonitorsMonitorIdRoute
+    }
   }
 }
 
+interface AppMonitorsMonitorIdRouteChildren {
+  AppMonitorsMonitorIdEditRoute: typeof AppMonitorsMonitorIdEditRoute
+}
+
+const AppMonitorsMonitorIdRouteChildren: AppMonitorsMonitorIdRouteChildren = {
+  AppMonitorsMonitorIdEditRoute: AppMonitorsMonitorIdEditRoute,
+}
+
+const AppMonitorsMonitorIdRouteWithChildren =
+  AppMonitorsMonitorIdRoute._addFileChildren(AppMonitorsMonitorIdRouteChildren)
+
+interface AppMonitorsRouteChildren {
+  AppMonitorsMonitorIdRoute: typeof AppMonitorsMonitorIdRouteWithChildren
+  AppMonitorsNewRoute: typeof AppMonitorsNewRoute
+  AppMonitorsIndexRoute: typeof AppMonitorsIndexRoute
+}
+
+const AppMonitorsRouteChildren: AppMonitorsRouteChildren = {
+  AppMonitorsMonitorIdRoute: AppMonitorsMonitorIdRouteWithChildren,
+  AppMonitorsNewRoute: AppMonitorsNewRoute,
+  AppMonitorsIndexRoute: AppMonitorsIndexRoute,
+}
+
+const AppMonitorsRouteWithChildren = AppMonitorsRoute._addFileChildren(
+  AppMonitorsRouteChildren,
+)
+
 interface AppRouteChildren {
+  AppChangesRoute: typeof AppChangesRoute
   AppDashboardRoute: typeof AppDashboardRoute
+  AppMonitorsRoute: typeof AppMonitorsRouteWithChildren
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppRunsRunIdRoute: typeof AppRunsRunIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppChangesRoute: AppChangesRoute,
   AppDashboardRoute: AppDashboardRoute,
+  AppMonitorsRoute: AppMonitorsRouteWithChildren,
+  AppSettingsRoute: AppSettingsRoute,
+  AppRunsRunIdRoute: AppRunsRunIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface AuthRouteChildren {
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

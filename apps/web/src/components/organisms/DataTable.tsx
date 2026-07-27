@@ -17,9 +17,9 @@ export interface DataTableProperties<T> {
   readonly rows: readonly T[]
   readonly getRowId: (row: T) => string
   readonly caption: string
-  readonly density?: Density
-  readonly onRowClick?: (row: T) => void
-  readonly className?: string
+  readonly density?: Density | undefined
+  readonly onRowClick?: ((row: T) => void) | undefined
+  readonly className?: string | undefined
 }
 
 const ROW_HEIGHT: Readonly<Record<Density, string>> = {

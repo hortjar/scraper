@@ -8,7 +8,7 @@ export interface EmptyStateProperties {
   readonly title: string
   readonly description?: string
   readonly action?: ReactNode
-  readonly className?: string
+  readonly className?: string | undefined
 }
 
 export const EmptyState = ({ title, description, action, className }: EmptyStateProperties) => (
