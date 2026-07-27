@@ -4,8 +4,16 @@ import { useTranslation } from "react-i18next"
 import { AuthShell } from "../../components/layouts/AuthShell"
 import { LoginContainer } from "../../features/auth"
 
+export interface LoginSearch {
+  readonly registered?: true
+}
+
+const validateLoginSearch = (raw: Record<string, unknown>): LoginSearch =>
+  raw.registered === true || raw.registered === "true" ? { registered: true } : {}
+
 const LoginRoute = () => {
   const { t } = useTranslation("auth")
+  const { registered } = Route.useSearch()
 
   return (
     <AuthShell
@@ -20,9 +28,17 @@ const LoginRoute = () => {
         </span>
       }
     >
+      {registered === true && (
+        <p role="status" className="mb-4 text-small text-positive">
+          {t("login.registeredNotice")}
+        </p>
+      )}
       <LoginContainer />
     </AuthShell>
   )
 }
 
-export const Route = createFileRoute("/_auth/login")({ component: LoginRoute })
+export const Route = createFileRoute("/_auth/login")({
+  component: LoginRoute,
+  validateSearch: validateLoginSearch,
+})

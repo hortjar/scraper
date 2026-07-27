@@ -12,7 +12,7 @@ const INITIAL_VALUES: RegisterFormValues = {
   confirmPassword: "",
   displayName: "",
 }
-const DASHBOARD_PATH = "/dashboard"
+const LOGIN_PATH = "/login"
 
 export const RegisterContainer = () => {
   const navigate = useNavigate()
@@ -36,7 +36,7 @@ export const RegisterContainer = () => {
       },
       {
         onSuccess: () => {
-          void navigate({ to: DASHBOARD_PATH })
+          void navigate({ to: LOGIN_PATH, search: { registered: true } })
         },
       },
     )
