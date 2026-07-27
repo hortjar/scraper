@@ -20,14 +20,15 @@ passing on `main`.
 | `packages/server/src/modules/runs`          | ✅ built, mounted, verified end to end against a live stack               |
 | Notification channel routes                 | ✅ built, mounted, CRUD + test verified over HTTP                         |
 | Notification rule routes                    | ✅ built, mounted, CRUD + ownership verified over HTTP                    |
+| Delivery routes                             | ✅ list with filters and retry, verified over HTTP                        |
 | `apps/web/src/features/auth`                | ✅ login, register, password reset, profile, password, sessions, API keys |
 | `apps/web/src/features/monitors`            | ✅ list, create, edit, detail, delete, run now                            |
 | `apps/web/src/features/runs`                | ✅ runs and changes panels, run detail, diff renderer                     |
 | `apps/web` channels feature                 | ❌ not started; the routes it needs now exist                             |
 
-The API serves **29 paths**: `/health`, `/ready`, `/metrics`, `/meta`, 13 under
+The API serves **31 paths**: `/health`, `/ready`, `/metrics`, `/meta`, 13 under
 `/auth`, 5 under `/monitors`, 3 more under `/monitors` for runs and changes, one
-`/runs/:runId`, 4 under `/channels`, and 2 for notification rules.
+`/runs/:runId`, 4 under `/channels`, 2 for notification rules, and 2 for deliveries.
 
 ### Auth is finished
 
@@ -70,6 +71,8 @@ see §5.
 | Assigning a full HTML document to `innerHTML` corrupts linkedom's node list                   | `modules/scraping/dom.types.ts`           |
 | `sql.unsafe` returns `timestamptz` as a **string**, so `DateFromSelf` decoding fails          | `channel.repository.rows.ts`              |
 | A helper typed as a narrow `Pick` but handed the whole row silently reverts every other field | `channel.repository.rows.ts`              |
+| An unqualified `SELECT` column list breaks the moment the query gains a `JOIN`                | `delivery.repository.ts`                  |
+| `errors.internalError` needs `{requestId}`; omitting it made intl throw and masked every 500  | `modules/auth/auth.http.ts`               |
 
 ## 3. How a module is wired
 
@@ -92,9 +95,9 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **Remaining API operations.** `docs/09-API.md` specifies roughly 50; 29 are
-   served. Missing: `POST /rules/:id/preview`, deliveries, monitor preview/enable/
-   disable/duplicate/extractors/export/import, and run diff/snapshot/series.
+1. **Remaining API operations.** `docs/09-API.md` specifies roughly 50; 31 are
+   served. Missing: `POST /rules/:id/preview`, monitor preview/enable/disable/
+   duplicate/extractors/export/import, and run diff/snapshot/series.
 2. **`web/features/channels`** — the channel routes it needs now exist.
 3. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
    suppression is recorded but never delivered — `modules/runs/README.md` §Known gaps.

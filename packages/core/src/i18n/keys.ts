@@ -8,6 +8,7 @@ export const MSG = {
     runNotFound: "errors.runNotFound",
     channelNotFound: "errors.channelNotFound",
     ruleNotFound: "errors.ruleNotFound",
+    deliveryNotFound: "errors.deliveryNotFound",
     userNotFound: "errors.userNotFound",
     extractorNotFound: "errors.extractorNotFound",
     sessionNotFound: "errors.sessionNotFound",

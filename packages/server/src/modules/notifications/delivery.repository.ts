@@ -6,6 +6,8 @@ import { DatabaseError as DatabaseErrorClass } from "@scraper/core/errors"
 import { Database, decodeRow } from "@scraper/db"
 import { Effect } from "effect"
 
+import { timestampParameter, withDeliveryDates } from "./delivery.repository.rows.js"
+
 const decodeDelivery = decodeRow(NotificationDelivery, "notification_delivery")
 
 const SELECT_COLUMNS = `
@@ -13,6 +15,13 @@ const SELECT_COLUMNS = `
   change_ids AS "changeIds", status, suppressed_reason AS "suppressedReason",
   attempts, last_error AS "lastError", provider_message_id AS "providerMessageId",
   sent_at AS "sentAt", created_at AS "createdAt"
+`
+
+const JOINED_COLUMNS = `
+  d.id, d.rule_id AS "ruleId", d.channel_id AS "channelId", d.monitor_id AS "monitorId",
+  d.change_ids AS "changeIds", d.status, d.suppressed_reason AS "suppressedReason",
+  d.attempts, d.last_error AS "lastError", d.provider_message_id AS "providerMessageId",
+  d.sent_at AS "sentAt", d.created_at AS "createdAt"
 `
 
 export interface InsertDeliveryInput {
@@ -78,7 +87,7 @@ export class DeliveryRepository extends Effect.Service<DeliveryRepository>()(
             new DatabaseErrorClass({ operation: "insert notification_delivery", cause: null }),
           )
         }
-        return yield* decodeDelivery(row)
+        return yield* decodeDelivery(withDeliveryDates(row))
       })
 
       const updateStatus = Effect.fn(SPAN.deliveryRepository.updateStatus)(function* (
@@ -91,7 +100,7 @@ export class DeliveryRepository extends Effect.Service<DeliveryRepository>()(
                attempts = COALESCE($2, attempts),
                last_error = COALESCE($3, last_error),
                provider_message_id = COALESCE($4, provider_message_id),
-               sent_at = COALESCE($5, sent_at)
+               sent_at = COALESCE($5::timestamptz, sent_at)
            WHERE id = $6
            RETURNING ${SELECT_COLUMNS}`,
           [
@@ -99,7 +108,7 @@ export class DeliveryRepository extends Effect.Service<DeliveryRepository>()(
             patch.attempts ?? null,
             patch.lastError ?? null,
             patch.providerMessageId ?? null,
-            patch.sentAt ?? null,
+            timestampParameter(patch.sentAt),
             id,
           ],
         )
@@ -109,7 +118,7 @@ export class DeliveryRepository extends Effect.Service<DeliveryRepository>()(
             new DatabaseErrorClass({ operation: "update notification_delivery", cause: null }),
           )
         }
-        return yield* decodeDelivery(row)
+        return yield* decodeDelivery(withDeliveryDates(row))
       })
 
       const listByChannel = Effect.fn(SPAN.deliveryRepository.list)(function* (
@@ -118,17 +127,56 @@ export class DeliveryRepository extends Effect.Service<DeliveryRepository>()(
         limit: number,
       ) {
         const rows = yield* run(
-          `SELECT ${SELECT_COLUMNS} FROM notification_deliveries d
+          `SELECT ${JOINED_COLUMNS} FROM notification_deliveries d
            INNER JOIN notification_channels c ON c.id = d.channel_id
            WHERE d.channel_id = $1 AND c.user_id = $2
            ORDER BY d.created_at DESC
            LIMIT $3`,
           [channelId, userId, limit],
         )
-        return yield* Effect.forEach(rows, decodeDelivery)
+        return yield* Effect.forEach(rows, (row) => decodeDelivery(withDeliveryDates(row)))
       })
 
-      return { insert, updateStatus, listByChannel } as const
+      const listFiltered = Effect.fn(SPAN.deliveryRepository.listFiltered)(function* (
+        userId: UserId,
+        filters: {
+          readonly ruleId: string | null
+          readonly channelId: string | null
+          readonly status: string | null
+        },
+        limit: number,
+      ) {
+        const rows = yield* run(
+          `SELECT ${JOINED_COLUMNS} FROM notification_deliveries d
+           INNER JOIN notification_channels c ON c.id = d.channel_id
+           WHERE c.user_id = $1
+             AND ($2::uuid IS NULL OR d.rule_id = $2::uuid)
+             AND ($3::uuid IS NULL OR d.channel_id = $3::uuid)
+             AND ($4::text IS NULL OR d.status::text = $4::text)
+           ORDER BY d.created_at DESC
+           LIMIT $5`,
+          [userId, filters.ruleId, filters.channelId, filters.status, limit],
+        )
+        return yield* Effect.forEach(rows, (row) => decodeDelivery(withDeliveryDates(row)))
+      })
+
+      const findById = Effect.fn(SPAN.deliveryRepository.findById)(function* (
+        userId: UserId,
+        id: string,
+      ) {
+        const rows = yield* run(
+          `SELECT ${JOINED_COLUMNS} FROM notification_deliveries d
+           INNER JOIN notification_channels c ON c.id = d.channel_id
+           WHERE d.id = $1 AND c.user_id = $2
+           LIMIT 1`,
+          [id, userId],
+        )
+        const row = rows[0]
+        if (row === undefined) return null
+        return yield* decodeDelivery(withDeliveryDates(row))
+      })
+
+      return { insert, updateStatus, listByChannel, listFiltered, findById } as const
     }),
     dependencies: [Database.Default],
   },

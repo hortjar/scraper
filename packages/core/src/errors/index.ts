@@ -55,6 +55,10 @@ export class RuleNotFound extends Data.TaggedError("RuleNotFound")<{
   readonly id: string
 }> {}
 
+export class DeliveryNotFound extends Data.TaggedError("DeliveryNotFound")<{
+  readonly id: string
+}> {}
+
 export class ExtractorNotFound extends Data.TaggedError("ExtractorNotFound")<{
   readonly id: string
 }> {}
@@ -202,6 +206,7 @@ export type AppError =
   | RunNotFound
   | ChannelNotFound
   | RuleNotFound
+  | DeliveryNotFound
   | ExtractorNotFound
   | SessionNotFound
   | ApiKeyNotFound

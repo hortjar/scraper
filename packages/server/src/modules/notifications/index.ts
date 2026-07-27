@@ -6,6 +6,7 @@ import { ChannelSetLive } from "./channels/index.js"
 import { ChannelRegistryLive } from "./channels/registry.service.js"
 import { ChannelsLive } from "./channels.service.js"
 import { CryptoLive } from "./crypto/crypto.service.js"
+import { DeliveriesLive } from "./deliveries.service.js"
 import { DeliveryRepositoryLive } from "./delivery.repository.js"
 import { NotificationDispatcherLive } from "./dispatcher/notification-dispatcher.service.js"
 import { MailerLive } from "./mailer/mailer.service.js"
@@ -47,6 +48,9 @@ export { Rules, RulesLive } from "./rules.service.js"
 export { monitorRuleRoutes, ruleRoutes, type RuleServices } from "./rules.routes.js"
 export { toRuleDto } from "./rules.dto.js"
 
+export { Deliveries, DeliveriesLive } from "./deliveries.service.js"
+export { deliveryRoutes, type DeliveryServices } from "./deliveries.routes.js"
+
 export const NotificationsLayer = Layer.mergeAll(
   ChannelRegistryLive,
   NotificationsHttpClientLive,
@@ -59,4 +63,5 @@ export const NotificationsLayer = Layer.mergeAll(
   RuleRepositoryLive,
   ChannelsLive,
   RulesLive,
+  DeliveriesLive,
 ).pipe(Layer.provideMerge(ChannelSetLive))

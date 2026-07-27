@@ -11,6 +11,8 @@ export const NOTIFICATIONS_OPERATION_ID = {
   createRule: "createRule",
   updateRule: "updateRule",
   deleteRule: "deleteRule",
+  listDeliveries: "listDeliveries",
+  retryDelivery: "retryDelivery",
 } as const
 
 export const STUB_AUTH_HEADER = "x-user-id"

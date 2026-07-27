@@ -102,6 +102,12 @@ export const SPAN = {
     insert: "DeliveryRepository.insert",
     updateStatus: "DeliveryRepository.updateStatus",
     list: "DeliveryRepository.list",
+    listFiltered: "DeliveryRepository.listFiltered",
+    findById: "DeliveryRepository.findById",
+  },
+  deliveries: {
+    list: "Deliveries.list",
+    retry: "Deliveries.retry",
   },
   ruleRepository: {
     list: "RuleRepository.list",
@@ -190,6 +196,8 @@ export const LOG_FIELD = {
   host: "host",
   durationMs: "durationMs",
   errorTag: "errorTag",
+  path: "path",
+  cause: "cause",
   migrationFile: "migrationFile",
   migrationsApplied: "migrationsApplied",
 } as const

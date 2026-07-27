@@ -1,6 +1,6 @@
 import type { RootConfig } from "@scraper/core/config"
 import { AppConfig, blankToUndefined } from "@scraper/core/config"
-import { APP_ENV, HEADER } from "@scraper/core/constants"
+import { APP_ENV, HEADER, HTTP_STATUS, LOG_FIELD } from "@scraper/core/constants"
 import type { AppError, HttpErrorBody } from "@scraper/core/errors"
 import { resolveLocale, Translator } from "@scraper/core/i18n"
 import { toHttpFailure } from "@scraper/core/observability"
@@ -92,6 +92,15 @@ export interface ResponseSink {
   headers: Record<string, string | number | undefined>
 }
 
+const SERVER_FAILURE_LOG = "http.serverFailure"
+
+const describeAppError = (error: AppError): string => {
+  const cause = "cause" in error ? error.cause : undefined
+  if (cause === undefined || cause === null) return error._tag
+  const detail = typeof cause === "string" ? cause : JSON.stringify(cause)
+  return `${error._tag} cause=${detail}`
+}
+
 const failureResponse = (
   error: AppError,
   headers: Readonly<Record<string, string | undefined>>,
@@ -110,12 +119,25 @@ const failureResponse = (
     if (failure.retryAfterSeconds !== undefined) {
       set.headers[HEADER.retryAfter] = String(failure.retryAfterSeconds)
     }
+    const requestId = String(set.headers[HEADER.requestId] ?? "")
+    const messageParameters = { ...failure.messageParams, requestId }
+
+    if (failure.status >= HTTP_STATUS.internalError) {
+      yield* Effect.logError(SERVER_FAILURE_LOG).pipe(
+        Effect.annotateLogs({
+          [LOG_FIELD.requestId]: requestId,
+          [LOG_FIELD.errorTag]: error._tag,
+          [LOG_FIELD.cause]: describeAppError(error),
+        }),
+      )
+    }
+
     const body: HttpErrorBody = {
       code: failure.code,
       messageKey: failure.messageKey,
-      messageParams: failure.messageParams,
-      message: translator.render(failure.messageKey, failure.messageParams, locale),
-      requestId: String(set.headers[HEADER.requestId] ?? ""),
+      messageParams: messageParameters,
+      message: translator.render(failure.messageKey, messageParameters, locale),
+      requestId,
       ...(failure.issues && { issues: failure.issues }),
     }
     return { status: failure.status, body }

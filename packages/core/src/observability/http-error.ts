@@ -63,6 +63,7 @@ export const toHttpFailure: (error: AppError) => HttpFailure = Match.type<AppErr
     RunNotFound: (error) => notFound(MSG.errors.runNotFound, error.id),
     ChannelNotFound: (error) => notFound(MSG.errors.channelNotFound, error.id),
     RuleNotFound: (error) => notFound(MSG.errors.ruleNotFound, error.id),
+    DeliveryNotFound: (error) => notFound(MSG.errors.deliveryNotFound, error.id),
     ExtractorNotFound: (error) => notFound(MSG.errors.extractorNotFound, error.id),
     SessionNotFound: (error) => notFound(MSG.errors.sessionNotFound, error.id),
     ApiKeyNotFound: (error) => notFound(MSG.errors.apiKeyNotFound, error.id),
