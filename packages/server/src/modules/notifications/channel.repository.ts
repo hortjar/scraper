@@ -5,34 +5,14 @@ import { ChannelNotFound, Conflict, type DatabaseError } from "@scraper/core/err
 import { Database, constraintFailure, decodeRow } from "@scraper/db"
 import { Effect } from "effect"
 
+import type { ChannelRow, EncryptedSecretColumns } from "./channel.repository.rows.js"
+import { mergeChannelPatch, timestampParameter, withHasSecret } from "./channel.repository.rows.js"
+
+export type { ChannelRow, EncryptedSecretColumns } from "./channel.repository.rows.js"
+
 const decodeChannel = decodeRow(NotificationChannelRecord, "notification_channel")
 
-interface ChannelRow {
-  readonly id: string
-  readonly userId: string
-  readonly kind: string
-  readonly name: string
-  readonly config: Record<string, unknown>
-  readonly secret: Buffer | null
-  readonly secretIv: Buffer | null
-  readonly secretTag: Buffer | null
-  readonly verifiedAt: Date | null
-  readonly enabled: boolean
-  readonly failureCount: number
-  readonly createdAt: Date
-  readonly updatedAt: Date
-}
-
-export interface EncryptedSecretColumns {
-  readonly secret: Buffer
-  readonly iv: Buffer
-  readonly tag: Buffer
-}
-
-export interface ChannelDecryptedConfig {
-  readonly config: Record<string, unknown>
-  readonly secret: EncryptedSecretColumns | null
-}
+export type { ChannelDecryptedConfig }
 
 const SELECT_COLUMNS = `
   id, user_id AS "userId", kind, name, config,
@@ -41,36 +21,10 @@ const SELECT_COLUMNS = `
   created_at AS "createdAt", updated_at AS "updatedAt"
 `
 
-const withHasSecret = (row: ChannelRow) => ({ ...row, hasSecret: row.secret !== null })
-
-interface ChannelPatch {
-  readonly name?: string
-  readonly config?: Record<string, unknown>
-  readonly enabled?: boolean
-  readonly secret?: EncryptedSecretColumns | null
+interface ChannelDecryptedConfig {
+  readonly config: Record<string, unknown>
+  readonly secret: EncryptedSecretColumns | null
 }
-
-type ChannelSecretColumns = Pick<ChannelRow, "secret" | "secretIv" | "secretTag" | "verifiedAt">
-
-const mergeSecretColumns = (
-  existing: ChannelSecretColumns,
-  secret: EncryptedSecretColumns | null | undefined,
-): ChannelSecretColumns => {
-  if (secret === undefined) return existing
-  return {
-    secret: secret?.secret ?? null,
-    secretIv: secret?.iv ?? null,
-    secretTag: secret?.tag ?? null,
-    verifiedAt: null,
-  }
-}
-
-const mergeChannelPatch = (existing: ChannelRow, patch: ChannelPatch) => ({
-  name: patch.name ?? existing.name,
-  config: patch.config ?? existing.config,
-  enabled: patch.enabled ?? existing.enabled,
-  ...mergeSecretColumns(existing, patch.secret),
-})
 
 export class ChannelRepository extends Effect.Service<ChannelRepository>()(
   SERVICE_TAG.ChannelRepository,
@@ -156,7 +110,7 @@ export class ChannelRepository extends Effect.Service<ChannelRepository>()(
 
         const rows = yield* run<ChannelRow>(
           `UPDATE notification_channels
-           SET name = $1, config = $2::jsonb, enabled = $3, secret = $4, secret_iv = $5, secret_tag = $6, verified_at = $7
+           SET name = $1, config = $2::jsonb, enabled = $3, secret = $4, secret_iv = $5, secret_tag = $6, verified_at = $7::timestamptz
            WHERE id = $8 AND user_id = $9
            RETURNING ${SELECT_COLUMNS}`,
           [
@@ -166,7 +120,7 @@ export class ChannelRepository extends Effect.Service<ChannelRepository>()(
             next.secret,
             next.secretIv,
             next.secretTag,
-            next.verifiedAt,
+            timestampParameter(next.verifiedAt),
             id,
             userId,
           ],
@@ -193,8 +147,8 @@ export class ChannelRepository extends Effect.Service<ChannelRepository>()(
         verifiedAt: Date,
       ) {
         yield* run(
-          `UPDATE notification_channels SET verified_at = $1, failure_count = 0 WHERE id = $2 AND user_id = $3`,
-          [verifiedAt, id, userId],
+          `UPDATE notification_channels SET verified_at = $1::timestamptz, failure_count = 0 WHERE id = $2 AND user_id = $3`,
+          [timestampParameter(verifiedAt), id, userId],
         )
       })
 

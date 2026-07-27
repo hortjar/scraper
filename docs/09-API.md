@@ -125,7 +125,7 @@ GET    /channels                      → Channel[]  (secrets masked)
 POST   /channels                      { kind, name, config } → 201
 PATCH  /channels/:id
 DELETE /channels/:id                  → 409 if referenced by an enabled rule
-POST   /channels/:id/test             → 202 { deliveryId }
+POST   /channels/:id/test             → 202 { channelId, verified, testedAt }
 GET    /monitors/:id/rules            → Rule[]
 POST   /monitors/:id/rules            → 201
 PATCH  /rules/:id
@@ -134,6 +134,22 @@ POST   /rules/:id/preview             → rendered message for the last change
 GET    /deliveries                    ?ruleId&channelId&status → Delivery[]
 POST   /deliveries/:id/retry          → 202
 ```
+
+**Channel secrets never leave the server.** A channel's secret field is stripped from
+`config` on write and is never returned; `hasSecret` reports whether one is stored.
+There is deliberately no masked placeholder — a `••••` that round-tripped through a
+`PATCH` would overwrite the real secret with bullets. `PATCH /channels/:id` with a
+`config` that omits the secret field keeps the stored one.
+
+`POST /channels/:id/test` runs the channel's own `verify()` and, on success, stamps
+`verified_at` and resets `failure_count`. It does **not** create a delivery row:
+`notification_deliveries.rule_id` and `.monitor_id` are `NOT NULL`, and a test send
+belongs to neither. `422` with `errors.channelVerificationUnsupported` if the kind
+cannot be verified.
+
+The four API-key scopes are fixed (§08-AUTH §7); there is no `channels:read`, so all
+channel routes require `channels:write`. Session-authenticated users are not
+scope-limited, so this only constrains API keys — and channels hold credentials.
 
 ### System
 

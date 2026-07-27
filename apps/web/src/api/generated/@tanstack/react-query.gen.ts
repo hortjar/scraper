@@ -4,8 +4,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { changePassword, createApiKey, createMonitor, deleteMonitor, getCurrentUser, getHealth, getMeta, getMetrics, getMonitor, getReadiness, getRun, listApiKeys, listChanges, listMonitors, listRuns, listSessions, login, logout, type Options, register, requestEmailVerification, requestPasswordReset, resetPassword, revokeAllSessions, revokeApiKey, revokeSession, runMonitorNow, updateCurrentUser, updateMonitor, verifyEmail } from '../sdk.gen';
-import type { ChangePasswordData, ChangePasswordError, CreateApiKeyData, CreateApiKeyError, CreateApiKeyResponse, CreateMonitorData, CreateMonitorError, CreateMonitorResponse, DeleteMonitorData, DeleteMonitorError, GetCurrentUserData, GetCurrentUserError, GetCurrentUserResponse, GetHealthData, GetHealthResponse, GetMetaData, GetMetaResponse, GetMetricsData, GetMetricsResponse, GetMonitorData, GetMonitorError, GetMonitorResponse, GetReadinessData, GetReadinessError, GetReadinessResponse, GetRunData, GetRunError, GetRunResponse, ListApiKeysData, ListApiKeysError, ListApiKeysResponse, ListChangesData, ListChangesError, ListChangesResponse, ListMonitorsData, ListMonitorsError, ListMonitorsResponse, ListRunsData, ListRunsError, ListRunsResponse, ListSessionsData, ListSessionsError, ListSessionsResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, RegisterData, RegisterError, RegisterResponse, RequestEmailVerificationData, RequestEmailVerificationError, RequestEmailVerificationResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordData, ResetPasswordError, RevokeAllSessionsData, RevokeAllSessionsError, RevokeApiKeyData, RevokeApiKeyError, RevokeSessionData, RevokeSessionError, RunMonitorNowData, RunMonitorNowError, UpdateCurrentUserData, UpdateCurrentUserError, UpdateCurrentUserResponse, UpdateMonitorData, UpdateMonitorError, UpdateMonitorResponse, VerifyEmailData, VerifyEmailError } from '../types.gen';
+import { changePassword, createApiKey, createChannel, createMonitor, deleteChannel, deleteMonitor, getCurrentUser, getHealth, getMeta, getMetrics, getMonitor, getReadiness, getRun, listApiKeys, listChanges, listChannelKinds, listChannels, listMonitors, listRuns, listSessions, login, logout, type Options, register, requestEmailVerification, requestPasswordReset, resetPassword, revokeAllSessions, revokeApiKey, revokeSession, runMonitorNow, testChannel, updateChannel, updateCurrentUser, updateMonitor, verifyEmail } from '../sdk.gen';
+import type { ChangePasswordData, ChangePasswordError, CreateApiKeyData, CreateApiKeyError, CreateApiKeyResponse, CreateChannelData, CreateChannelError, CreateChannelResponse, CreateMonitorData, CreateMonitorError, CreateMonitorResponse, DeleteChannelData, DeleteChannelError, DeleteMonitorData, DeleteMonitorError, GetCurrentUserData, GetCurrentUserError, GetCurrentUserResponse, GetHealthData, GetHealthResponse, GetMetaData, GetMetaResponse, GetMetricsData, GetMetricsResponse, GetMonitorData, GetMonitorError, GetMonitorResponse, GetReadinessData, GetReadinessError, GetReadinessResponse, GetRunData, GetRunError, GetRunResponse, ListApiKeysData, ListApiKeysError, ListApiKeysResponse, ListChangesData, ListChangesError, ListChangesResponse, ListChannelKindsData, ListChannelKindsError, ListChannelKindsResponse, ListChannelsData, ListChannelsError, ListChannelsResponse, ListMonitorsData, ListMonitorsError, ListMonitorsResponse, ListRunsData, ListRunsError, ListRunsResponse, ListSessionsData, ListSessionsError, ListSessionsResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, RegisterData, RegisterError, RegisterResponse, RequestEmailVerificationData, RequestEmailVerificationError, RequestEmailVerificationResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordData, ResetPasswordError, RevokeAllSessionsData, RevokeAllSessionsError, RevokeApiKeyData, RevokeApiKeyError, RevokeSessionData, RevokeSessionError, RunMonitorNowData, RunMonitorNowError, TestChannelData, TestChannelError, TestChannelResponse, UpdateChannelData, UpdateChannelError, UpdateChannelResponse, UpdateCurrentUserData, UpdateCurrentUserError, UpdateCurrentUserResponse, UpdateMonitorData, UpdateMonitorError, UpdateMonitorResponse, VerifyEmailData, VerifyEmailError } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -314,6 +314,110 @@ export const revokeSessionMutation = (options?: Partial<Options<RevokeSessionDat
     };
     return mutationOptions;
 };
+
+export const listChannelsQueryKey = (options?: Options<ListChannelsData>) => createQueryKey('listChannels', options);
+
+/**
+ * List notification channels
+ */
+export const listChannelsOptions = (options?: Options<ListChannelsData>) => queryOptions<ListChannelsResponse, ListChannelsError, ListChannelsResponse, ReturnType<typeof listChannelsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await listChannels({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: listChannelsQueryKey(options)
+});
+
+/**
+ * Create a notification channel
+ */
+export const createChannelMutation = (options?: Partial<Options<CreateChannelData>>): UseMutationOptions<CreateChannelResponse, CreateChannelError, Options<CreateChannelData>> => {
+    const mutationOptions: UseMutationOptions<CreateChannelResponse, CreateChannelError, Options<CreateChannelData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await createChannel({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Delete a notification channel
+ */
+export const deleteChannelMutation = (options?: Partial<Options<DeleteChannelData>>): UseMutationOptions<unknown, DeleteChannelError, Options<DeleteChannelData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DeleteChannelError, Options<DeleteChannelData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteChannel({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Update a notification channel
+ */
+export const updateChannelMutation = (options?: Partial<Options<UpdateChannelData>>): UseMutationOptions<UpdateChannelResponse, UpdateChannelError, Options<UpdateChannelData>> => {
+    const mutationOptions: UseMutationOptions<UpdateChannelResponse, UpdateChannelError, Options<UpdateChannelData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateChannel({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Send a verification message to a channel
+ */
+export const testChannelMutation = (options?: Partial<Options<TestChannelData>>): UseMutationOptions<TestChannelResponse, TestChannelError, Options<TestChannelData>> => {
+    const mutationOptions: UseMutationOptions<TestChannelResponse, TestChannelError, Options<TestChannelData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await testChannel({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const listChannelKindsQueryKey = (options?: Options<ListChannelKindsData>) => createQueryKey('listChannelKinds', options);
+
+/**
+ * List the channel types this instance supports
+ */
+export const listChannelKindsOptions = (options?: Options<ListChannelKindsData>) => queryOptions<ListChannelKindsResponse, ListChannelKindsError, ListChannelKindsResponse, ReturnType<typeof listChannelKindsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await listChannelKinds({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: listChannelKindsQueryKey(options)
+});
 
 export const getHealthQueryKey = (options?: Options<GetHealthData>) => createQueryKey('getHealth', options);
 

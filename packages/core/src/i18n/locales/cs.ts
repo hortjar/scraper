@@ -41,6 +41,9 @@ export const cs: Catalog = {
   "errors.passwordTooShort": "Použijte alespoň {min} znaků.",
   "errors.passwordBreached": "Toto heslo se objevilo v úniku dat. Zvolte jiné.",
   "errors.intervalTooShort": "Nejkratší povolený interval je {seconds} sekund.",
+  "errors.channelKindUnknown": "{kind} není typ kanálu, který tato instance podporuje.",
+  "errors.channelConfigInvalid": "Zkontrolujte nastavení pro tento typ kanálu.",
+  "errors.channelVerificationUnsupported": "Kanály typu {kind} nelze před použitím otestovat.",
 
   "notifications.changeSubject": "{monitorName} se změnil",
   "notifications.changeBody":

@@ -38,6 +38,9 @@ export const MSG = {
     passwordTooShort: "errors.passwordTooShort",
     passwordBreached: "errors.passwordBreached",
     intervalTooShort: "errors.intervalTooShort",
+    channelKindUnknown: "errors.channelKindUnknown",
+    channelConfigInvalid: "errors.channelConfigInvalid",
+    channelVerificationUnsupported: "errors.channelVerificationUnsupported",
   },
   notifications: {
     changeSubject: "notifications.changeSubject",

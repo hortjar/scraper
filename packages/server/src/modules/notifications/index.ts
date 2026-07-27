@@ -4,6 +4,7 @@ import { ChannelRepositoryLive } from "./channel.repository.js"
 import { NotificationsHttpClientLive } from "./channels/http-client.service.js"
 import { ChannelSetLive } from "./channels/index.js"
 import { ChannelRegistryLive } from "./channels/registry.service.js"
+import { ChannelsLive } from "./channels.service.js"
 import { CryptoLive } from "./crypto/crypto.service.js"
 import { DeliveryRepositoryLive } from "./delivery.repository.js"
 import { NotificationDispatcherLive } from "./dispatcher/notification-dispatcher.service.js"
@@ -37,6 +38,10 @@ export { TemplateRenderer, TemplateRendererLive } from "./template/template-rend
 export { mergeSecret, splitSecret, type SplitConfig } from "./notifications.config-codec.js"
 export * from "./notifications.types.js"
 
+export { Channels, ChannelsLive } from "./channels.service.js"
+export { channelRoutes, type ChannelServices } from "./channels.routes.js"
+export { toChannelDto } from "./channels.dto.js"
+
 export const NotificationsLayer = Layer.mergeAll(
   ChannelRegistryLive,
   NotificationsHttpClientLive,
@@ -47,4 +52,5 @@ export const NotificationsLayer = Layer.mergeAll(
   ChannelRepositoryLive,
   DeliveryRepositoryLive,
   RuleRepositoryLive,
+  ChannelsLive,
 ).pipe(Layer.provideMerge(ChannelSetLive))

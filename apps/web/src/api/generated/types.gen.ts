@@ -3372,6 +3372,1298 @@ export type RevokeSessionResponses = {
     204: unknown;
 };
 
+export type ListChannelsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/channels';
+};
+
+export type ListChannelsErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type ListChannelsError = ListChannelsErrors[keyof ListChannelsErrors];
+
+export type ListChannelsResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        items: Array<{
+            config: {
+                [key: string]: unknown;
+            };
+            createdAt: string;
+            enabled: boolean;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            failureCount: number;
+            hasSecret: boolean;
+            /**
+             * a Universally Unique Identifier
+             */
+            id: string;
+            kind: string;
+            name: string;
+            updatedAt: string;
+            verifiedAt: string | unknown;
+        }>;
+    };
+};
+
+export type ListChannelsResponse = ListChannelsResponses[keyof ListChannelsResponses];
+
+export type CreateChannelData = {
+    body: {
+        config?: {
+            [key: string]: unknown;
+        };
+        /**
+         * trimmed
+         *
+         * a string with no leading or trailing whitespace
+         */
+        kind: string;
+        /**
+         * trimmed
+         *
+         * a string with no leading or trailing whitespace
+         */
+        name: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/channels';
+};
+
+export type CreateChannelErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type CreateChannelError = CreateChannelErrors[keyof CreateChannelErrors];
+
+export type CreateChannelResponses = {
+    /**
+     * Response for status 201
+     */
+    201: {
+        config: {
+            [key: string]: unknown;
+        };
+        createdAt: string;
+        enabled: boolean;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        failureCount: number;
+        hasSecret: boolean;
+        /**
+         * a Universally Unique Identifier
+         */
+        id: string;
+        kind: string;
+        name: string;
+        updatedAt: string;
+        verifiedAt: string | unknown;
+    };
+};
+
+export type CreateChannelResponse = CreateChannelResponses[keyof CreateChannelResponses];
+
+export type DeleteChannelData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        channelId: string;
+    };
+    query?: never;
+    url: '/channels/{channelId}';
+};
+
+export type DeleteChannelErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type DeleteChannelError = DeleteChannelErrors[keyof DeleteChannelErrors];
+
+export type DeleteChannelResponses = {
+    /**
+     * Response for status 204
+     */
+    204: unknown;
+};
+
+export type UpdateChannelData = {
+    body: {
+        config?: {
+            [key: string]: unknown;
+        };
+        enabled?: boolean;
+        /**
+         * trimmed
+         *
+         * a string with no leading or trailing whitespace
+         */
+        name?: string;
+    };
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        channelId: string;
+    };
+    query?: never;
+    url: '/channels/{channelId}';
+};
+
+export type UpdateChannelErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type UpdateChannelError = UpdateChannelErrors[keyof UpdateChannelErrors];
+
+export type UpdateChannelResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        config: {
+            [key: string]: unknown;
+        };
+        createdAt: string;
+        enabled: boolean;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        failureCount: number;
+        hasSecret: boolean;
+        /**
+         * a Universally Unique Identifier
+         */
+        id: string;
+        kind: string;
+        name: string;
+        updatedAt: string;
+        verifiedAt: string | unknown;
+    };
+};
+
+export type UpdateChannelResponse = UpdateChannelResponses[keyof UpdateChannelResponses];
+
+export type TestChannelData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        channelId: string;
+    };
+    query?: never;
+    url: '/channels/{channelId}/test';
+};
+
+export type TestChannelErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type TestChannelError = TestChannelErrors[keyof TestChannelErrors];
+
+export type TestChannelResponses = {
+    /**
+     * Response for status 202
+     */
+    202: {
+        /**
+         * a Universally Unique Identifier
+         */
+        channelId: string;
+        testedAt: string;
+        verified: boolean;
+    };
+};
+
+export type TestChannelResponse = TestChannelResponses[keyof TestChannelResponses];
+
+export type ListChannelKindsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/channels/kinds';
+};
+
+export type ListChannelKindsErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type ListChannelKindsError = ListChannelKindsErrors[keyof ListChannelKindsErrors];
+
+export type ListChannelKindsResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        items: Array<{
+            capabilities: {
+                attachments: boolean;
+                /**
+                 * nonNegative
+                 *
+                 * a non-negative number
+                 */
+                maxLength: number;
+                richText: boolean;
+                supportsDigest: boolean;
+                supportsVerification: boolean;
+            };
+            descriptionKey: string;
+            displayName: string;
+            fields: Array<{
+                labelKey: string;
+                name: string;
+                options?: Array<string>;
+                placeholder?: string;
+                required: boolean;
+                secret: boolean;
+                type: 'string' | 'number' | 'boolean' | 'select' | 'secret' | 'url';
+            }>;
+            icon: string;
+            kind: string;
+        }>;
+    };
+};
+
+export type ListChannelKindsResponse = ListChannelKindsResponses[keyof ListChannelKindsResponses];
+
 export type GetHealthData = {
     body?: never;
     path?: never;

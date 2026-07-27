@@ -4,7 +4,7 @@
 that cost real time, and what is left. Where it disagrees with another doc about
 current state, this page is right.
 
-Last verified **2026-07-27**, workspace green: 0 lint, 0 typecheck, 508 tests, CI
+Last verified **2026-07-27**, workspace green: 0 lint, 0 typecheck, 577 tests, CI
 passing on `main`.
 
 ## 1. What exists
@@ -18,15 +18,15 @@ passing on `main`.
 | `packages/server/src/modules/jobs`          | ✅ queues, schedulers, rate limits, maintenance, worker liveness          |
 | `packages/server/src/modules/monitors`      | ✅ built, **mounted**, CRUD verified over HTTP                            |
 | `packages/server/src/modules/runs`          | ✅ built, mounted, verified end to end against a live stack               |
-| Notification channel routes                 | ❌ services exist, no HTTP surface                                        |
+| Notification channel routes                 | ✅ built, mounted, CRUD + test verified over HTTP                         |
 | `apps/web/src/features/auth`                | ✅ login, register, password reset, profile, password, sessions, API keys |
 | `apps/web/src/features/monitors`            | ✅ list, create, edit, detail, delete, run now                            |
 | `apps/web/src/features/runs`                | ✅ runs and changes panels, run detail, diff renderer                     |
-| `apps/web` channels feature                 | ❌ blocked on the channel routes above                                    |
+| `apps/web` channels feature                 | ❌ not started; the routes it needs now exist                             |
 
-The API serves **23 paths**: `/health`, `/ready`, `/metrics`, `/meta`, 13 under
-`/auth`, 5 under `/monitors`, 3 more under `/monitors` for runs and changes, and one
-`/runs/:runId`.
+The API serves **27 paths**: `/health`, `/ready`, `/metrics`, `/meta`, 13 under
+`/auth`, 5 under `/monitors`, 3 more under `/monitors` for runs and changes, one
+`/runs/:runId`, and 4 under `/channels`.
 
 ### Auth is finished
 
@@ -67,6 +67,8 @@ see §5.
 | A `Date` in a raw drizzle `sql` template throws under Bun; cast in the SQL, not the parameter | `modules/runs/README.md`                  |
 | `ON CONFLICT` on nullable columns needs `UNIQUE NULLS NOT DISTINCT`                           | `modules/runs/README.md`                  |
 | Assigning a full HTML document to `innerHTML` corrupts linkedom's node list                   | `modules/scraping/dom.types.ts`           |
+| `sql.unsafe` returns `timestamptz` as a **string**, so `DateFromSelf` decoding fails          | `channel.repository.rows.ts`              |
+| A helper typed as a narrow `Pick` but handed the whole row silently reverts every other field | `channel.repository.rows.ts`              |
 
 ## 3. How a module is wired
 
@@ -89,15 +91,13 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **Notification channel routes.** Services, registry and adapters are done; there
-   is no channel CRUD over HTTP yet.
-2. **Remaining API operations.** `docs/09-API.md` specifies roughly 50; 23 are
-   served. Missing: channels, rules, deliveries, monitor preview/enable/disable/
-   duplicate/extractors/export/import, and run diff/snapshot/series.
-3. **`web/features/channels`**, blocked on item 1.
-4. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
+1. **Remaining API operations.** `docs/09-API.md` specifies roughly 50; 27 are
+   served. Missing: rules, deliveries, monitor preview/enable/disable/duplicate/
+   extractors/export/import, and run diff/snapshot/series.
+2. **`web/features/channels`** — the channel routes it needs now exist.
+3. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
    suppression is recorded but never delivered — `modules/runs/README.md` §Known gaps.
-5. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
+4. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
    Portainer — 23 documented variables are absent from the compose
    `x-app-environment` anchor, listed in `deploy/portainer/STACK.md` §3a.
 
