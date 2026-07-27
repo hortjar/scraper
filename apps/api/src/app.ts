@@ -32,7 +32,7 @@ export const createApiRoutes = ({ runtime, redisProbe, config }: CreateAppOption
     .use(observabilityPlugin(runtime))
     .use(errorHandlerPlugin(runtime))
     .use(effectPlugin(runtime))
-    .use(openapiPlugin)
+    .use(openapiPlugin(config.app.version))
     .use(systemRoutes(runtime, redisProbe))
     .use(authRoutes({ runtime, config }))
     .use(monitorRoutes({ runtime, config }))

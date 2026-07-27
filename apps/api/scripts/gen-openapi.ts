@@ -2,7 +2,7 @@ import { writeFile } from "node:fs/promises"
 import path from "node:path"
 import process from "node:process"
 
-import { AppConfig } from "@scraper/core/config"
+import { AppConfig, readPackageVersion } from "@scraper/core/config"
 import { ROUTE } from "@scraper/core/constants"
 import { Effect } from "effect"
 
@@ -10,7 +10,11 @@ import { createApiRoutes } from "../src/app.js"
 import { makeRedisProbe } from "../src/health/redis-probe.js"
 import { makeRuntime } from "../src/runtime.js"
 
+const PACKAGE_VERSION =
+  readPackageVersion(new URL("../package.json", import.meta.url)) ?? "0.0.0-dev"
+
 const PLACEHOLDERS: readonly (readonly [string, string])[] = [
+  ["APP_VERSION", PACKAGE_VERSION],
   ["APP_URL", "http://localhost:9300"],
   ["DATABASE_URL", "postgres://openapi:openapi@localhost:9302/openapi"],
   ["REDIS_URL", "redis://localhost:9303/0"],

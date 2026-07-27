@@ -8,7 +8,33 @@ This file starts at 0.2.0. For anything earlier, see the git history.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-07-27
+
 ### Added
+
+- **The web app reaches the API.** `features/auth` (login, register, password reset,
+  profile, password, sessions, API keys), `features/monitors` (list, create, edit,
+  detail, delete, run now) and `features/runs` (runs and changes panels, run detail,
+  a word-level diff renderer). `/_app` is guarded by a real session check, and the
+  monitor detail page composes the runs panels through an `activity` slot so
+  `features/monitors` never imports `features/runs`.
+- **Notification channels over HTTP**: `GET /channels/kinds` for the descriptors the
+  UI builds forms from, plus list, create, update, delete and
+  `POST /channels/:id/test`, which runs the channel's own `verify()` and stamps
+  `verified_at`. Secrets are stripped from `config` on write and never returned —
+  `hasSecret` carries the signal, because a masked `••••` placeholder that
+  round-tripped through a `PATCH` would overwrite the real secret with bullets.
+- **Notification rules over HTTP**: list and create under `/monitors/:monitorId/rules`,
+  update and delete under `/rules/:ruleId`. Rules carry no `user_id`, so every query
+  joins `monitors` and filters on `monitors.user_id`; create additionally verifies both
+  the monitor and the referenced channel belong to the caller.
+- **Deliveries over HTTP**: `GET /deliveries` filterable by rule, channel and status,
+  and `POST /deliveries/:id/retry`, which resets the row to pending and enqueues a
+  notify job.
+- **5xx causes are logged.** Server failures now record the underlying error and its
+  cause, in both the auth failure renderer and the Elysia error handler.
+
+The API now serves 41 operations across 31 paths.
 
 - **`packages/server`** with five feature modules: `auth`, `scraping`,
   `notifications`, `jobs` and `monitors`. `auth` and `monitors` are mounted on
@@ -36,6 +62,42 @@ This file starts at 0.2.0. For anything earlier, see the git history.
   with its field values, and queueing a run on demand.
 
 ### Fixed
+
+- **Every 500 in the codebase was undiagnosable, in production too.**
+  `errors.internalError` interpolates `{requestId}`, but the auth failure renderer
+  rendered it with `messageParams` that never carried one. formatjs threw, and that
+  throw _replaced_ the real error — so the actual cause was discarded and every
+  server fault surfaced as an intl complaint. The Elysia error handler destructured
+  everything except `error`, so nothing was logged either.
+- **The channel repository had never returned a row.** `sql.unsafe` hands back
+  `timestamptz` as a string, which fails `DateFromSelf` decoding. The delivery
+  repository had the same defect, which is why no delivery row has ever existed.
+- **Every channel `PATCH` that did not change the secret silently reverted.**
+  `mergeSecretColumns` is declared to take a four-key `Pick` but every caller hands
+  it the whole row; with no secret in the patch it returned that row, and its spread
+  is last in `mergeChannelPatch`, so `name`, `config` and `enabled` were overwritten
+  with their stored values while the request answered `200`. TypeScript cannot see
+  this — the full row is a structural subtype of the `Pick`.
+- **`listByChannel` had never run**: its `SELECT` column list is unqualified, but the
+  query joins `notification_channels`, so `id` was ambiguous.
+- **A `Date` in `sql.unsafe` parameters throws under Bun** — the documented trap, in
+  `markVerified` and `updateStatus`.
+- **A new account was bounced to the login page with no explanation.**
+  `POST /auth/register` returns 201 without a session by design, but the register
+  container navigated to `/dashboard`, where the guard found no session. It now lands
+  on `/login?registered=true` and says the account was created.
+- **jest-dom's matchers were neither registered nor typed.** Its `dist/vitest.mjs`
+  does `import { expect } from "vitest"`, but under pnpm nothing links `vitest` into
+  jest-dom's own `node_modules`, so it extended a different `expect` instance than the
+  tests use and every `toBeInTheDocument` failed with `Invalid Chai property`. The
+  matchers are now registered through the app's own `expect.extend`. Separately, the
+  type augmentation targets `declare module "vitest"`, but vitest 4 re-exports
+  `Assertion` from `@vitest/expect`, so it never merged.
+- **A test passed for the wrong reason.** Testing-library normalizes node text but not
+  the matcher string, so `getByText("In stock at ")` with a trailing space can never
+  match — including the `changedOnly` assertion that was asserting absence.
+- **Route search-param types were module-private**, so the generated route tree could
+  not name them (TS4023).
 
 - **No queued job was ever processed.** BullMQ's `prefix` was set on the producer's
   queues from `JOB_PREFIX` but not on the workers, so the API wrote to
