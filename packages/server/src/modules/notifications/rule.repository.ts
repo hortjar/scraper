@@ -12,6 +12,8 @@ import { Database, schema } from "@scraper/db"
 import { and, eq, sql } from "drizzle-orm"
 import { Effect } from "effect"
 
+import { makeRuleCrud } from "./rule.repository.crud.js"
+
 export interface ActiveRule {
   readonly id: RuleId
   readonly monitorId: MonitorId
@@ -91,7 +93,7 @@ export class RuleRepository extends Effect.Service<RuleRepository>()(SERVICE_TAG
       )
     })
 
-    return { listActiveForMonitor, markFired } as const
+    return { listActiveForMonitor, markFired, ...makeRuleCrud(database) } as const
   }),
   dependencies: [Database.Default],
 }) {}

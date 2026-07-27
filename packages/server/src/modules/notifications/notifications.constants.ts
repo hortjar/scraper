@@ -7,6 +7,10 @@ export const NOTIFICATIONS_OPERATION_ID = {
   updateChannel: "updateChannel",
   deleteChannel: "deleteChannel",
   testChannel: "testChannel",
+  listRules: "listRules",
+  createRule: "createRule",
+  updateRule: "updateRule",
+  deleteRule: "deleteRule",
 } as const
 
 export const STUB_AUTH_HEADER = "x-user-id"

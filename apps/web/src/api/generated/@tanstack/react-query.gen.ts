@@ -4,8 +4,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { changePassword, createApiKey, createChannel, createMonitor, deleteChannel, deleteMonitor, getCurrentUser, getHealth, getMeta, getMetrics, getMonitor, getReadiness, getRun, listApiKeys, listChanges, listChannelKinds, listChannels, listMonitors, listRuns, listSessions, login, logout, type Options, register, requestEmailVerification, requestPasswordReset, resetPassword, revokeAllSessions, revokeApiKey, revokeSession, runMonitorNow, testChannel, updateChannel, updateCurrentUser, updateMonitor, verifyEmail } from '../sdk.gen';
-import type { ChangePasswordData, ChangePasswordError, CreateApiKeyData, CreateApiKeyError, CreateApiKeyResponse, CreateChannelData, CreateChannelError, CreateChannelResponse, CreateMonitorData, CreateMonitorError, CreateMonitorResponse, DeleteChannelData, DeleteChannelError, DeleteMonitorData, DeleteMonitorError, GetCurrentUserData, GetCurrentUserError, GetCurrentUserResponse, GetHealthData, GetHealthResponse, GetMetaData, GetMetaResponse, GetMetricsData, GetMetricsResponse, GetMonitorData, GetMonitorError, GetMonitorResponse, GetReadinessData, GetReadinessError, GetReadinessResponse, GetRunData, GetRunError, GetRunResponse, ListApiKeysData, ListApiKeysError, ListApiKeysResponse, ListChangesData, ListChangesError, ListChangesResponse, ListChannelKindsData, ListChannelKindsError, ListChannelKindsResponse, ListChannelsData, ListChannelsError, ListChannelsResponse, ListMonitorsData, ListMonitorsError, ListMonitorsResponse, ListRunsData, ListRunsError, ListRunsResponse, ListSessionsData, ListSessionsError, ListSessionsResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, RegisterData, RegisterError, RegisterResponse, RequestEmailVerificationData, RequestEmailVerificationError, RequestEmailVerificationResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordData, ResetPasswordError, RevokeAllSessionsData, RevokeAllSessionsError, RevokeApiKeyData, RevokeApiKeyError, RevokeSessionData, RevokeSessionError, RunMonitorNowData, RunMonitorNowError, TestChannelData, TestChannelError, TestChannelResponse, UpdateChannelData, UpdateChannelError, UpdateChannelResponse, UpdateCurrentUserData, UpdateCurrentUserError, UpdateCurrentUserResponse, UpdateMonitorData, UpdateMonitorError, UpdateMonitorResponse, VerifyEmailData, VerifyEmailError } from '../types.gen';
+import { changePassword, createApiKey, createChannel, createMonitor, createRule, deleteChannel, deleteMonitor, deleteRule, getCurrentUser, getHealth, getMeta, getMetrics, getMonitor, getReadiness, getRun, listApiKeys, listChanges, listChannelKinds, listChannels, listMonitors, listRules, listRuns, listSessions, login, logout, type Options, register, requestEmailVerification, requestPasswordReset, resetPassword, revokeAllSessions, revokeApiKey, revokeSession, runMonitorNow, testChannel, updateChannel, updateCurrentUser, updateMonitor, updateRule, verifyEmail } from '../sdk.gen';
+import type { ChangePasswordData, ChangePasswordError, CreateApiKeyData, CreateApiKeyError, CreateApiKeyResponse, CreateChannelData, CreateChannelError, CreateChannelResponse, CreateMonitorData, CreateMonitorError, CreateMonitorResponse, CreateRuleData, CreateRuleError, CreateRuleResponse, DeleteChannelData, DeleteChannelError, DeleteMonitorData, DeleteMonitorError, DeleteRuleData, DeleteRuleError, GetCurrentUserData, GetCurrentUserError, GetCurrentUserResponse, GetHealthData, GetHealthResponse, GetMetaData, GetMetaResponse, GetMetricsData, GetMetricsResponse, GetMonitorData, GetMonitorError, GetMonitorResponse, GetReadinessData, GetReadinessError, GetReadinessResponse, GetRunData, GetRunError, GetRunResponse, ListApiKeysData, ListApiKeysError, ListApiKeysResponse, ListChangesData, ListChangesError, ListChangesResponse, ListChannelKindsData, ListChannelKindsError, ListChannelKindsResponse, ListChannelsData, ListChannelsError, ListChannelsResponse, ListMonitorsData, ListMonitorsError, ListMonitorsResponse, ListRulesData, ListRulesError, ListRulesResponse, ListRunsData, ListRunsError, ListRunsResponse, ListSessionsData, ListSessionsError, ListSessionsResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, RegisterData, RegisterError, RegisterResponse, RequestEmailVerificationData, RequestEmailVerificationError, RequestEmailVerificationResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordData, ResetPasswordError, RevokeAllSessionsData, RevokeAllSessionsError, RevokeApiKeyData, RevokeApiKeyError, RevokeSessionData, RevokeSessionError, RunMonitorNowData, RunMonitorNowError, TestChannelData, TestChannelError, TestChannelResponse, UpdateChannelData, UpdateChannelError, UpdateChannelResponse, UpdateCurrentUserData, UpdateCurrentUserError, UpdateCurrentUserResponse, UpdateMonitorData, UpdateMonitorError, UpdateMonitorResponse, UpdateRuleData, UpdateRuleError, UpdateRuleResponse, VerifyEmailData, VerifyEmailError } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -578,6 +578,41 @@ export const listChangesOptions = (options: Options<ListChangesData>) => queryOp
     queryKey: listChangesQueryKey(options)
 });
 
+export const listRulesQueryKey = (options: Options<ListRulesData>) => createQueryKey('listRules', options);
+
+/**
+ * List notification rules for a monitor
+ */
+export const listRulesOptions = (options: Options<ListRulesData>) => queryOptions<ListRulesResponse, ListRulesError, ListRulesResponse, ReturnType<typeof listRulesQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await listRules({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: listRulesQueryKey(options)
+});
+
+/**
+ * Create a notification rule
+ */
+export const createRuleMutation = (options?: Partial<Options<CreateRuleData>>): UseMutationOptions<CreateRuleResponse, CreateRuleError, Options<CreateRuleData>> => {
+    const mutationOptions: UseMutationOptions<CreateRuleResponse, CreateRuleError, Options<CreateRuleData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await createRule({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
 /**
  * Queue a run now
  */
@@ -630,6 +665,40 @@ export const getReadinessOptions = (options?: Options<GetReadinessData>) => quer
     },
     queryKey: getReadinessQueryKey(options)
 });
+
+/**
+ * Delete a notification rule
+ */
+export const deleteRuleMutation = (options?: Partial<Options<DeleteRuleData>>): UseMutationOptions<unknown, DeleteRuleError, Options<DeleteRuleData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DeleteRuleError, Options<DeleteRuleData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteRule({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Update a notification rule
+ */
+export const updateRuleMutation = (options?: Partial<Options<UpdateRuleData>>): UseMutationOptions<UpdateRuleResponse, UpdateRuleError, Options<UpdateRuleData>> => {
+    const mutationOptions: UseMutationOptions<UpdateRuleResponse, UpdateRuleError, Options<UpdateRuleData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateRule({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
 
 export const getRunQueryKey = (options: Options<GetRunData>) => createQueryKey('getRun', options);
 

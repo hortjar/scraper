@@ -4,7 +4,7 @@
 that cost real time, and what is left. Where it disagrees with another doc about
 current state, this page is right.
 
-Last verified **2026-07-27**, workspace green: 0 lint, 0 typecheck, 577 tests, CI
+Last verified **2026-07-27**, workspace green: 0 lint, 0 typecheck, 599 tests, CI
 passing on `main`.
 
 ## 1. What exists
@@ -19,14 +19,15 @@ passing on `main`.
 | `packages/server/src/modules/monitors`      | ✅ built, **mounted**, CRUD verified over HTTP                            |
 | `packages/server/src/modules/runs`          | ✅ built, mounted, verified end to end against a live stack               |
 | Notification channel routes                 | ✅ built, mounted, CRUD + test verified over HTTP                         |
+| Notification rule routes                    | ✅ built, mounted, CRUD + ownership verified over HTTP                    |
 | `apps/web/src/features/auth`                | ✅ login, register, password reset, profile, password, sessions, API keys |
 | `apps/web/src/features/monitors`            | ✅ list, create, edit, detail, delete, run now                            |
 | `apps/web/src/features/runs`                | ✅ runs and changes panels, run detail, diff renderer                     |
 | `apps/web` channels feature                 | ❌ not started; the routes it needs now exist                             |
 
-The API serves **27 paths**: `/health`, `/ready`, `/metrics`, `/meta`, 13 under
+The API serves **29 paths**: `/health`, `/ready`, `/metrics`, `/meta`, 13 under
 `/auth`, 5 under `/monitors`, 3 more under `/monitors` for runs and changes, one
-`/runs/:runId`, and 4 under `/channels`.
+`/runs/:runId`, 4 under `/channels`, and 2 for notification rules.
 
 ### Auth is finished
 
@@ -91,9 +92,9 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **Remaining API operations.** `docs/09-API.md` specifies roughly 50; 27 are
-   served. Missing: rules, deliveries, monitor preview/enable/disable/duplicate/
-   extractors/export/import, and run diff/snapshot/series.
+1. **Remaining API operations.** `docs/09-API.md` specifies roughly 50; 29 are
+   served. Missing: `POST /rules/:id/preview`, deliveries, monitor preview/enable/
+   disable/duplicate/extractors/export/import, and run diff/snapshot/series.
 2. **`web/features/channels`** — the channel routes it needs now exist.
 3. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
    suppression is recorded but never delivered — `modules/runs/README.md` §Known gaps.

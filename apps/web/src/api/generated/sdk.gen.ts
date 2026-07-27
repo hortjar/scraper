@@ -3,7 +3,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateApiKeyData, CreateApiKeyErrors, CreateApiKeyResponses, CreateChannelData, CreateChannelErrors, CreateChannelResponses, CreateMonitorData, CreateMonitorErrors, CreateMonitorResponses, DeleteChannelData, DeleteChannelErrors, DeleteChannelResponses, DeleteMonitorData, DeleteMonitorErrors, DeleteMonitorResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetHealthData, GetHealthResponses, GetMetaData, GetMetaResponses, GetMetricsData, GetMetricsResponses, GetMonitorData, GetMonitorErrors, GetMonitorResponses, GetReadinessData, GetReadinessErrors, GetReadinessResponses, GetRunData, GetRunErrors, GetRunResponses, ListApiKeysData, ListApiKeysErrors, ListApiKeysResponses, ListChangesData, ListChangesErrors, ListChangesResponses, ListChannelKindsData, ListChannelKindsErrors, ListChannelKindsResponses, ListChannelsData, ListChannelsErrors, ListChannelsResponses, ListMonitorsData, ListMonitorsErrors, ListMonitorsResponses, ListRunsData, ListRunsErrors, ListRunsResponses, ListSessionsData, ListSessionsErrors, ListSessionsResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, RegisterData, RegisterErrors, RegisterResponses, RequestEmailVerificationData, RequestEmailVerificationErrors, RequestEmailVerificationResponses, RequestPasswordResetData, RequestPasswordResetErrors, RequestPasswordResetResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllSessionsData, RevokeAllSessionsErrors, RevokeAllSessionsResponses, RevokeApiKeyData, RevokeApiKeyErrors, RevokeApiKeyResponses, RevokeSessionData, RevokeSessionErrors, RevokeSessionResponses, RunMonitorNowData, RunMonitorNowErrors, RunMonitorNowResponses, TestChannelData, TestChannelErrors, TestChannelResponses, UpdateChannelData, UpdateChannelErrors, UpdateChannelResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UpdateMonitorData, UpdateMonitorErrors, UpdateMonitorResponses, VerifyEmailData, VerifyEmailErrors, VerifyEmailResponses } from './types.gen';
+import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateApiKeyData, CreateApiKeyErrors, CreateApiKeyResponses, CreateChannelData, CreateChannelErrors, CreateChannelResponses, CreateMonitorData, CreateMonitorErrors, CreateMonitorResponses, CreateRuleData, CreateRuleErrors, CreateRuleResponses, DeleteChannelData, DeleteChannelErrors, DeleteChannelResponses, DeleteMonitorData, DeleteMonitorErrors, DeleteMonitorResponses, DeleteRuleData, DeleteRuleErrors, DeleteRuleResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetHealthData, GetHealthResponses, GetMetaData, GetMetaResponses, GetMetricsData, GetMetricsResponses, GetMonitorData, GetMonitorErrors, GetMonitorResponses, GetReadinessData, GetReadinessErrors, GetReadinessResponses, GetRunData, GetRunErrors, GetRunResponses, ListApiKeysData, ListApiKeysErrors, ListApiKeysResponses, ListChangesData, ListChangesErrors, ListChangesResponses, ListChannelKindsData, ListChannelKindsErrors, ListChannelKindsResponses, ListChannelsData, ListChannelsErrors, ListChannelsResponses, ListMonitorsData, ListMonitorsErrors, ListMonitorsResponses, ListRulesData, ListRulesErrors, ListRulesResponses, ListRunsData, ListRunsErrors, ListRunsResponses, ListSessionsData, ListSessionsErrors, ListSessionsResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, RegisterData, RegisterErrors, RegisterResponses, RequestEmailVerificationData, RequestEmailVerificationErrors, RequestEmailVerificationResponses, RequestPasswordResetData, RequestPasswordResetErrors, RequestPasswordResetResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllSessionsData, RevokeAllSessionsErrors, RevokeAllSessionsResponses, RevokeApiKeyData, RevokeApiKeyErrors, RevokeApiKeyResponses, RevokeSessionData, RevokeSessionErrors, RevokeSessionResponses, RunMonitorNowData, RunMonitorNowErrors, RunMonitorNowResponses, TestChannelData, TestChannelErrors, TestChannelResponses, UpdateChannelData, UpdateChannelErrors, UpdateChannelResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UpdateMonitorData, UpdateMonitorErrors, UpdateMonitorResponses, UpdateRuleData, UpdateRuleErrors, UpdateRuleResponses, VerifyEmailData, VerifyEmailErrors, VerifyEmailResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -259,6 +259,23 @@ export const updateMonitor = <ThrowOnError extends boolean = false>(options: Opt
 export const listChanges = <ThrowOnError extends boolean = false>(options: Options<ListChangesData, ThrowOnError>): RequestResult<ListChangesResponses, ListChangesErrors, ThrowOnError> => (options.client ?? client).get<ListChangesResponses, ListChangesErrors, ThrowOnError>({ url: '/monitors/{monitorId}/changes', ...options });
 
 /**
+ * List notification rules for a monitor
+ */
+export const listRules = <ThrowOnError extends boolean = false>(options: Options<ListRulesData, ThrowOnError>): RequestResult<ListRulesResponses, ListRulesErrors, ThrowOnError> => (options.client ?? client).get<ListRulesResponses, ListRulesErrors, ThrowOnError>({ url: '/monitors/{monitorId}/rules', ...options });
+
+/**
+ * Create a notification rule
+ */
+export const createRule = <ThrowOnError extends boolean = false>(options: Options<CreateRuleData, ThrowOnError>): RequestResult<CreateRuleResponses, CreateRuleErrors, ThrowOnError> => (options.client ?? client).post<CreateRuleResponses, CreateRuleErrors, ThrowOnError>({
+    url: '/monitors/{monitorId}/rules',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Queue a run now
  */
 export const runMonitorNow = <ThrowOnError extends boolean = false>(options: Options<RunMonitorNowData, ThrowOnError>): RequestResult<RunMonitorNowResponses, RunMonitorNowErrors, ThrowOnError> => (options.client ?? client).post<RunMonitorNowResponses, RunMonitorNowErrors, ThrowOnError>({ url: '/monitors/{monitorId}/run', ...options });
@@ -272,6 +289,23 @@ export const listRuns = <ThrowOnError extends boolean = false>(options: Options<
  * Readiness probe
  */
 export const getReadiness = <ThrowOnError extends boolean = false>(options?: Options<GetReadinessData, ThrowOnError>): RequestResult<GetReadinessResponses, GetReadinessErrors, ThrowOnError> => (options?.client ?? client).get<GetReadinessResponses, GetReadinessErrors, ThrowOnError>({ url: '/ready', ...options });
+
+/**
+ * Delete a notification rule
+ */
+export const deleteRule = <ThrowOnError extends boolean = false>(options: Options<DeleteRuleData, ThrowOnError>): RequestResult<DeleteRuleResponses, DeleteRuleErrors, ThrowOnError> => (options.client ?? client).delete<DeleteRuleResponses, DeleteRuleErrors, ThrowOnError>({ url: '/rules/{ruleId}', ...options });
+
+/**
+ * Update a notification rule
+ */
+export const updateRule = <ThrowOnError extends boolean = false>(options: Options<UpdateRuleData, ThrowOnError>): RequestResult<UpdateRuleResponses, UpdateRuleErrors, ThrowOnError> => (options.client ?? client).patch<UpdateRuleResponses, UpdateRuleErrors, ThrowOnError>({
+    url: '/rules/{ruleId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Get a run

@@ -106,6 +106,17 @@ export const SPAN = {
   ruleRepository: {
     list: "RuleRepository.list",
     markFired: "RuleRepository.markFired",
+    insert: "RuleRepository.insert",
+    findById: "RuleRepository.findById",
+    listForMonitor: "RuleRepository.listForMonitor",
+    update: "RuleRepository.update",
+    remove: "RuleRepository.remove",
+  },
+  rules: {
+    list: "Rules.list",
+    create: "Rules.create",
+    update: "Rules.update",
+    remove: "Rules.remove",
   },
   crypto: {
     encrypt: "Crypto.encrypt",

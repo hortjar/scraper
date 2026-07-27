@@ -27,6 +27,7 @@ export const SERVICE_TAG = {
   ChangeRepository: "app/ChangeRepository",
   ChannelRepository: "app/ChannelRepository",
   RuleRepository: "app/RuleRepository",
+  Rules: "app/Rules",
   DeliveryRepository: "app/DeliveryRepository",
   Channels: "app/Channels",
 

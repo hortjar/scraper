@@ -6601,6 +6601,682 @@ export type ListChangesResponses = {
 
 export type ListChangesResponse = ListChangesResponses[keyof ListChangesResponses];
 
+export type ListRulesData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}/rules';
+};
+
+export type ListRulesErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type ListRulesError = ListRulesErrors[keyof ListRulesErrors];
+
+export type ListRulesResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        items: Array<{
+            /**
+             * a Universally Unique Identifier
+             */
+            channelId: string;
+            createdAt: string;
+            deliveryMode: 'immediate' | 'digest';
+            digestCron: string | unknown;
+            enabled: boolean;
+            extractorKey: string | unknown;
+            /**
+             * a Universally Unique Identifier
+             */
+            id: string;
+            /**
+             * a Universally Unique Identifier
+             */
+            monitorId: string;
+            name: string;
+            quietHours: {
+                /**
+                 * a string matching the pattern ^([01]\d|2[0-3]):([0-5]\d)$
+                 */
+                end: string;
+                /**
+                 * a string matching the pattern ^([01]\d|2[0-3]):([0-5]\d)$
+                 */
+                start: string;
+                /**
+                 * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+                 */
+                timezone: string;
+            } | unknown;
+            template: string | unknown;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            throttleSeconds: number;
+            trigger: {
+                kind: 'any_change';
+            } | {
+                kind: 'field_changed';
+            } | {
+                kind: 'numeric_threshold';
+                operator: 'gt' | 'gte' | 'lt' | 'lte' | 'eq';
+                value: number;
+            } | {
+                direction: 'up' | 'down' | 'any';
+                kind: 'percent_change';
+                percent: number;
+            } | {
+                caseSensitive: boolean;
+                kind: 'text_contains';
+                /**
+                 * trimmed
+                 *
+                 * a string with no leading or trailing whitespace
+                 */
+                text: string;
+            } | {
+                caseSensitive: boolean;
+                kind: 'text_not_contains';
+                /**
+                 * trimmed
+                 *
+                 * a string with no leading or trailing whitespace
+                 */
+                text: string;
+            } | {
+                kind: 'regex_match';
+                /**
+                 * trimmed
+                 *
+                 * a string with no leading or trailing whitespace
+                 */
+                pattern: string;
+            } | {
+                expect: 'available' | 'unavailable' | 'any';
+                kind: 'availability';
+            } | {
+                kind: 'run_failed';
+            } | {
+                kind: 'run_recovered';
+            } | {
+                /**
+                 * nonNegative
+                 *
+                 * a non-negative number
+                 */
+                hours: number;
+                kind: 'no_change_for';
+            };
+            updatedAt: string;
+        }>;
+    };
+};
+
+export type ListRulesResponse = ListRulesResponses[keyof ListRulesResponses];
+
+export type CreateRuleData = {
+    body: {
+        /**
+         * a Universally Unique Identifier
+         */
+        channelId: string;
+        deliveryMode?: 'immediate' | 'digest';
+        digestCron?: string | unknown;
+        enabled?: boolean;
+        extractorKey?: string | unknown;
+        /**
+         * trimmed
+         *
+         * a string with no leading or trailing whitespace
+         */
+        name: string;
+        quietHours?: {
+            /**
+             * a string matching the pattern ^([01]\d|2[0-3]):([0-5]\d)$
+             */
+            end: string;
+            /**
+             * a string matching the pattern ^([01]\d|2[0-3]):([0-5]\d)$
+             */
+            start: string;
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        } | unknown;
+        template?: string | unknown;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        throttleSeconds?: number;
+        trigger: {
+            kind: 'any_change';
+        } | {
+            kind: 'field_changed';
+        } | {
+            kind: 'numeric_threshold';
+            operator: 'gt' | 'gte' | 'lt' | 'lte' | 'eq';
+            value: number;
+        } | {
+            direction: 'up' | 'down' | 'any';
+            kind: 'percent_change';
+            percent: number;
+        } | {
+            caseSensitive: boolean;
+            kind: 'text_contains';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            text: string;
+        } | {
+            caseSensitive: boolean;
+            kind: 'text_not_contains';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            text: string;
+        } | {
+            kind: 'regex_match';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            pattern: string;
+        } | {
+            expect: 'available' | 'unavailable' | 'any';
+            kind: 'availability';
+        } | {
+            kind: 'run_failed';
+        } | {
+            kind: 'run_recovered';
+        } | {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            hours: number;
+            kind: 'no_change_for';
+        };
+    };
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}/rules';
+};
+
+export type CreateRuleErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type CreateRuleError = CreateRuleErrors[keyof CreateRuleErrors];
+
+export type CreateRuleResponses = {
+    /**
+     * Response for status 201
+     */
+    201: {
+        /**
+         * a Universally Unique Identifier
+         */
+        channelId: string;
+        createdAt: string;
+        deliveryMode: 'immediate' | 'digest';
+        digestCron: string | unknown;
+        enabled: boolean;
+        extractorKey: string | unknown;
+        /**
+         * a Universally Unique Identifier
+         */
+        id: string;
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+        name: string;
+        quietHours: {
+            /**
+             * a string matching the pattern ^([01]\d|2[0-3]):([0-5]\d)$
+             */
+            end: string;
+            /**
+             * a string matching the pattern ^([01]\d|2[0-3]):([0-5]\d)$
+             */
+            start: string;
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        } | unknown;
+        template: string | unknown;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        throttleSeconds: number;
+        trigger: {
+            kind: 'any_change';
+        } | {
+            kind: 'field_changed';
+        } | {
+            kind: 'numeric_threshold';
+            operator: 'gt' | 'gte' | 'lt' | 'lte' | 'eq';
+            value: number;
+        } | {
+            direction: 'up' | 'down' | 'any';
+            kind: 'percent_change';
+            percent: number;
+        } | {
+            caseSensitive: boolean;
+            kind: 'text_contains';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            text: string;
+        } | {
+            caseSensitive: boolean;
+            kind: 'text_not_contains';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            text: string;
+        } | {
+            kind: 'regex_match';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            pattern: string;
+        } | {
+            expect: 'available' | 'unavailable' | 'any';
+            kind: 'availability';
+        } | {
+            kind: 'run_failed';
+        } | {
+            kind: 'run_recovered';
+        } | {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            hours: number;
+            kind: 'no_change_for';
+        };
+        updatedAt: string;
+    };
+};
+
+export type CreateRuleResponse = CreateRuleResponses[keyof CreateRuleResponses];
+
 export type RunMonitorNowData = {
     body?: never;
     path: {
@@ -7060,6 +7736,583 @@ export type GetReadinessResponses = {
 };
 
 export type GetReadinessResponse = GetReadinessResponses[keyof GetReadinessResponses];
+
+export type DeleteRuleData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        ruleId: string;
+    };
+    query?: never;
+    url: '/rules/{ruleId}';
+};
+
+export type DeleteRuleErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type DeleteRuleError = DeleteRuleErrors[keyof DeleteRuleErrors];
+
+export type DeleteRuleResponses = {
+    /**
+     * Response for status 204
+     */
+    204: unknown;
+};
+
+export type UpdateRuleData = {
+    body: {
+        /**
+         * a Universally Unique Identifier
+         */
+        channelId?: string;
+        deliveryMode?: 'immediate' | 'digest';
+        digestCron?: string | unknown;
+        enabled?: boolean;
+        extractorKey?: string | unknown;
+        /**
+         * trimmed
+         *
+         * a string with no leading or trailing whitespace
+         */
+        name?: string;
+        quietHours?: {
+            /**
+             * a string matching the pattern ^([01]\d|2[0-3]):([0-5]\d)$
+             */
+            end: string;
+            /**
+             * a string matching the pattern ^([01]\d|2[0-3]):([0-5]\d)$
+             */
+            start: string;
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        } | unknown;
+        template?: string | unknown;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        throttleSeconds?: number;
+        trigger?: {
+            kind: 'any_change';
+        } | {
+            kind: 'field_changed';
+        } | {
+            kind: 'numeric_threshold';
+            operator: 'gt' | 'gte' | 'lt' | 'lte' | 'eq';
+            value: number;
+        } | {
+            direction: 'up' | 'down' | 'any';
+            kind: 'percent_change';
+            percent: number;
+        } | {
+            caseSensitive: boolean;
+            kind: 'text_contains';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            text: string;
+        } | {
+            caseSensitive: boolean;
+            kind: 'text_not_contains';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            text: string;
+        } | {
+            kind: 'regex_match';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            pattern: string;
+        } | {
+            expect: 'available' | 'unavailable' | 'any';
+            kind: 'availability';
+        } | {
+            kind: 'run_failed';
+        } | {
+            kind: 'run_recovered';
+        } | {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            hours: number;
+            kind: 'no_change_for';
+        };
+    };
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        ruleId: string;
+    };
+    query?: never;
+    url: '/rules/{ruleId}';
+};
+
+export type UpdateRuleErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type UpdateRuleError = UpdateRuleErrors[keyof UpdateRuleErrors];
+
+export type UpdateRuleResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        /**
+         * a Universally Unique Identifier
+         */
+        channelId: string;
+        createdAt: string;
+        deliveryMode: 'immediate' | 'digest';
+        digestCron: string | unknown;
+        enabled: boolean;
+        extractorKey: string | unknown;
+        /**
+         * a Universally Unique Identifier
+         */
+        id: string;
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+        name: string;
+        quietHours: {
+            /**
+             * a string matching the pattern ^([01]\d|2[0-3]):([0-5]\d)$
+             */
+            end: string;
+            /**
+             * a string matching the pattern ^([01]\d|2[0-3]):([0-5]\d)$
+             */
+            start: string;
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone: string;
+        } | unknown;
+        template: string | unknown;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        throttleSeconds: number;
+        trigger: {
+            kind: 'any_change';
+        } | {
+            kind: 'field_changed';
+        } | {
+            kind: 'numeric_threshold';
+            operator: 'gt' | 'gte' | 'lt' | 'lte' | 'eq';
+            value: number;
+        } | {
+            direction: 'up' | 'down' | 'any';
+            kind: 'percent_change';
+            percent: number;
+        } | {
+            caseSensitive: boolean;
+            kind: 'text_contains';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            text: string;
+        } | {
+            caseSensitive: boolean;
+            kind: 'text_not_contains';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            text: string;
+        } | {
+            kind: 'regex_match';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            pattern: string;
+        } | {
+            expect: 'available' | 'unavailable' | 'any';
+            kind: 'availability';
+        } | {
+            kind: 'run_failed';
+        } | {
+            kind: 'run_recovered';
+        } | {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            hours: number;
+            kind: 'no_change_for';
+        };
+        updatedAt: string;
+    };
+};
+
+export type UpdateRuleResponse = UpdateRuleResponses[keyof UpdateRuleResponses];
 
 export type GetRunData = {
     body?: never;
