@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
+import type { ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 
 import { ErrorState } from "../../../components/organisms/ErrorState"
@@ -18,12 +19,14 @@ export interface MonitorDetailViewProperties {
   readonly monitorId: string
   readonly confirmingDelete: boolean
   readonly onConfirmDeleteChange: (isOpen: boolean) => void
+  readonly activity?: ReactNode
 }
 
 export const MonitorDetailView = ({
   monitorId,
   confirmingDelete,
   onConfirmDeleteChange,
+  activity,
 }: MonitorDetailViewProperties) => {
   const { t } = useTranslation("monitors")
   const navigate = useNavigate()
@@ -79,7 +82,7 @@ export const MonitorDetailView = ({
 
       <MonitorOverview monitor={monitor} />
       <MonitorExtractors extractors={monitor.extractors} />
-      <MonitorActivityPlaceholder monitorId={monitorId} />
+      {activity ?? <MonitorActivityPlaceholder monitorId={monitorId} />}
 
       <DeleteMonitorDialog
         monitorName={confirmingDelete ? monitor.name : undefined}

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import { AppShell } from "../../components/layouts/AppShell"
 import { Button } from "../../components/ui/Button"
 import { MonitorDetailView } from "../../features/monitors"
+import { MonitorChangesPanel, MonitorRunsPanel } from "../../features/runs"
 
 export interface DetailSearch {
   readonly confirmDelete?: true
@@ -35,6 +36,12 @@ const MonitorDetailRoute = () => {
         onConfirmDeleteChange={(open) => {
           void navigate({ search: open ? { confirmDelete: true } : {} })
         }}
+        activity={
+          <div className="flex flex-col gap-6">
+            <MonitorRunsPanel monitorId={monitorId} />
+            <MonitorChangesPanel monitorId={monitorId} />
+          </div>
+        }
       />
     </AppShell>
   )
