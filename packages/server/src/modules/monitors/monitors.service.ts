@@ -1,18 +1,69 @@
 import { AppConfig } from "@scraper/core/config"
 import { SCHEDULE_KIND, SERVICE_TAG, SPAN } from "@scraper/core/constants"
-import type { MonitorId, Schedule, UserId } from "@scraper/core/domain"
+import type { Extractor, MonitorConfig, MonitorId, Schedule, UserId } from "@scraper/core/domain"
 import { PlanLimitExceeded, ValidationFailed } from "@scraper/core/errors"
 import { MSG } from "@scraper/core/i18n"
 import { Clock, Effect } from "effect"
 
 import { JobProducer } from "../jobs/index.js"
-import { UrlGuard } from "../scraping/index.js"
+import { previewScrape, UrlGuard } from "../scraping/index.js"
 
-import { DEFAULT_JITTER_SECONDS } from "./monitors.constants.js"
+import {
+  DEFAULT_JITTER_SECONDS,
+  DUPLICATE_NAME_SUFFIX,
+  PREVIEW_MONITOR_ID,
+} from "./monitors.constants.js"
 import { MonitorRepository } from "./monitors.repository.js"
-import type { CreateMonitorBody, UpdateMonitorBody } from "./monitors.schema.js"
+import type {
+  CreateMonitorBody,
+  ExtractorInput,
+  PreviewMonitorBody,
+  UpdateMonitorBody,
+} from "./monitors.schema.js"
 
 const SCHEDULE_PATH = ["schedule", "intervalSeconds"] as const
+
+export const toExtractorInput = (extractor: Extractor): ExtractorInput => ({
+  key: extractor.key,
+  label: extractor.label,
+  selectorKind: extractor.selectorKind,
+  selector: extractor.selector,
+  attribute: extractor.attribute,
+  valueType: extractor.valueType,
+  transforms: extractor.transforms,
+  occurrence: extractor.occurrence,
+  occurrenceIndex: extractor.occurrenceIndex,
+  required: extractor.required,
+})
+
+const toPreviewExtractor = (input: ExtractorInput, position: number): Extractor => ({
+  id: PREVIEW_MONITOR_ID as Extractor["id"],
+  monitorId: PREVIEW_MONITOR_ID as MonitorId,
+  key: input.key,
+  label: input.label,
+  selectorKind: input.selectorKind,
+  selector: input.selector,
+  attribute: input.attribute,
+  valueType: input.valueType,
+  transforms: input.transforms,
+  occurrence: input.occurrence,
+  occurrenceIndex: input.occurrenceIndex,
+  required: input.required,
+  position,
+})
+
+export const toPreviewConfig = (input: PreviewMonitorBody): MonitorConfig => ({
+  id: PREVIEW_MONITOR_ID as MonitorId,
+  url: input.url,
+  engine: input.engine,
+  engineResolved: null,
+  request: input.request,
+  browserOptions: input.browserOptions,
+  contentSelector: input.contentSelector,
+  ignoreRules: input.ignoreRules,
+  respectRobots: input.respectRobots,
+  extractors: input.extractors.map((extractor, index) => toPreviewExtractor(extractor, index)),
+})
 const MONITOR_RESOURCE = "monitors"
 
 export const scheduleColumns = (schedule: Schedule) =>
@@ -142,7 +193,61 @@ export class Monitors extends Effect.Service<Monitors>()(SERVICE_TAG.Monitors, {
       return yield* repository.list(userId, filter)
     })
 
-    return { create, update, remove, list, detail, findById: repository.findById } as const
+    const setEnabled = Effect.fn(SPAN.monitors.update)(function* (
+      userId: UserId,
+      id: MonitorId,
+      isEnabled: boolean,
+    ) {
+      yield* repository.findById(userId, id)
+      const now = new Date(yield* Clock.currentTimeMillis)
+      const monitor = yield* repository.update(userId, id, { enabled: isEnabled, updatedAt: now })
+      yield* jobs.upsertSchedule(monitor)
+      return yield* detail(userId, id)
+    })
+
+    const duplicate = Effect.fn(SPAN.monitors.create)(function* (userId: UserId, id: MonitorId) {
+      const source = yield* detail(userId, id)
+      yield* assertWithinPlan(userId)
+
+      const copy = yield* repository.insert(userId, {
+        name: `${source.monitor.name}${DUPLICATE_NAME_SUFFIX}`,
+        url: source.monitor.url,
+        engine: source.monitor.engine,
+        request: source.monitor.request,
+        browserOptions: source.monitor.browserOptions,
+        contentSelector: source.monitor.contentSelector,
+        ignoreRules: [...source.monitor.ignoreRules],
+        respectRobots: source.monitor.respectRobots,
+        jitterSeconds: source.monitor.jitterSeconds,
+        enabled: false,
+        tags: [...source.monitor.tags],
+        ...scheduleColumns(source.monitor.schedule),
+      })
+
+      yield* repository.replaceExtractors(
+        copy.id,
+        source.extractors.map((extractor) => toExtractorInput(extractor)),
+      )
+      yield* jobs.upsertSchedule(copy)
+      return yield* detail(userId, copy.id)
+    })
+
+    const preview = Effect.fn(SPAN.monitors.preview)(function* (input: PreviewMonitorBody) {
+      yield* urlGuard.check(input.url)
+      return yield* previewScrape(toPreviewConfig(input))
+    })
+
+    return {
+      create,
+      update,
+      remove,
+      list,
+      detail,
+      setEnabled,
+      duplicate,
+      preview,
+      findById: repository.findById,
+    } as const
   }),
   dependencies: [
     MonitorRepository.Default,

@@ -1,9 +1,18 @@
 import { API_TAG, HTTP_STATUS, PAGINATION, ROUTE } from "@scraper/core/constants"
+import { PreviewResult } from "@scraper/core/domain"
 import { Effect, Schema } from "effect"
 import { Elysia } from "elysia"
 
 import type { AuthPluginOptions } from "../auth/index.js"
 import { authBase, FAILURES, requireUser, standardNoContent } from "../auth/index.js"
+import type {
+  ContentNormalizer,
+  Extraction,
+  RobotsCache,
+  StrategyRegistry,
+  TransformPipeline,
+  UrlGuard,
+} from "../scraping/index.js"
 
 import {
   MONITOR_ACTION,
@@ -14,6 +23,7 @@ import {
 import { toMonitorDetailDto, toMonitorDto } from "./monitors.dto.js"
 import {
   CreateMonitorBody,
+  PreviewMonitorBody,
   MonitorDetailDto,
   MonitorIdParameters,
   MonitorListDto,
@@ -26,6 +36,8 @@ const standardUpdate = Schema.standardSchemaV1(UpdateMonitorBody)
 const standardParameters = Schema.standardSchemaV1(MonitorIdParameters)
 const standardDetail = Schema.standardSchemaV1(MonitorDetailDto)
 const standardList = Schema.standardSchemaV1(MonitorListDto)
+const standardPreview = Schema.standardSchemaV1(PreviewMonitorBody)
+const standardPreviewResult = Schema.standardSchemaV1(PreviewResult)
 
 const READ_SCOPE = "monitors:read"
 const WRITE_SCOPE = "monitors:write"
@@ -37,7 +49,14 @@ const limitFrom = (raw: string | undefined): number => {
   return Math.min(Math.max(parsed, 1), PAGINATION.maxLimit)
 }
 
-export type MonitorServices = Monitors
+export type MonitorServices =
+  | Monitors
+  | ContentNormalizer
+  | Extraction
+  | RobotsCache
+  | StrategyRegistry
+  | TransformPipeline
+  | UrlGuard
 
 const monitorHandlers = (options: AuthPluginOptions<MonitorServices>) =>
   authBase<MonitorServices>(options, MONITOR_PLUGIN.handlers)
@@ -161,6 +180,93 @@ const monitorHandlers = (options: AuthPluginOptions<MonitorServices>) =>
         detail: {
           summary: "Delete a monitor",
           operationId: MONITOR_OPERATION_ID.remove,
+          tags: [API_TAG.monitors],
+        },
+      },
+    )
+
+    .post(
+      MONITOR_PATH.preview,
+      ({ runAuthFx, body }) =>
+        runAuthFx(Effect.flatMap(Monitors, (monitors) => monitors.preview(body))),
+      {
+        auth: { scopes: [WRITE_SCOPE], action: MONITOR_ACTION.preview },
+        body: standardPreview,
+        response: { ...FAILURES, [HTTP_STATUS.ok]: standardPreviewResult },
+        detail: {
+          summary: "Preview a monitor draft without saving it",
+          operationId: MONITOR_OPERATION_ID.preview,
+          tags: [API_TAG.monitors],
+        },
+      },
+    )
+    .post(
+      MONITOR_PATH.enable,
+      ({ runAuthFx, user, params }) =>
+        runAuthFx(
+          Effect.flatMap(Monitors, (monitors) =>
+            monitors
+              .setEnabled(user.userId, params.monitorId, true)
+              .pipe(
+                Effect.map(({ extractors, monitor }) => toMonitorDetailDto(monitor, extractors)),
+              ),
+          ),
+        ),
+      {
+        auth: { scopes: [WRITE_SCOPE], action: MONITOR_ACTION.enable },
+        params: standardParameters,
+        response: { ...FAILURES, [HTTP_STATUS.ok]: standardDetail },
+        detail: {
+          summary: "Enable a monitor",
+          operationId: MONITOR_OPERATION_ID.enable,
+          tags: [API_TAG.monitors],
+        },
+      },
+    )
+    .post(
+      MONITOR_PATH.disable,
+      ({ runAuthFx, user, params }) =>
+        runAuthFx(
+          Effect.flatMap(Monitors, (monitors) =>
+            monitors
+              .setEnabled(user.userId, params.monitorId, false)
+              .pipe(
+                Effect.map(({ extractors, monitor }) => toMonitorDetailDto(monitor, extractors)),
+              ),
+          ),
+        ),
+      {
+        auth: { scopes: [WRITE_SCOPE], action: MONITOR_ACTION.disable },
+        params: standardParameters,
+        response: { ...FAILURES, [HTTP_STATUS.ok]: standardDetail },
+        detail: {
+          summary: "Disable a monitor",
+          operationId: MONITOR_OPERATION_ID.disable,
+          tags: [API_TAG.monitors],
+        },
+      },
+    )
+    .post(
+      MONITOR_PATH.duplicate,
+      ({ runAuthFx, user, params, set }) => {
+        set.status = HTTP_STATUS.created
+        return runAuthFx(
+          Effect.flatMap(Monitors, (monitors) =>
+            monitors
+              .duplicate(user.userId, params.monitorId)
+              .pipe(
+                Effect.map(({ extractors, monitor }) => toMonitorDetailDto(monitor, extractors)),
+              ),
+          ),
+        )
+      },
+      {
+        auth: { scopes: [WRITE_SCOPE], action: MONITOR_ACTION.duplicate },
+        params: standardParameters,
+        response: { ...FAILURES, [HTTP_STATUS.created]: standardDetail },
+        detail: {
+          summary: "Duplicate a monitor",
+          operationId: MONITOR_OPERATION_ID.duplicate,
           tags: [API_TAG.monitors],
         },
       },

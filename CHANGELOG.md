@@ -8,6 +8,18 @@ This file starts at 0.2.0. For anything earlier, see the git history.
 
 ## [Unreleased]
 
+### Added
+
+- **Monitor preview, enable, disable and duplicate.** `POST /monitors/preview` does
+  one live fetch of an unsaved draft and returns extracted values, timings, resolved
+  strategy, page title and warnings without persisting anything — the editor's
+  backbone. `duplicate` copies extractors and schedule but lands disabled.
+- **Preview warns about the selectors that matter.** `warnings.selectorNoMatch` and
+  `warnings.selectorManyMatches` were in the message catalog since 0.2.0 but nothing
+  ever emitted them, so a preview could not tell you your selector matched nothing or
+  matched twelve things — the one question the editor exists to answer. Extraction now
+  carries a match count and preview reports both cases.
+
 ## [0.7.0] - 2026-07-27
 
 ### Added

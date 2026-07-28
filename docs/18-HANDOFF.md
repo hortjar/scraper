@@ -26,9 +26,10 @@ passing on `main`.
 | `apps/web/src/features/runs`                | ✅ runs and changes panels, run detail, diff renderer                     |
 | `apps/web` channels feature                 | ❌ not started; the routes it needs now exist                             |
 
-The API serves **31 paths**: `/health`, `/ready`, `/metrics`, `/meta`, 13 under
-`/auth`, 5 under `/monitors`, 3 more under `/monitors` for runs and changes, one
-`/runs/:runId`, 4 under `/channels`, 2 for notification rules, and 2 for deliveries.
+The API serves **35 paths** / 45 operations: `/health`, `/ready`, `/metrics`, `/meta`,
+13 under `/auth`, 9 under `/monitors` (CRUD plus preview, enable, disable, duplicate),
+3 more under `/monitors` for runs and changes, one `/runs/:runId`, 4 under `/channels`,
+2 for notification rules, and 2 for deliveries.
 
 ### Auth is finished
 
@@ -95,9 +96,10 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **Remaining API operations.** `docs/09-API.md` specifies roughly 50; 31 are
-   served. Missing: `POST /rules/:id/preview`, monitor preview/enable/disable/
-   duplicate/extractors/export/import, and run diff/snapshot/series.
+1. **Remaining API operations.** `docs/09-API.md` specifies 58; 45 are served.
+   Missing: monitor extractor CRUD and export/import, run diff/snapshot/series,
+   `GET /changes`, `POST /rules/:id/preview`, and the two `/admin` routes — there is
+   no admin module yet.
 2. **`web/features/channels`** — the channel routes it needs now exist.
 3. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
    suppression is recorded but never delivered — `modules/runs/README.md` §Known gaps.

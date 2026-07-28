@@ -16,6 +16,7 @@ export interface RawExtraction {
   readonly raw: string | null
   readonly rawList: readonly string[] | null
   readonly missing: boolean
+  readonly matchCount: number
 }
 
 const stringifyJsonValue = (value: JsonValue): string =>
@@ -25,21 +26,22 @@ export const byOccurrence = (
   values: readonly string[],
   extractor: ExtractorSpec,
 ): RawExtraction => {
+  const matchCount = values.length
   if (extractor.occurrence === OCCURRENCE.all) {
-    return { raw: null, rawList: values, missing: values.length === 0 }
+    return { raw: null, rawList: values, missing: matchCount === 0, matchCount }
   }
-  if (values.length === 0) return { raw: null, rawList: null, missing: true }
+  if (matchCount === 0) return { raw: null, rawList: null, missing: true, matchCount }
   if (extractor.occurrence === OCCURRENCE.first) {
-    return { raw: values[0] ?? null, rawList: null, missing: false }
+    return { raw: values[0] ?? null, rawList: null, missing: false, matchCount }
   }
   if (extractor.occurrence === OCCURRENCE.last) {
-    return { raw: values.at(-1) ?? null, rawList: null, missing: false }
+    return { raw: values.at(-1) ?? null, rawList: null, missing: false, matchCount }
   }
   const index = extractor.occurrenceIndex ?? 0
   const value = values[index]
   return value === undefined
-    ? { raw: null, rawList: null, missing: true }
-    : { raw: value, rawList: null, missing: false }
+    ? { raw: null, rawList: null, missing: true, matchCount }
+    : { raw: value, rawList: null, missing: false, matchCount }
 }
 
 const readElementValues = (

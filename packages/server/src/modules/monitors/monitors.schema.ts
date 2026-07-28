@@ -68,6 +68,18 @@ export type UpdateMonitorBody = typeof UpdateMonitorBody.Type
 
 export const MonitorIdParameters = Schema.Struct({ monitorId: MonitorId })
 
+export const PreviewMonitorBody = Schema.Struct({
+  url: HttpUrl,
+  engine: Schema.optionalWith(Engine, { default: () => "auto" as const }),
+  request: Schema.optionalWith(RequestOptions, { default: () => ({}) }),
+  browserOptions: Schema.optionalWith(BrowserOptions, { default: () => ({}) }),
+  contentSelector: Schema.optionalWith(Schema.NullOr(Schema.String), { default: () => null }),
+  ignoreRules: Schema.optionalWith(Schema.Array(IgnoreRule), { default: () => [] }),
+  respectRobots: Schema.optionalWith(Schema.Boolean, { default: () => true }),
+  extractors: Schema.optionalWith(Schema.Array(ExtractorInput), { default: () => [] }),
+})
+export type PreviewMonitorBody = typeof PreviewMonitorBody.Type
+
 export const MonitorDto = Schema.Struct({
   id: MonitorId,
   name: Schema.String,

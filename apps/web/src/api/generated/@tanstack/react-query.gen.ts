@@ -4,8 +4,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { changePassword, createApiKey, createChannel, createMonitor, createRule, deleteChannel, deleteMonitor, deleteRule, getCurrentUser, getHealth, getMeta, getMetrics, getMonitor, getReadiness, getRun, listApiKeys, listChanges, listChannelKinds, listChannels, listDeliveries, listMonitors, listRules, listRuns, listSessions, login, logout, type Options, register, requestEmailVerification, requestPasswordReset, resetPassword, retryDelivery, revokeAllSessions, revokeApiKey, revokeSession, runMonitorNow, testChannel, updateChannel, updateCurrentUser, updateMonitor, updateRule, verifyEmail } from '../sdk.gen';
-import type { ChangePasswordData, ChangePasswordError, CreateApiKeyData, CreateApiKeyError, CreateApiKeyResponse, CreateChannelData, CreateChannelError, CreateChannelResponse, CreateMonitorData, CreateMonitorError, CreateMonitorResponse, CreateRuleData, CreateRuleError, CreateRuleResponse, DeleteChannelData, DeleteChannelError, DeleteMonitorData, DeleteMonitorError, DeleteRuleData, DeleteRuleError, GetCurrentUserData, GetCurrentUserError, GetCurrentUserResponse, GetHealthData, GetHealthResponse, GetMetaData, GetMetaResponse, GetMetricsData, GetMetricsResponse, GetMonitorData, GetMonitorError, GetMonitorResponse, GetReadinessData, GetReadinessError, GetReadinessResponse, GetRunData, GetRunError, GetRunResponse, ListApiKeysData, ListApiKeysError, ListApiKeysResponse, ListChangesData, ListChangesError, ListChangesResponse, ListChannelKindsData, ListChannelKindsError, ListChannelKindsResponse, ListChannelsData, ListChannelsError, ListChannelsResponse, ListDeliveriesData, ListDeliveriesError, ListDeliveriesResponse, ListMonitorsData, ListMonitorsError, ListMonitorsResponse, ListRulesData, ListRulesError, ListRulesResponse, ListRunsData, ListRunsError, ListRunsResponse, ListSessionsData, ListSessionsError, ListSessionsResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, RegisterData, RegisterError, RegisterResponse, RequestEmailVerificationData, RequestEmailVerificationError, RequestEmailVerificationResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordData, ResetPasswordError, RetryDeliveryData, RetryDeliveryError, RetryDeliveryResponse, RevokeAllSessionsData, RevokeAllSessionsError, RevokeApiKeyData, RevokeApiKeyError, RevokeSessionData, RevokeSessionError, RunMonitorNowData, RunMonitorNowError, TestChannelData, TestChannelError, TestChannelResponse, UpdateChannelData, UpdateChannelError, UpdateChannelResponse, UpdateCurrentUserData, UpdateCurrentUserError, UpdateCurrentUserResponse, UpdateMonitorData, UpdateMonitorError, UpdateMonitorResponse, UpdateRuleData, UpdateRuleError, UpdateRuleResponse, VerifyEmailData, VerifyEmailError } from '../types.gen';
+import { changePassword, createApiKey, createChannel, createMonitor, createRule, deleteChannel, deleteMonitor, deleteRule, disableMonitor, duplicateMonitor, enableMonitor, getCurrentUser, getHealth, getMeta, getMetrics, getMonitor, getReadiness, getRun, listApiKeys, listChanges, listChannelKinds, listChannels, listDeliveries, listMonitors, listRules, listRuns, listSessions, login, logout, type Options, previewMonitor, register, requestEmailVerification, requestPasswordReset, resetPassword, retryDelivery, revokeAllSessions, revokeApiKey, revokeSession, runMonitorNow, testChannel, updateChannel, updateCurrentUser, updateMonitor, updateRule, verifyEmail } from '../sdk.gen';
+import type { ChangePasswordData, ChangePasswordError, CreateApiKeyData, CreateApiKeyError, CreateApiKeyResponse, CreateChannelData, CreateChannelError, CreateChannelResponse, CreateMonitorData, CreateMonitorError, CreateMonitorResponse, CreateRuleData, CreateRuleError, CreateRuleResponse, DeleteChannelData, DeleteChannelError, DeleteMonitorData, DeleteMonitorError, DeleteRuleData, DeleteRuleError, DisableMonitorData, DisableMonitorError, DisableMonitorResponse, DuplicateMonitorData, DuplicateMonitorError, DuplicateMonitorResponse, EnableMonitorData, EnableMonitorError, EnableMonitorResponse, GetCurrentUserData, GetCurrentUserError, GetCurrentUserResponse, GetHealthData, GetHealthResponse, GetMetaData, GetMetaResponse, GetMetricsData, GetMetricsResponse, GetMonitorData, GetMonitorError, GetMonitorResponse, GetReadinessData, GetReadinessError, GetReadinessResponse, GetRunData, GetRunError, GetRunResponse, ListApiKeysData, ListApiKeysError, ListApiKeysResponse, ListChangesData, ListChangesError, ListChangesResponse, ListChannelKindsData, ListChannelKindsError, ListChannelKindsResponse, ListChannelsData, ListChannelsError, ListChannelsResponse, ListDeliveriesData, ListDeliveriesError, ListDeliveriesResponse, ListMonitorsData, ListMonitorsError, ListMonitorsResponse, ListRulesData, ListRulesError, ListRulesResponse, ListRunsData, ListRunsError, ListRunsResponse, ListSessionsData, ListSessionsError, ListSessionsResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, PreviewMonitorData, PreviewMonitorError, PreviewMonitorResponse, RegisterData, RegisterError, RegisterResponse, RequestEmailVerificationData, RequestEmailVerificationError, RequestEmailVerificationResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordData, ResetPasswordError, RetryDeliveryData, RetryDeliveryError, RetryDeliveryResponse, RevokeAllSessionsData, RevokeAllSessionsError, RevokeApiKeyData, RevokeApiKeyError, RevokeSessionData, RevokeSessionError, RunMonitorNowData, RunMonitorNowError, TestChannelData, TestChannelError, TestChannelResponse, UpdateChannelData, UpdateChannelError, UpdateChannelResponse, UpdateCurrentUserData, UpdateCurrentUserError, UpdateCurrentUserResponse, UpdateMonitorData, UpdateMonitorError, UpdateMonitorResponse, UpdateRuleData, UpdateRuleError, UpdateRuleResponse, VerifyEmailData, VerifyEmailError } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -613,6 +613,57 @@ export const listChangesOptions = (options: Options<ListChangesData>) => queryOp
     queryKey: listChangesQueryKey(options)
 });
 
+/**
+ * Disable a monitor
+ */
+export const disableMonitorMutation = (options?: Partial<Options<DisableMonitorData>>): UseMutationOptions<DisableMonitorResponse, DisableMonitorError, Options<DisableMonitorData>> => {
+    const mutationOptions: UseMutationOptions<DisableMonitorResponse, DisableMonitorError, Options<DisableMonitorData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await disableMonitor({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Duplicate a monitor
+ */
+export const duplicateMonitorMutation = (options?: Partial<Options<DuplicateMonitorData>>): UseMutationOptions<DuplicateMonitorResponse, DuplicateMonitorError, Options<DuplicateMonitorData>> => {
+    const mutationOptions: UseMutationOptions<DuplicateMonitorResponse, DuplicateMonitorError, Options<DuplicateMonitorData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await duplicateMonitor({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Enable a monitor
+ */
+export const enableMonitorMutation = (options?: Partial<Options<EnableMonitorData>>): UseMutationOptions<EnableMonitorResponse, EnableMonitorError, Options<EnableMonitorData>> => {
+    const mutationOptions: UseMutationOptions<EnableMonitorResponse, EnableMonitorError, Options<EnableMonitorData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await enableMonitor({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
 export const listRulesQueryKey = (options: Options<ListRulesData>) => createQueryKey('listRules', options);
 
 /**
@@ -682,6 +733,23 @@ export const listRunsOptions = (options: Options<ListRunsData>) => queryOptions<
     },
     queryKey: listRunsQueryKey(options)
 });
+
+/**
+ * Preview a monitor draft without saving it
+ */
+export const previewMonitorMutation = (options?: Partial<Options<PreviewMonitorData>>): UseMutationOptions<PreviewMonitorResponse, PreviewMonitorError, Options<PreviewMonitorData>> => {
+    const mutationOptions: UseMutationOptions<PreviewMonitorResponse, PreviewMonitorError, Options<PreviewMonitorData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await previewMonitor({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
 
 export const getReadinessQueryKey = (options?: Options<GetReadinessData>) => createQueryKey('getReadiness', options);
 

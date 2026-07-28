@@ -1,6 +1,7 @@
 import {
   AppConfig,
   ENGINE,
+  OCCURRENCE,
   ExtractorMissing,
   MSG,
   RobotsDisallowed,
@@ -35,6 +36,45 @@ export interface ScrapeOutcome {
   readonly normalized: string
   readonly contentHash: string
   readonly warnings: readonly PreviewWarning[]
+}
+
+const WARNING_CODE = {
+  selectorNoMatch: "selector_no_match",
+  selectorManyMatches: "selector_many_matches",
+} as const
+
+const selectorWarning = (
+  extractor: Extractor,
+  raw: RawExtraction | undefined,
+): PreviewWarning | null => {
+  if (raw === undefined) return null
+  if (raw.matchCount === 0) {
+    return {
+      code: WARNING_CODE.selectorNoMatch,
+      messageKey: MSG.warnings.selectorNoMatch,
+      params: { field: extractor.label },
+    }
+  }
+  if (raw.matchCount > 1 && extractor.occurrence !== OCCURRENCE.all) {
+    return {
+      code: WARNING_CODE.selectorManyMatches,
+      messageKey: MSG.warnings.selectorManyMatches,
+      params: { field: extractor.label, count: String(raw.matchCount) },
+    }
+  }
+  return null
+}
+
+export const selectorWarnings = (
+  extractors: readonly Extractor[],
+  raws: readonly RawExtraction[],
+): readonly PreviewWarning[] => {
+  const collected: PreviewWarning[] = []
+  for (const [index, extractor] of extractors.entries()) {
+    const warning = selectorWarning(extractor, raws[index])
+    if (warning !== null) collected.push(warning)
+  }
+  return collected
 }
 
 export const hasRequiredMissing = (
@@ -139,10 +179,12 @@ export const scrapeAndExtract = Effect.fn(SPAN.scraping.fetch)(function* (monito
     }
   }
 
+  warnings.push(...selectorWarnings(monitor.extractors, rawFields))
+
   const fields = yield* Effect.forEach(monitor.extractors, (extractor, index) =>
     processExtractor(
       extractor,
-      rawFields[index] ?? { raw: null, rawList: null, missing: true },
+      rawFields[index] ?? { raw: null, rawList: null, missing: true, matchCount: 0 },
       transformPipeline,
     ),
   )
