@@ -7835,6 +7835,1047 @@ export type EnableMonitorResponses = {
 
 export type EnableMonitorResponse = EnableMonitorResponses[keyof EnableMonitorResponses];
 
+export type ListExtractorsData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}/extractors';
+};
+
+export type ListExtractorsErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type ListExtractorsError = ListExtractorsErrors[keyof ListExtractorsErrors];
+
+export type ListExtractorsResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        items: Array<{
+            attribute: string | unknown;
+            id: string;
+            key: string;
+            label: string;
+            occurrence: 'first' | 'last' | 'all' | 'nth';
+            occurrenceIndex: number | unknown;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            position: number;
+            required: boolean;
+            selector: string;
+            selectorKind: 'css' | 'xpath' | 'jsonpath' | 'regex' | 'json_ld' | 'whole_page';
+            valueType: 'text' | 'number' | 'price' | 'boolean' | 'url' | 'date' | 'list';
+        }>;
+    };
+};
+
+export type ListExtractorsResponse = ListExtractorsResponses[keyof ListExtractorsResponses];
+
+export type AddExtractorData = {
+    body: {
+        attribute?: string | unknown;
+        /**
+         * a string matching the pattern ^[a-z][a-z0-9_]{0,63}$
+         */
+        key: string;
+        /**
+         * trimmed
+         *
+         * a string with no leading or trailing whitespace
+         */
+        label: string;
+        occurrence?: 'first' | 'last' | 'all' | 'nth';
+        occurrenceIndex?: number | unknown;
+        required?: boolean;
+        selector: string;
+        selectorKind: 'css' | 'xpath' | 'jsonpath' | 'regex' | 'json_ld' | 'whole_page';
+        transforms?: Array<{
+            kind: 'trim';
+        } | {
+            kind: 'lowercase';
+        } | {
+            kind: 'uppercase';
+        } | {
+            kind: 'collapse_whitespace';
+        } | {
+            kind: 'strip_html';
+        } | {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            group?: number;
+            kind: 'regex_extract';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            pattern: string;
+        } | {
+            kind: 'regex_replace';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            pattern: string;
+            replacement: string;
+        } | {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            end?: number;
+            kind: 'slice';
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            start: number;
+        } | {
+            decimal?: string;
+            kind: 'parse_number';
+            locale?: string;
+            thousands?: string;
+        } | {
+            currency?: string;
+            kind: 'parse_price';
+        } | {
+            format?: string;
+            kind: 'parse_date';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone?: string;
+        } | {
+            kind: 'map_values';
+            mapping: {
+                [key: string]: string;
+            };
+        } | {
+            kind: 'default';
+            value: string;
+        } | {
+            kind: 'json_path';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            path: string;
+        }>;
+        valueType: 'text' | 'number' | 'price' | 'boolean' | 'url' | 'date' | 'list';
+    };
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}/extractors';
+};
+
+export type AddExtractorErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type AddExtractorError = AddExtractorErrors[keyof AddExtractorErrors];
+
+export type AddExtractorResponses = {
+    /**
+     * Response for status 201
+     */
+    201: {
+        attribute: string | unknown;
+        id: string;
+        key: string;
+        label: string;
+        occurrence: 'first' | 'last' | 'all' | 'nth';
+        occurrenceIndex: number | unknown;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        position: number;
+        required: boolean;
+        selector: string;
+        selectorKind: 'css' | 'xpath' | 'jsonpath' | 'regex' | 'json_ld' | 'whole_page';
+        valueType: 'text' | 'number' | 'price' | 'boolean' | 'url' | 'date' | 'list';
+    };
+};
+
+export type AddExtractorResponse = AddExtractorResponses[keyof AddExtractorResponses];
+
+export type RemoveExtractorData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+        /**
+         * a Universally Unique Identifier
+         */
+        extractorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}/extractors/{extractorId}';
+};
+
+export type RemoveExtractorErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type RemoveExtractorError = RemoveExtractorErrors[keyof RemoveExtractorErrors];
+
+export type RemoveExtractorResponses = {
+    /**
+     * Response for status 204
+     */
+    204: unknown;
+};
+
+export type UpdateExtractorData = {
+    body: {
+        attribute?: string | unknown;
+        /**
+         * a string matching the pattern ^[a-z][a-z0-9_]{0,63}$
+         */
+        key?: string;
+        /**
+         * trimmed
+         *
+         * a string with no leading or trailing whitespace
+         */
+        label?: string;
+        occurrence?: 'first' | 'last' | 'all' | 'nth';
+        occurrenceIndex?: number | unknown;
+        required?: boolean;
+        selector?: string;
+        selectorKind?: 'css' | 'xpath' | 'jsonpath' | 'regex' | 'json_ld' | 'whole_page';
+        transforms?: Array<{
+            kind: 'trim';
+        } | {
+            kind: 'lowercase';
+        } | {
+            kind: 'uppercase';
+        } | {
+            kind: 'collapse_whitespace';
+        } | {
+            kind: 'strip_html';
+        } | {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            group?: number;
+            kind: 'regex_extract';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            pattern: string;
+        } | {
+            kind: 'regex_replace';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            pattern: string;
+            replacement: string;
+        } | {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            end?: number;
+            kind: 'slice';
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            start: number;
+        } | {
+            decimal?: string;
+            kind: 'parse_number';
+            locale?: string;
+            thousands?: string;
+        } | {
+            currency?: string;
+            kind: 'parse_price';
+        } | {
+            format?: string;
+            kind: 'parse_date';
+            /**
+             * a string matching the pattern ^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+)+$|^UTC$
+             */
+            timezone?: string;
+        } | {
+            kind: 'map_values';
+            mapping: {
+                [key: string]: string;
+            };
+        } | {
+            kind: 'default';
+            value: string;
+        } | {
+            kind: 'json_path';
+            /**
+             * trimmed
+             *
+             * a string with no leading or trailing whitespace
+             */
+            path: string;
+        }>;
+        valueType?: 'text' | 'number' | 'price' | 'boolean' | 'url' | 'date' | 'list';
+    };
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+        /**
+         * a Universally Unique Identifier
+         */
+        extractorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}/extractors/{extractorId}';
+};
+
+export type UpdateExtractorErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type UpdateExtractorError = UpdateExtractorErrors[keyof UpdateExtractorErrors];
+
+export type UpdateExtractorResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        attribute: string | unknown;
+        id: string;
+        key: string;
+        label: string;
+        occurrence: 'first' | 'last' | 'all' | 'nth';
+        occurrenceIndex: number | unknown;
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        position: number;
+        required: boolean;
+        selector: string;
+        selectorKind: 'css' | 'xpath' | 'jsonpath' | 'regex' | 'json_ld' | 'whole_page';
+        valueType: 'text' | 'number' | 'price' | 'boolean' | 'url' | 'date' | 'list';
+    };
+};
+
+export type UpdateExtractorResponse = UpdateExtractorResponses[keyof UpdateExtractorResponses];
+
 export type ListRulesData = {
     body?: never;
     path: {

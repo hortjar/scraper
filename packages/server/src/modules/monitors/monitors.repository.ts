@@ -20,6 +20,7 @@ import {
 import { and, arrayContains, asc, desc, eq, ilike, isNull, or, sql } from "drizzle-orm"
 import { Effect } from "effect"
 
+import { makeExtractorCrud } from "./extractors.repository.js"
 import { EXTRACTOR_ENTITY, MONITOR_ENTITY } from "./monitors.constants.js"
 import { isoTimestamp } from "./monitors.rows.js"
 import type { ExtractorInput } from "./monitors.schema.js"
@@ -252,6 +253,7 @@ export class MonitorRepository extends Effect.Service<MonitorRepository>()(
         archive,
         replaceExtractors,
         countActive,
+        ...makeExtractorCrud(database),
       } as const
     }),
     dependencies: [Database.Default],

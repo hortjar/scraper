@@ -14,6 +14,7 @@ import type {
   UrlGuard,
 } from "../scraping/index.js"
 
+import { extractorHandlers } from "./extractors.routes.js"
 import {
   MONITOR_ACTION,
   MONITOR_OPERATION_ID,
@@ -277,4 +278,6 @@ export const monitorRoutes = (options: AuthPluginOptions<MonitorServices>) =>
     name: MONITOR_PLUGIN.routes,
     prefix: ROUTE.monitors,
     tags: [API_TAG.monitors],
-  }).use(monitorHandlers(options))
+  })
+    .use(monitorHandlers(options))
+    .use(extractorHandlers(options))

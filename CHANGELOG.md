@@ -14,6 +14,8 @@ This file starts at 0.2.0. For anything earlier, see the git history.
   one live fetch of an unsaved draft and returns extracted values, timings, resolved
   strategy, page title and warnings without persisting anything — the editor's
   backbone. `duplicate` copies extractors and schedule but lands disabled.
+- **Per-extractor CRUD**: list, add, update and delete a single extractor without
+  resubmitting the whole monitor. Adding appends at the next free position.
 - **Preview warns about the selectors that matter.** `warnings.selectorNoMatch` and
   `warnings.selectorManyMatches` were in the message catalog since 0.2.0 but nothing
   ever emitted them, so a preview could not tell you your selector matched nothing or

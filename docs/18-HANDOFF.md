@@ -26,10 +26,10 @@ passing on `main`.
 | `apps/web/src/features/runs`                | ✅ runs and changes panels, run detail, diff renderer                     |
 | `apps/web` channels feature                 | ❌ not started; the routes it needs now exist                             |
 
-The API serves **35 paths** / 45 operations: `/health`, `/ready`, `/metrics`, `/meta`,
-13 under `/auth`, 9 under `/monitors` (CRUD plus preview, enable, disable, duplicate),
-3 more under `/monitors` for runs and changes, one `/runs/:runId`, 4 under `/channels`,
-2 for notification rules, and 2 for deliveries.
+The API serves **37 paths** / 49 operations: `/health`, `/ready`, `/metrics`, `/meta`,
+13 under `/auth`, 13 under `/monitors` (CRUD plus preview, enable, disable, duplicate
+and extractor CRUD), 3 more under `/monitors` for runs and changes, one `/runs/:runId`,
+4 under `/channels`, 2 for notification rules, and 2 for deliveries.
 
 ### Auth is finished
 
@@ -70,6 +70,7 @@ see §5.
 | A `Date` in a raw drizzle `sql` template throws under Bun; cast in the SQL, not the parameter | `modules/runs/README.md`                  |
 | `ON CONFLICT` on nullable columns needs `UNIQUE NULLS NOT DISTINCT`                           | `modules/runs/README.md`                  |
 | Assigning a full HTML document to `innerHTML` corrupts linkedom's node list                   | `modules/scraping/dom.types.ts`           |
+| `Schema.partial` throws at runtime on a struct using `optionalWith(…, { default })`           | `monitors.schema.ts`                      |
 | `sql.unsafe` returns `timestamptz` as a **string**, so `DateFromSelf` decoding fails          | `channel.repository.rows.ts`              |
 | A helper typed as a narrow `Pick` but handed the whole row silently reverts every other field | `channel.repository.rows.ts`              |
 | An unqualified `SELECT` column list breaks the moment the query gains a `JOIN`                | `delivery.repository.ts`                  |
@@ -96,10 +97,10 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **Remaining API operations.** `docs/09-API.md` specifies 58; 45 are served.
-   Missing: monitor extractor CRUD and export/import, run diff/snapshot/series,
-   `GET /changes`, `POST /rules/:id/preview`, and the two `/admin` routes — there is
-   no admin module yet.
+1. **Remaining API operations.** `docs/09-API.md` specifies 58; 49 are served.
+   Missing: monitor export/import, run diff/snapshot/series, `GET /changes`,
+   `POST /rules/:id/preview`, and the two `/admin` routes — there is no admin module
+   yet.
 2. **`web/features/channels`** — the channel routes it needs now exist.
 3. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
    suppression is recorded but never delivered — `modules/runs/README.md` §Known gaps.

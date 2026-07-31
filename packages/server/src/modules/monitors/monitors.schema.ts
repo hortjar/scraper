@@ -2,6 +2,7 @@ import {
   BrowserOptions,
   Engine,
   type Extractor,
+  ExtractorId,
   ExtractorKey,
   HttpUrl,
   IgnoreRule,
@@ -68,6 +69,25 @@ export type UpdateMonitorBody = typeof UpdateMonitorBody.Type
 
 export const MonitorIdParameters = Schema.Struct({ monitorId: MonitorId })
 
+export const ExtractorParameters = Schema.Struct({
+  monitorId: MonitorId,
+  extractorId: ExtractorId,
+})
+
+export const UpdateExtractorBody = Schema.Struct({
+  key: Schema.optional(ExtractorKey),
+  label: Schema.optional(NonEmptyString),
+  selectorKind: Schema.optional(SelectorKind),
+  selector: Schema.optional(Schema.String),
+  attribute: Schema.optional(Schema.NullOr(Schema.String)),
+  valueType: Schema.optional(ValueType),
+  transforms: Schema.optional(Schema.Array(Transform)),
+  occurrence: Schema.optional(Occurrence),
+  occurrenceIndex: Schema.optional(Schema.NullOr(NonNegativeInt)),
+  required: Schema.optional(Schema.Boolean),
+})
+export type UpdateExtractorBody = typeof UpdateExtractorBody.Type
+
 export const PreviewMonitorBody = Schema.Struct({
   url: HttpUrl,
   engine: Schema.optionalWith(Engine, { default: () => "auto" as const }),
@@ -122,6 +142,8 @@ export const MonitorDetailDto = Schema.Struct({
   extractors: Schema.Array(ExtractorDto),
 })
 export type MonitorDetailDto = typeof MonitorDetailDto.Type
+
+export const ExtractorListDto = Schema.Struct({ items: Schema.Array(ExtractorDto) })
 
 export const MonitorListDto = Schema.Struct({
   items: Schema.Array(MonitorDto),

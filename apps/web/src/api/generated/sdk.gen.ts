@@ -3,7 +3,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateApiKeyData, CreateApiKeyErrors, CreateApiKeyResponses, CreateChannelData, CreateChannelErrors, CreateChannelResponses, CreateMonitorData, CreateMonitorErrors, CreateMonitorResponses, CreateRuleData, CreateRuleErrors, CreateRuleResponses, DeleteChannelData, DeleteChannelErrors, DeleteChannelResponses, DeleteMonitorData, DeleteMonitorErrors, DeleteMonitorResponses, DeleteRuleData, DeleteRuleErrors, DeleteRuleResponses, DisableMonitorData, DisableMonitorErrors, DisableMonitorResponses, DuplicateMonitorData, DuplicateMonitorErrors, DuplicateMonitorResponses, EnableMonitorData, EnableMonitorErrors, EnableMonitorResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetHealthData, GetHealthResponses, GetMetaData, GetMetaResponses, GetMetricsData, GetMetricsResponses, GetMonitorData, GetMonitorErrors, GetMonitorResponses, GetReadinessData, GetReadinessErrors, GetReadinessResponses, GetRunData, GetRunErrors, GetRunResponses, ListApiKeysData, ListApiKeysErrors, ListApiKeysResponses, ListChangesData, ListChangesErrors, ListChangesResponses, ListChannelKindsData, ListChannelKindsErrors, ListChannelKindsResponses, ListChannelsData, ListChannelsErrors, ListChannelsResponses, ListDeliveriesData, ListDeliveriesErrors, ListDeliveriesResponses, ListMonitorsData, ListMonitorsErrors, ListMonitorsResponses, ListRulesData, ListRulesErrors, ListRulesResponses, ListRunsData, ListRunsErrors, ListRunsResponses, ListSessionsData, ListSessionsErrors, ListSessionsResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, PreviewMonitorData, PreviewMonitorErrors, PreviewMonitorResponses, RegisterData, RegisterErrors, RegisterResponses, RequestEmailVerificationData, RequestEmailVerificationErrors, RequestEmailVerificationResponses, RequestPasswordResetData, RequestPasswordResetErrors, RequestPasswordResetResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RetryDeliveryData, RetryDeliveryErrors, RetryDeliveryResponses, RevokeAllSessionsData, RevokeAllSessionsErrors, RevokeAllSessionsResponses, RevokeApiKeyData, RevokeApiKeyErrors, RevokeApiKeyResponses, RevokeSessionData, RevokeSessionErrors, RevokeSessionResponses, RunMonitorNowData, RunMonitorNowErrors, RunMonitorNowResponses, TestChannelData, TestChannelErrors, TestChannelResponses, UpdateChannelData, UpdateChannelErrors, UpdateChannelResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UpdateMonitorData, UpdateMonitorErrors, UpdateMonitorResponses, UpdateRuleData, UpdateRuleErrors, UpdateRuleResponses, VerifyEmailData, VerifyEmailErrors, VerifyEmailResponses } from './types.gen';
+import type { AddExtractorData, AddExtractorErrors, AddExtractorResponses, ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateApiKeyData, CreateApiKeyErrors, CreateApiKeyResponses, CreateChannelData, CreateChannelErrors, CreateChannelResponses, CreateMonitorData, CreateMonitorErrors, CreateMonitorResponses, CreateRuleData, CreateRuleErrors, CreateRuleResponses, DeleteChannelData, DeleteChannelErrors, DeleteChannelResponses, DeleteMonitorData, DeleteMonitorErrors, DeleteMonitorResponses, DeleteRuleData, DeleteRuleErrors, DeleteRuleResponses, DisableMonitorData, DisableMonitorErrors, DisableMonitorResponses, DuplicateMonitorData, DuplicateMonitorErrors, DuplicateMonitorResponses, EnableMonitorData, EnableMonitorErrors, EnableMonitorResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetHealthData, GetHealthResponses, GetMetaData, GetMetaResponses, GetMetricsData, GetMetricsResponses, GetMonitorData, GetMonitorErrors, GetMonitorResponses, GetReadinessData, GetReadinessErrors, GetReadinessResponses, GetRunData, GetRunErrors, GetRunResponses, ListApiKeysData, ListApiKeysErrors, ListApiKeysResponses, ListChangesData, ListChangesErrors, ListChangesResponses, ListChannelKindsData, ListChannelKindsErrors, ListChannelKindsResponses, ListChannelsData, ListChannelsErrors, ListChannelsResponses, ListDeliveriesData, ListDeliveriesErrors, ListDeliveriesResponses, ListExtractorsData, ListExtractorsErrors, ListExtractorsResponses, ListMonitorsData, ListMonitorsErrors, ListMonitorsResponses, ListRulesData, ListRulesErrors, ListRulesResponses, ListRunsData, ListRunsErrors, ListRunsResponses, ListSessionsData, ListSessionsErrors, ListSessionsResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, PreviewMonitorData, PreviewMonitorErrors, PreviewMonitorResponses, RegisterData, RegisterErrors, RegisterResponses, RemoveExtractorData, RemoveExtractorErrors, RemoveExtractorResponses, RequestEmailVerificationData, RequestEmailVerificationErrors, RequestEmailVerificationResponses, RequestPasswordResetData, RequestPasswordResetErrors, RequestPasswordResetResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RetryDeliveryData, RetryDeliveryErrors, RetryDeliveryResponses, RevokeAllSessionsData, RevokeAllSessionsErrors, RevokeAllSessionsResponses, RevokeApiKeyData, RevokeApiKeyErrors, RevokeApiKeyResponses, RevokeSessionData, RevokeSessionErrors, RevokeSessionResponses, RunMonitorNowData, RunMonitorNowErrors, RunMonitorNowResponses, TestChannelData, TestChannelErrors, TestChannelResponses, UpdateChannelData, UpdateChannelErrors, UpdateChannelResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UpdateExtractorData, UpdateExtractorErrors, UpdateExtractorResponses, UpdateMonitorData, UpdateMonitorErrors, UpdateMonitorResponses, UpdateRuleData, UpdateRuleErrors, UpdateRuleResponses, VerifyEmailData, VerifyEmailErrors, VerifyEmailResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -282,6 +282,40 @@ export const duplicateMonitor = <ThrowOnError extends boolean = false>(options: 
  * Enable a monitor
  */
 export const enableMonitor = <ThrowOnError extends boolean = false>(options: Options<EnableMonitorData, ThrowOnError>): RequestResult<EnableMonitorResponses, EnableMonitorErrors, ThrowOnError> => (options.client ?? client).post<EnableMonitorResponses, EnableMonitorErrors, ThrowOnError>({ url: '/monitors/{monitorId}/enable', ...options });
+
+/**
+ * List a monitor's extractors
+ */
+export const listExtractors = <ThrowOnError extends boolean = false>(options: Options<ListExtractorsData, ThrowOnError>): RequestResult<ListExtractorsResponses, ListExtractorsErrors, ThrowOnError> => (options.client ?? client).get<ListExtractorsResponses, ListExtractorsErrors, ThrowOnError>({ url: '/monitors/{monitorId}/extractors', ...options });
+
+/**
+ * Add an extractor to a monitor
+ */
+export const addExtractor = <ThrowOnError extends boolean = false>(options: Options<AddExtractorData, ThrowOnError>): RequestResult<AddExtractorResponses, AddExtractorErrors, ThrowOnError> => (options.client ?? client).post<AddExtractorResponses, AddExtractorErrors, ThrowOnError>({
+    url: '/monitors/{monitorId}/extractors',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete a single extractor
+ */
+export const removeExtractor = <ThrowOnError extends boolean = false>(options: Options<RemoveExtractorData, ThrowOnError>): RequestResult<RemoveExtractorResponses, RemoveExtractorErrors, ThrowOnError> => (options.client ?? client).delete<RemoveExtractorResponses, RemoveExtractorErrors, ThrowOnError>({ url: '/monitors/{monitorId}/extractors/{extractorId}', ...options });
+
+/**
+ * Update a single extractor
+ */
+export const updateExtractor = <ThrowOnError extends boolean = false>(options: Options<UpdateExtractorData, ThrowOnError>): RequestResult<UpdateExtractorResponses, UpdateExtractorErrors, ThrowOnError> => (options.client ?? client).patch<UpdateExtractorResponses, UpdateExtractorErrors, ThrowOnError>({
+    url: '/monitors/{monitorId}/extractors/{extractorId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * List notification rules for a monitor

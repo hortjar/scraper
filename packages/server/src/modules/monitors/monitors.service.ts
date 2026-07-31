@@ -1,6 +1,6 @@
 import { AppConfig } from "@scraper/core/config"
 import { SCHEDULE_KIND, SERVICE_TAG, SPAN } from "@scraper/core/constants"
-import type { Extractor, MonitorConfig, MonitorId, Schedule, UserId } from "@scraper/core/domain"
+import type { ExtractorId, MonitorId, Schedule, UserId } from "@scraper/core/domain"
 import { PlanLimitExceeded, ValidationFailed } from "@scraper/core/errors"
 import { MSG } from "@scraper/core/i18n"
 import { Clock, Effect } from "effect"
@@ -8,62 +8,19 @@ import { Clock, Effect } from "effect"
 import { JobProducer } from "../jobs/index.js"
 import { previewScrape, UrlGuard } from "../scraping/index.js"
 
-import {
-  DEFAULT_JITTER_SECONDS,
-  DUPLICATE_NAME_SUFFIX,
-  PREVIEW_MONITOR_ID,
-} from "./monitors.constants.js"
+import { DEFAULT_JITTER_SECONDS, DUPLICATE_NAME_SUFFIX } from "./monitors.constants.js"
+import { toExtractorInput, toPreviewConfig } from "./monitors.mappers.js"
 import { MonitorRepository } from "./monitors.repository.js"
 import type {
   CreateMonitorBody,
   ExtractorInput,
   PreviewMonitorBody,
+  UpdateExtractorBody,
   UpdateMonitorBody,
 } from "./monitors.schema.js"
 
 const SCHEDULE_PATH = ["schedule", "intervalSeconds"] as const
 
-export const toExtractorInput = (extractor: Extractor): ExtractorInput => ({
-  key: extractor.key,
-  label: extractor.label,
-  selectorKind: extractor.selectorKind,
-  selector: extractor.selector,
-  attribute: extractor.attribute,
-  valueType: extractor.valueType,
-  transforms: extractor.transforms,
-  occurrence: extractor.occurrence,
-  occurrenceIndex: extractor.occurrenceIndex,
-  required: extractor.required,
-})
-
-const toPreviewExtractor = (input: ExtractorInput, position: number): Extractor => ({
-  id: PREVIEW_MONITOR_ID as Extractor["id"],
-  monitorId: PREVIEW_MONITOR_ID as MonitorId,
-  key: input.key,
-  label: input.label,
-  selectorKind: input.selectorKind,
-  selector: input.selector,
-  attribute: input.attribute,
-  valueType: input.valueType,
-  transforms: input.transforms,
-  occurrence: input.occurrence,
-  occurrenceIndex: input.occurrenceIndex,
-  required: input.required,
-  position,
-})
-
-export const toPreviewConfig = (input: PreviewMonitorBody): MonitorConfig => ({
-  id: PREVIEW_MONITOR_ID as MonitorId,
-  url: input.url,
-  engine: input.engine,
-  engineResolved: null,
-  request: input.request,
-  browserOptions: input.browserOptions,
-  contentSelector: input.contentSelector,
-  ignoreRules: input.ignoreRules,
-  respectRobots: input.respectRobots,
-  extractors: input.extractors.map((extractor, index) => toPreviewExtractor(extractor, index)),
-})
 const MONITOR_RESOURCE = "monitors"
 
 export const scheduleColumns = (schedule: Schedule) =>
@@ -232,6 +189,42 @@ export class Monitors extends Effect.Service<Monitors>()(SERVICE_TAG.Monitors, {
       return yield* detail(userId, copy.id)
     })
 
+    const listExtractors = Effect.fn(SPAN.monitors.findById)(function* (
+      userId: UserId,
+      id: MonitorId,
+    ) {
+      yield* repository.findById(userId, id)
+      return yield* repository.listExtractors(id)
+    })
+
+    const addExtractor = Effect.fn(SPAN.monitors.update)(function* (
+      userId: UserId,
+      id: MonitorId,
+      input: ExtractorInput,
+    ) {
+      yield* repository.findById(userId, id)
+      return yield* repository.appendExtractor(id, input)
+    })
+
+    const editExtractor = Effect.fn(SPAN.monitors.update)(function* (
+      userId: UserId,
+      id: MonitorId,
+      extractorId: ExtractorId,
+      patch: UpdateExtractorBody,
+    ) {
+      yield* repository.findById(userId, id)
+      return yield* repository.updateExtractor(id, extractorId, patch)
+    })
+
+    const removeExtractor = Effect.fn(SPAN.monitors.update)(function* (
+      userId: UserId,
+      id: MonitorId,
+      extractorId: ExtractorId,
+    ) {
+      yield* repository.findById(userId, id)
+      yield* repository.removeExtractor(id, extractorId)
+    })
+
     const preview = Effect.fn(SPAN.monitors.preview)(function* (input: PreviewMonitorBody) {
       yield* urlGuard.check(input.url)
       return yield* previewScrape(toPreviewConfig(input))
@@ -246,6 +239,10 @@ export class Monitors extends Effect.Service<Monitors>()(SERVICE_TAG.Monitors, {
       setEnabled,
       duplicate,
       preview,
+      listExtractors,
+      addExtractor,
+      editExtractor,
+      removeExtractor,
       findById: repository.findById,
     } as const
   }),
