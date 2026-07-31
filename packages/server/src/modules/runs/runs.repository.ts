@@ -1,5 +1,5 @@
 import { RUN_STATUS, SERVICE_TAG, SPAN } from "@scraper/core/constants"
-import { Change, Run, type MonitorId, type RunId } from "@scraper/core/domain"
+import { Change, Run, type MonitorId, type RunId, type UserId } from "@scraper/core/domain"
 import {
   constraintFailure,
   Database,
@@ -223,6 +223,33 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
       }))
     })
 
+    const listUserChanges = Effect.fn(SPAN.runRepository.listChanges)(function* (
+      userId: UserId,
+      filter: RunListFilter,
+    ) {
+      const cursor = filter.cursor === undefined ? null : decodeCursor(filter.cursor)
+      const conditions = [eq(schema.monitors.userId, userId)]
+      if (cursor !== null) {
+        conditions.push(
+          sql`(${schema.changes.createdAt}, ${schema.changes.id}) < (${isoTimestamp(new Date(cursor.at))}::timestamptz, ${cursor.id})`,
+        )
+      }
+      const rows = yield* database.query((executor) =>
+        executor
+          .select({ change: schema.changes })
+          .from(schema.changes)
+          .innerJoin(schema.monitors, eq(schema.changes.monitorId, schema.monitors.id))
+          .where(and(...conditions))
+          .orderBy(desc(schema.changes.createdAt), desc(schema.changes.id))
+          .limit(filter.limit + 1),
+      )
+      const decoded = yield* decodeChangeRows(rows.map((row) => row.change))
+      return takePage(decoded, filter.limit, (change) => ({
+        at: change.createdAt.toISOString(),
+        id: change.id,
+      }))
+    })
+
     const findById = Effect.fn(SPAN.runRepository.findById)(function* (runId: RunId) {
       const rows = yield* database.query((executor) =>
         executor.select().from(schema.runs).where(eq(schema.runs.id, runId)).limit(1),
@@ -270,6 +297,7 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
       list,
       findById,
       listChanges,
+      listUserChanges,
     } as const
   }),
   dependencies: [Database.Default],

@@ -4,8 +4,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { addExtractor, changePassword, createApiKey, createChannel, createMonitor, createRule, deleteChannel, deleteMonitor, deleteRule, disableMonitor, duplicateMonitor, enableMonitor, getCurrentUser, getHealth, getMeta, getMetrics, getMonitor, getReadiness, getRun, listApiKeys, listChanges, listChannelKinds, listChannels, listDeliveries, listExtractors, listMonitors, listRules, listRuns, listSessions, login, logout, type Options, previewMonitor, register, removeExtractor, requestEmailVerification, requestPasswordReset, resetPassword, retryDelivery, revokeAllSessions, revokeApiKey, revokeSession, runMonitorNow, testChannel, updateChannel, updateCurrentUser, updateExtractor, updateMonitor, updateRule, verifyEmail } from '../sdk.gen';
-import type { AddExtractorData, AddExtractorError, AddExtractorResponse, ChangePasswordData, ChangePasswordError, CreateApiKeyData, CreateApiKeyError, CreateApiKeyResponse, CreateChannelData, CreateChannelError, CreateChannelResponse, CreateMonitorData, CreateMonitorError, CreateMonitorResponse, CreateRuleData, CreateRuleError, CreateRuleResponse, DeleteChannelData, DeleteChannelError, DeleteMonitorData, DeleteMonitorError, DeleteRuleData, DeleteRuleError, DisableMonitorData, DisableMonitorError, DisableMonitorResponse, DuplicateMonitorData, DuplicateMonitorError, DuplicateMonitorResponse, EnableMonitorData, EnableMonitorError, EnableMonitorResponse, GetCurrentUserData, GetCurrentUserError, GetCurrentUserResponse, GetHealthData, GetHealthResponse, GetMetaData, GetMetaResponse, GetMetricsData, GetMetricsResponse, GetMonitorData, GetMonitorError, GetMonitorResponse, GetReadinessData, GetReadinessError, GetReadinessResponse, GetRunData, GetRunError, GetRunResponse, ListApiKeysData, ListApiKeysError, ListApiKeysResponse, ListChangesData, ListChangesError, ListChangesResponse, ListChannelKindsData, ListChannelKindsError, ListChannelKindsResponse, ListChannelsData, ListChannelsError, ListChannelsResponse, ListDeliveriesData, ListDeliveriesError, ListDeliveriesResponse, ListExtractorsData, ListExtractorsError, ListExtractorsResponse, ListMonitorsData, ListMonitorsError, ListMonitorsResponse, ListRulesData, ListRulesError, ListRulesResponse, ListRunsData, ListRunsError, ListRunsResponse, ListSessionsData, ListSessionsError, ListSessionsResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, PreviewMonitorData, PreviewMonitorError, PreviewMonitorResponse, RegisterData, RegisterError, RegisterResponse, RemoveExtractorData, RemoveExtractorError, RequestEmailVerificationData, RequestEmailVerificationError, RequestEmailVerificationResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordData, ResetPasswordError, RetryDeliveryData, RetryDeliveryError, RetryDeliveryResponse, RevokeAllSessionsData, RevokeAllSessionsError, RevokeApiKeyData, RevokeApiKeyError, RevokeSessionData, RevokeSessionError, RunMonitorNowData, RunMonitorNowError, TestChannelData, TestChannelError, TestChannelResponse, UpdateChannelData, UpdateChannelError, UpdateChannelResponse, UpdateCurrentUserData, UpdateCurrentUserError, UpdateCurrentUserResponse, UpdateExtractorData, UpdateExtractorError, UpdateExtractorResponse, UpdateMonitorData, UpdateMonitorError, UpdateMonitorResponse, UpdateRuleData, UpdateRuleError, UpdateRuleResponse, VerifyEmailData, VerifyEmailError } from '../types.gen';
+import { addExtractor, changePassword, createApiKey, createChannel, createMonitor, createRule, deleteChannel, deleteMonitor, deleteRule, disableMonitor, duplicateMonitor, enableMonitor, getCurrentUser, getHealth, getMeta, getMetrics, getMonitor, getReadiness, getRun, getRunDiff, getRunSnapshot, listActivity, listApiKeys, listChanges, listChannelKinds, listChannels, listDeliveries, listExtractors, listMonitors, listRules, listRuns, listSessions, login, logout, type Options, previewMonitor, register, removeExtractor, requestEmailVerification, requestPasswordReset, resetPassword, retryDelivery, revokeAllSessions, revokeApiKey, revokeSession, runMonitorNow, testChannel, updateChannel, updateCurrentUser, updateExtractor, updateMonitor, updateRule, verifyEmail } from '../sdk.gen';
+import type { AddExtractorData, AddExtractorError, AddExtractorResponse, ChangePasswordData, ChangePasswordError, CreateApiKeyData, CreateApiKeyError, CreateApiKeyResponse, CreateChannelData, CreateChannelError, CreateChannelResponse, CreateMonitorData, CreateMonitorError, CreateMonitorResponse, CreateRuleData, CreateRuleError, CreateRuleResponse, DeleteChannelData, DeleteChannelError, DeleteMonitorData, DeleteMonitorError, DeleteRuleData, DeleteRuleError, DisableMonitorData, DisableMonitorError, DisableMonitorResponse, DuplicateMonitorData, DuplicateMonitorError, DuplicateMonitorResponse, EnableMonitorData, EnableMonitorError, EnableMonitorResponse, GetCurrentUserData, GetCurrentUserError, GetCurrentUserResponse, GetHealthData, GetHealthResponse, GetMetaData, GetMetaResponse, GetMetricsData, GetMetricsResponse, GetMonitorData, GetMonitorError, GetMonitorResponse, GetReadinessData, GetReadinessError, GetReadinessResponse, GetRunData, GetRunDiffData, GetRunDiffError, GetRunDiffResponse, GetRunError, GetRunResponse, GetRunSnapshotData, GetRunSnapshotError, GetRunSnapshotResponse, ListActivityData, ListActivityError, ListActivityResponse, ListApiKeysData, ListApiKeysError, ListApiKeysResponse, ListChangesData, ListChangesError, ListChangesResponse, ListChannelKindsData, ListChannelKindsError, ListChannelKindsResponse, ListChannelsData, ListChannelsError, ListChannelsResponse, ListDeliveriesData, ListDeliveriesError, ListDeliveriesResponse, ListExtractorsData, ListExtractorsError, ListExtractorsResponse, ListMonitorsData, ListMonitorsError, ListMonitorsResponse, ListRulesData, ListRulesError, ListRulesResponse, ListRunsData, ListRunsError, ListRunsResponse, ListSessionsData, ListSessionsError, ListSessionsResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, PreviewMonitorData, PreviewMonitorError, PreviewMonitorResponse, RegisterData, RegisterError, RegisterResponse, RemoveExtractorData, RemoveExtractorError, RequestEmailVerificationData, RequestEmailVerificationError, RequestEmailVerificationResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordData, ResetPasswordError, RetryDeliveryData, RetryDeliveryError, RetryDeliveryResponse, RevokeAllSessionsData, RevokeAllSessionsError, RevokeApiKeyData, RevokeApiKeyError, RevokeSessionData, RevokeSessionError, RunMonitorNowData, RunMonitorNowError, TestChannelData, TestChannelError, TestChannelResponse, UpdateChannelData, UpdateChannelError, UpdateChannelResponse, UpdateCurrentUserData, UpdateCurrentUserError, UpdateCurrentUserResponse, UpdateExtractorData, UpdateExtractorError, UpdateExtractorResponse, UpdateMonitorData, UpdateMonitorError, UpdateMonitorResponse, UpdateRuleData, UpdateRuleError, UpdateRuleResponse, VerifyEmailData, VerifyEmailError } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -314,6 +314,24 @@ export const revokeSessionMutation = (options?: Partial<Options<RevokeSessionDat
     };
     return mutationOptions;
 };
+
+export const listActivityQueryKey = (options?: Options<ListActivityData>) => createQueryKey('listActivity', options);
+
+/**
+ * List changes across every monitor
+ */
+export const listActivityOptions = (options?: Options<ListActivityData>) => queryOptions<ListActivityResponse, ListActivityError, ListActivityResponse, ReturnType<typeof listActivityQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await listActivity({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: listActivityQueryKey(options)
+});
 
 export const listChannelsQueryKey = (options?: Options<ListChannelsData>) => createQueryKey('listChannels', options);
 
@@ -888,4 +906,40 @@ export const getRunOptions = (options: Options<GetRunData>) => queryOptions<GetR
         return data;
     },
     queryKey: getRunQueryKey(options)
+});
+
+export const getRunDiffQueryKey = (options: Options<GetRunDiffData>) => createQueryKey('getRunDiff', options);
+
+/**
+ * Diff a run against its baseline or another run
+ */
+export const getRunDiffOptions = (options: Options<GetRunDiffData>) => queryOptions<GetRunDiffResponse, GetRunDiffError, GetRunDiffResponse, ReturnType<typeof getRunDiffQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getRunDiff({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getRunDiffQueryKey(options)
+});
+
+export const getRunSnapshotQueryKey = (options: Options<GetRunSnapshotData>) => createQueryKey('getRunSnapshot', options);
+
+/**
+ * Get the stored page snapshot for a run
+ */
+export const getRunSnapshotOptions = (options: Options<GetRunSnapshotData>) => queryOptions<GetRunSnapshotResponse, GetRunSnapshotError, GetRunSnapshotResponse, ReturnType<typeof getRunSnapshotQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getRunSnapshot({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getRunSnapshotQueryKey(options)
 });

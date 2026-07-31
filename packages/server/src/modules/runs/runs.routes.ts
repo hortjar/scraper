@@ -1,4 +1,5 @@
 import { API_TAG, HTTP_STATUS, ROUTE } from "@scraper/core/constants"
+import type { RunId } from "@scraper/core/domain"
 import { Effect, Schema } from "effect"
 import { Elysia } from "elysia"
 
@@ -13,13 +14,20 @@ import {
   MonitorIdParameters,
   RunDetailDto,
   RunIdParameters,
+  RunDiffDto,
   RunListDto,
+  RunSnapshotDto,
 } from "./runs.schema.js"
 import { Runs } from "./runs.service.js"
 
 const standardMonitorParameters = Schema.standardSchemaV1(MonitorIdParameters)
 const standardRunParameters = Schema.standardSchemaV1(RunIdParameters)
 const standardRunList = Schema.standardSchemaV1(RunListDto)
+const standardDiff = Schema.standardSchemaV1(RunDiffDto)
+const standardSnapshot = Schema.standardSchemaV1(RunSnapshotDto)
+
+const againstFrom = (raw: string | undefined): RunId | null =>
+  raw === undefined || raw === "" ? null : (raw as RunId)
 const standardChangeList = Schema.standardSchemaV1(ChangeListDto)
 const standardRunDetail = Schema.standardSchemaV1(RunDetailDto)
 
@@ -105,6 +113,40 @@ const runScopedHandlers = (options: AuthPluginOptions<RunServices>) =>
   authBase<RunServices>(options, RUN_PLUGIN.runHandlers)
     .use(requireUser(options))
     .get(
+      RUN_PATH.snapshot,
+      ({ runAuthFx, user, params }) =>
+        runAuthFx(Effect.flatMap(Runs, (runs) => runs.snapshot(user.userId, params.runId))),
+      {
+        auth: { scopes: [READ_SCOPE] },
+        params: standardRunParameters,
+        response: { ...FAILURES, [HTTP_STATUS.ok]: standardSnapshot },
+        detail: {
+          summary: "Get the stored page snapshot for a run",
+          operationId: RUN_OPERATION_ID.snapshot,
+          tags: [API_TAG.runs],
+        },
+      },
+    )
+    .get(
+      RUN_PATH.diff,
+      ({ runAuthFx, user, params, query }) =>
+        runAuthFx(
+          Effect.flatMap(Runs, (runs) =>
+            runs.diff(user.userId, params.runId, againstFrom(query.against)),
+          ),
+        ),
+      {
+        auth: { scopes: [READ_SCOPE] },
+        params: standardRunParameters,
+        response: { ...FAILURES, [HTTP_STATUS.ok]: standardDiff },
+        detail: {
+          summary: "Diff a run against its baseline or another run",
+          operationId: RUN_OPERATION_ID.diff,
+          tags: [API_TAG.runs],
+        },
+      },
+    )
+    .get(
       RUN_PATH.byId,
       ({ runAuthFx, user, params }) =>
         runAuthFx(
@@ -130,6 +172,33 @@ const runScopedHandlers = (options: AuthPluginOptions<RunServices>) =>
       },
     )
 
+const activityHandlers = (options: AuthPluginOptions<RunServices>) =>
+  authBase<RunServices>(options, RUN_PLUGIN.activityHandlers)
+    .use(requireUser(options))
+    .get(
+      RUN_PATH.activity,
+      ({ runAuthFx, user, query }) =>
+        runAuthFx(
+          Effect.flatMap(Runs, (runs) =>
+            runs.activity(user.userId, query).pipe(
+              Effect.map((page) => ({
+                items: page.items.map((change) => toChangeDto(change)),
+                nextCursor: page.nextCursor,
+              })),
+            ),
+          ),
+        ),
+      {
+        auth: { scopes: [READ_SCOPE] },
+        response: { ...FAILURES, [HTTP_STATUS.ok]: standardChangeList },
+        detail: {
+          summary: "List changes across every monitor",
+          operationId: RUN_OPERATION_ID.activity,
+          tags: [API_TAG.runs],
+        },
+      },
+    )
+
 export const runRoutes = (options: AuthPluginOptions<RunServices>) =>
   new Elysia({ name: RUN_PLUGIN.routes, tags: [API_TAG.runs] })
     .use(
@@ -138,3 +207,4 @@ export const runRoutes = (options: AuthPluginOptions<RunServices>) =>
       ),
     )
     .use(new Elysia({ prefix: ROUTE.runs, tags: [API_TAG.runs] }).use(runScopedHandlers(options)))
+    .use(new Elysia({ prefix: ROUTE.changes, tags: [API_TAG.runs] }).use(activityHandlers(options)))

@@ -7,6 +7,7 @@ import { Effect } from "effect"
 import { JobProducer } from "../jobs/index.js"
 import { MonitorRepository } from "../monitors/index.js"
 
+import { diffText } from "./diff/text-diff.js"
 import { FIRST_ATTEMPT } from "./runs.constants.js"
 import { RunRepository } from "./runs.repository.js"
 
@@ -65,7 +66,57 @@ export class Runs extends Effect.Service<Runs>()(SERVICE_TAG.Runs, {
       })
     })
 
-    return { list, listChanges, findById, trigger } as const
+    const snapshot = Effect.fn(SPAN.runs.findById)(function* (userId: UserId, runId: RunId) {
+      const run = yield* repository.findById(runId)
+      if (run === null) return yield* new RunNotFound({ id: runId })
+      yield* monitors.findById(userId, run.monitorId)
+      const content = yield* repository.latestSnapshot(runId)
+      if (content === null) return yield* new RunNotFound({ id: runId })
+      return { runId, content }
+    })
+
+    const diffAgainst = Effect.fn(SPAN.runs.diff)(function* (
+      runId: RunId,
+      baseline: { readonly id: RunId },
+    ) {
+      const current = yield* repository.latestSnapshot(runId)
+      const previous = yield* repository.latestSnapshot(baseline.id)
+      if (current === null || previous === null) {
+        return { runId, againstRunId: baseline.id, hunks: [] }
+      }
+      return { runId, againstRunId: baseline.id, hunks: diffText(previous, current) }
+    })
+
+    const diff = Effect.fn(SPAN.runs.diff)(function* (
+      userId: UserId,
+      runId: RunId,
+      againstId: RunId | null,
+    ) {
+      const run = yield* repository.findById(runId)
+      if (run === null) return yield* new RunNotFound({ id: runId })
+      yield* monitors.findById(userId, run.monitorId)
+
+      if (againstId === null) {
+        const previous = yield* repository.previousSuccessful(run.monitorId, run.startedAt)
+        if (previous === null) return { runId, againstRunId: null, hunks: [] }
+        return yield* diffAgainst(runId, previous)
+      }
+
+      const named = yield* repository.findById(againstId)
+      if (named?.monitorId !== run.monitorId) {
+        return yield* new RunNotFound({ id: againstId })
+      }
+      return yield* diffAgainst(runId, named)
+    })
+
+    const activity = Effect.fn(SPAN.runs.listChanges)(function* (userId: UserId, query: PageQuery) {
+      return yield* repository.listUserChanges(userId, {
+        cursor: query.cursor,
+        limit: toLimit(query.limit),
+      })
+    })
+
+    return { list, listChanges, findById, trigger, snapshot, diff, activity } as const
   }),
   dependencies: [RunRepository.Default, MonitorRepository.Default, JobProducer.Default],
 }) {}

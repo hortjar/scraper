@@ -26,10 +26,11 @@ passing on `main`.
 | `apps/web/src/features/runs`                | ✅ runs and changes panels, run detail, diff renderer                     |
 | `apps/web` channels feature                 | ❌ not started; the routes it needs now exist                             |
 
-The API serves **37 paths** / 49 operations: `/health`, `/ready`, `/metrics`, `/meta`,
+The API serves **40 paths** / 52 operations: `/health`, `/ready`, `/metrics`, `/meta`,
 13 under `/auth`, 13 under `/monitors` (CRUD plus preview, enable, disable, duplicate
-and extractor CRUD), 3 more under `/monitors` for runs and changes, one `/runs/:runId`,
-4 under `/channels`, 2 for notification rules, and 2 for deliveries.
+and extractor CRUD), 3 more under `/monitors` for runs and changes, 3 under `/runs`
+(detail, diff, snapshot), a cross-monitor `/changes` feed, 4 under `/channels`, 2 for
+notification rules, and 2 for deliveries.
 
 ### Auth is finished
 
@@ -97,8 +98,8 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **Remaining API operations.** `docs/09-API.md` specifies 58; 49 are served.
-   Missing: monitor export/import, run diff/snapshot/series, `GET /changes`,
+1. **Remaining API operations.** `docs/09-API.md` specifies 58; 52 are served.
+   Missing: monitor export/import, `GET /monitors/:id/series`,
    `POST /rules/:id/preview`, and the two `/admin` routes — there is no admin module
    yet.
 2. **`web/features/channels`** — the channel routes it needs now exist.

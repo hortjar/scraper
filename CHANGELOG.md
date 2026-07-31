@@ -14,6 +14,11 @@ This file starts at 0.2.0. For anything earlier, see the git history.
   one live fetch of an unsaved draft and returns extracted values, timings, resolved
   strategy, page title and warnings without persisting anything — the editor's
   backbone. `duplicate` copies extractors and schedule but lands disabled.
+- **Run diff and snapshot, and a cross-monitor changes feed.**
+  `GET /runs/:id/diff` diffs a run against its previous successful run, or against
+  any other run of the same monitor via `?against=`. `GET /runs/:id/snapshot` returns
+  the stored normalized page. `GET /changes` lists changes across every monitor the
+  caller owns, cursor-paginated.
 - **Per-extractor CRUD**: list, add, update and delete a single extractor without
   resubmitting the whole monitor. Adding appends at the next free position.
 - **Preview warns about the selectors that matter.** `warnings.selectorNoMatch` and

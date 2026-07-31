@@ -26,6 +26,7 @@ export const RUN_PLUGIN = {
   routes: "runs/routes",
   monitorHandlers: "runs/monitor-handlers",
   runHandlers: "runs/run-handlers",
+  activityHandlers: "runs/activity-handlers",
 } as const
 
 export const RUN_PATH = {
@@ -33,6 +34,9 @@ export const RUN_PATH = {
   monitorChanges: "/:monitorId/changes",
   runNow: "/:monitorId/run",
   byId: "/:runId",
+  diff: "/:runId/diff",
+  snapshot: "/:runId/snapshot",
+  activity: "",
 } as const
 
 export const RUN_OPERATION_ID = {
@@ -40,6 +44,9 @@ export const RUN_OPERATION_ID = {
   listChanges: "listChanges",
   get: "getRun",
   runNow: "runMonitorNow",
+  diff: "getRunDiff",
+  snapshot: "getRunSnapshot",
+  activity: "listActivity",
 } as const
 
 export const RUN_ACTION = {

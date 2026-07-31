@@ -3372,6 +3372,225 @@ export type RevokeSessionResponses = {
     204: unknown;
 };
 
+export type ListActivityData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/changes';
+};
+
+export type ListActivityErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type ListActivityError = ListActivityErrors[keyof ListActivityErrors];
+
+export type ListActivityResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        items: Array<{
+            changeKind: 'appeared' | 'disappeared' | 'modified' | 'increased' | 'decreased';
+            createdAt: string;
+            deltaAbsolute: number | unknown;
+            deltaPercent: number | unknown;
+            diff: Array<{
+                kind: 'added' | 'removed' | 'unchanged';
+                value: string;
+            }> | unknown;
+            extractorKey: string | unknown;
+            id: string;
+            /**
+             * a Universally Unique Identifier
+             */
+            monitorId: string;
+            newNumber: number | unknown;
+            newValue: string | unknown;
+            oldNumber: number | unknown;
+            oldValue: string | unknown;
+            previousRunId: string | unknown;
+            /**
+             * a Universally Unique Identifier
+             */
+            runId: string;
+        }>;
+        nextCursor: string | unknown;
+    };
+};
+
+export type ListActivityResponse = ListActivityResponses[keyof ListActivityResponses];
+
 export type ListChannelsData = {
     body?: never;
     path?: never;
@@ -11216,3 +11435,413 @@ export type GetRunResponses = {
 };
 
 export type GetRunResponse = GetRunResponses[keyof GetRunResponses];
+
+export type GetRunDiffData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        runId: string;
+    };
+    query?: never;
+    url: '/runs/{runId}/diff';
+};
+
+export type GetRunDiffErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type GetRunDiffError = GetRunDiffErrors[keyof GetRunDiffErrors];
+
+export type GetRunDiffResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        againstRunId: string | unknown;
+        hunks: Array<{
+            kind: 'added' | 'removed' | 'unchanged';
+            value: string;
+        }>;
+        /**
+         * a Universally Unique Identifier
+         */
+        runId: string;
+    };
+};
+
+export type GetRunDiffResponse = GetRunDiffResponses[keyof GetRunDiffResponses];
+
+export type GetRunSnapshotData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        runId: string;
+    };
+    query?: never;
+    url: '/runs/{runId}/snapshot';
+};
+
+export type GetRunSnapshotErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type GetRunSnapshotError = GetRunSnapshotErrors[keyof GetRunSnapshotErrors];
+
+export type GetRunSnapshotResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        content: string;
+        /**
+         * a Universally Unique Identifier
+         */
+        runId: string;
+    };
+};
+
+export type GetRunSnapshotResponse = GetRunSnapshotResponses[keyof GetRunSnapshotResponses];

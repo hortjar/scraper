@@ -71,6 +71,19 @@ export const ChangeDto = Schema.Struct({
 })
 export type ChangeDto = typeof ChangeDto.Type
 
+export const RunDiffDto = Schema.Struct({
+  runId: RunId,
+  againstRunId: Schema.NullOr(RunId),
+  hunks: Schema.Array(DiffHunk),
+})
+
+export const RunSnapshotDto = Schema.Struct({
+  runId: RunId,
+  content: Schema.String,
+})
+
+export const RunDiffQuery = Schema.Struct({ against: Schema.optional(Schema.String) })
+
 export const RunListDto = Schema.Struct({
   items: Schema.Array(RunDto),
   nextCursor: Schema.NullOr(Schema.String),
