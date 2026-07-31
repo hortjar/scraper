@@ -55,27 +55,28 @@ Each of these typechecked and passed unit tests. Only booting the stack found th
 **Run the API against real Postgres and Redis before believing a feature works** —
 see §5.
 
-| Trap                                                                                          | Documented in                             |
-| --------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `ReservedSql` has no `.begin()`, so transactions must run on the pool                         | `packages/db/README.md`                   |
-| A `Date` in a postgres.js tagged template throws under Bun; use `sqlTimestamp()`              | `modules/auth/README.md`                  |
-| API-key secrets are base64url and contain `_`, so never `String.split` them                   | `modules/auth/README.md`                  |
-| `Schema.Int` emits `$ref: #/$defs/Int`, which Elysia drops and the client crashes on          | use `Schema.Number.pipe(Schema.int(), …)` |
-| A pre-existing schema must be baselined, not re-migrated, or boot exits and you 502           | `packages/db/README.md`                   |
-| Advisory lock and unlock must share one session, or later replicas block forever              | `packages/db/README.md`                   |
-| Routes go on `createApiRoutes`, never `createApp`, which double-prefixes the paths            | `docs/09-API.md`                          |
-| A bare `Schema.Struct` response is silently ignored; wrap in `standardSchemaV1(…)`            | `docs/09-API.md` §3                       |
-| Compose interpolates unset vars to `""`, so use `blankToUndefined`, never `??`                | `packages/core/README.md`                 |
-| A config key with no default must also be added to compose's `x-app-environment`              | `docs/17-DEPLOY-RUNBOOK.md`               |
-| BullMQ's `prefix` must be set on **workers** too, or no job is ever picked up                 | `modules/runs/README.md`                  |
-| A `Date` in a raw drizzle `sql` template throws under Bun; cast in the SQL, not the parameter | `modules/runs/README.md`                  |
-| `ON CONFLICT` on nullable columns needs `UNIQUE NULLS NOT DISTINCT`                           | `modules/runs/README.md`                  |
-| Assigning a full HTML document to `innerHTML` corrupts linkedom's node list                   | `modules/scraping/dom.types.ts`           |
-| `Schema.partial` throws at runtime on a struct using `optionalWith(…, { default })`           | `monitors.schema.ts`                      |
-| `sql.unsafe` returns `timestamptz` as a **string**, so `DateFromSelf` decoding fails          | `channel.repository.rows.ts`              |
-| A helper typed as a narrow `Pick` but handed the whole row silently reverts every other field | `channel.repository.rows.ts`              |
-| An unqualified `SELECT` column list breaks the moment the query gains a `JOIN`                | `delivery.repository.ts`                  |
-| `errors.internalError` needs `{requestId}`; omitting it made intl throw and masked every 500  | `modules/auth/auth.http.ts`               |
+| Trap                                                                                                   | Documented in                             |
+| ------------------------------------------------------------------------------------------------------ | ----------------------------------------- |
+| `ReservedSql` has no `.begin()`, so transactions must run on the pool                                  | `packages/db/README.md`                   |
+| A `Date` in a postgres.js tagged template throws under Bun; use `sqlTimestamp()`                       | `modules/auth/README.md`                  |
+| API-key secrets are base64url and contain `_`, so never `String.split` them                            | `modules/auth/README.md`                  |
+| `Schema.Int` emits `$ref: #/$defs/Int`, which Elysia drops and the client crashes on                   | use `Schema.Number.pipe(Schema.int(), …)` |
+| A pre-existing schema must be baselined, not re-migrated, or boot exits and you 502                    | `packages/db/README.md`                   |
+| Advisory lock and unlock must share one session, or later replicas block forever                       | `packages/db/README.md`                   |
+| Routes go on `createApiRoutes`, never `createApp`, which double-prefixes the paths                     | `docs/09-API.md`                          |
+| A bare `Schema.Struct` response is silently ignored; wrap in `standardSchemaV1(…)`                     | `docs/09-API.md` §3                       |
+| Compose interpolates unset vars to `""`, so use `blankToUndefined`, never `??`                         | `packages/core/README.md`                 |
+| A config key with no default must also be added to compose's `x-app-environment`                       | `docs/17-DEPLOY-RUNBOOK.md`               |
+| BullMQ's `prefix` must be set on **workers** too, or no job is ever picked up                          | `modules/runs/README.md`                  |
+| A `Date` in a raw drizzle `sql` template throws under Bun; cast in the SQL, not the parameter          | `modules/runs/README.md`                  |
+| `ON CONFLICT` on nullable columns needs `UNIQUE NULLS NOT DISTINCT`                                    | `modules/runs/README.md`                  |
+| Assigning a full HTML document to `innerHTML` corrupts linkedom's node list                            | `modules/scraping/dom.types.ts`           |
+| `Schema.partial` throws at runtime on a struct using `optionalWith(…, { default })`                    | `monitors.schema.ts`                      |
+| A queue with a stub handler looks identical to a queue that works — check the handler, not the enqueue | `jobs/handlers/notify-runner.service.ts`  |
+| `sql.unsafe` returns `timestamptz` as a **string**, so `DateFromSelf` decoding fails                   | `channel.repository.rows.ts`              |
+| A helper typed as a narrow `Pick` but handed the whole row silently reverts every other field          | `channel.repository.rows.ts`              |
+| An unqualified `SELECT` column list breaks the moment the query gains a `JOIN`                         | `delivery.repository.ts`                  |
+| `errors.internalError` needs `{requestId}`; omitting it made intl throw and masked every 500           | `modules/auth/auth.http.ts`               |
 
 ## 3. How a module is wired
 
@@ -98,14 +99,31 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **Remaining API operations.** `docs/09-API.md` specifies 58; 52 are served.
+1. **The notify worker is still a stub, so no notification has ever been sent.**
+   `modules/runs/rules/rule-evaluation.ts` inserts a `pending` delivery and enqueues
+   `notify({ deliveryId })`; `jobs/handlers/notify-runner.service.ts` logs
+   `job.notify.stub` and returns. Everything upstream works — verified end to end on
+   2026-07-31, a forced content change gave `changed: true`, a `changes` row and a
+   `pending` delivery — and then nothing. This is the product's core promise and the
+   single most valuable thing left.
+
+   `NotificationDispatcher.dispatch` is _not_ the seam: it inserts its own delivery
+   mid-flow, so calling it here would double-write. What is needed is a
+   `deliver(deliveryId)` path that reuses the dispatcher's decrypt → decode → render →
+   `withNotifyRetry` → `updateStatus` core against an existing row, plus a query that
+   rebuilds a `NotificationMessage` from delivery → rule → monitor → changes → run
+   (no builder exists yet) and the recipient's locale, then
+   `notifications/notify-runner.live.ts` wired into `WorkerLayer` the way
+   `runs/scrape-runner.live.ts` wires `ScrapeRunner`.
+
+2. **Remaining API operations.** `docs/09-API.md` specifies 58; 52 are served.
    Missing: monitor export/import, `GET /monitors/:id/series`,
    `POST /rules/:id/preview`, and the two `/admin` routes — there is no admin module
    yet.
-2. **`web/features/channels`** — the channel routes it needs now exist.
-3. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
+3. **`web/features/channels`** — the channel routes it needs now exist.
+4. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
    suppression is recorded but never delivered — `modules/runs/README.md` §Known gaps.
-4. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
+5. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
    Portainer — 23 documented variables are absent from the compose
    `x-app-environment` anchor, listed in `deploy/portainer/STACK.md` §3a.
 
