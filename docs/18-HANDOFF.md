@@ -4,7 +4,7 @@
 that cost real time, and what is left. Where it disagrees with another doc about
 current state, this page is right.
 
-Last verified **2026-07-27**, workspace green: 0 lint, 0 typecheck, 599 tests, CI
+Last verified **2026-07-31** at 0.8.0, workspace green: 0 lint, 0 typecheck, 583 tests, CI
 passing on `main`.
 
 ## 1. What exists

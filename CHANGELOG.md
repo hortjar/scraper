@@ -8,12 +8,10 @@ This file starts at 0.2.0. For anything earlier, see the git history.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-07-31
+
 ### Added
 
-- **Monitor preview, enable, disable and duplicate.** `POST /monitors/preview` does
-  one live fetch of an unsaved draft and returns extracted values, timings, resolved
-  strategy, page title and warnings without persisting anything — the editor's
-  backbone. `duplicate` copies extractors and schedule but lands disabled.
 - **Notifications are actually delivered.** The `notify` queue's handler was a stub
   that logged `job.notify.stub` and returned, so every delivery sat `pending` forever
   and no notification had ever been sent. `NotificationDispatcher` gains a `deliver`
@@ -21,6 +19,10 @@ This file starts at 0.2.0. For anything earlier, see the git history.
   `NotificationMessage` from delivery → rule → monitor → changes → run with the
   recipient's locale, and `notify-runner.live.ts` is wired into the worker the way
   `scrape-runner.live.ts` wires scraping. A page change now reaches the channel.
+- **Monitor preview, enable, disable and duplicate.** `POST /monitors/preview` does
+  one live fetch of an unsaved draft and returns extracted values, timings, resolved
+  strategy, page title and warnings without persisting anything — the editor's
+  backbone. `duplicate` copies extractors and schedule but lands disabled.
 - **Run diff and snapshot, and a cross-monitor changes feed.**
   `GET /runs/:id/diff` diffs a run against its previous successful run, or against
   any other run of the same monitor via `?against=`. `GET /runs/:id/snapshot` returns
@@ -33,6 +35,14 @@ This file starts at 0.2.0. For anything earlier, see the git history.
   ever emitted them, so a preview could not tell you your selector matched nothing or
   matched twelve things — the one question the editor exists to answer. Extraction now
   carries a match count and preview reports both cases.
+
+### Fixed
+
+- **A disabled channel could not be recorded as suppressed.** `UpdateDeliveryPatch`
+  had no `suppressedReason`, but `notification_deliveries` carries a CHECK requiring
+  one whenever `status` is `suppressed` — so a channel disabled between enqueue and
+  send would have failed the constraint at write time. The column is now part of the
+  patch, cast explicitly to its enum.
 
 ## [0.7.0] - 2026-07-27
 
