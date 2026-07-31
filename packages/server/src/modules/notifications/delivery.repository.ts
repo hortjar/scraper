@@ -39,6 +39,7 @@ export interface InsertDeliveryInput {
 
 export interface UpdateDeliveryPatch {
   readonly status: "pending" | "sent" | "failed" | "suppressed"
+  readonly suppressedReason?: NotificationDelivery["suppressedReason"]
   readonly attempts?: number
   readonly lastError?: string | null
   readonly providerMessageId?: string | null
@@ -97,6 +98,7 @@ export class DeliveryRepository extends Effect.Service<DeliveryRepository>()(
         const rows = yield* run(
           `UPDATE notification_deliveries
            SET status = $1,
+               suppressed_reason = COALESCE($7::suppression_reason, suppressed_reason),
                attempts = COALESCE($2, attempts),
                last_error = COALESCE($3, last_error),
                provider_message_id = COALESCE($4, provider_message_id),
@@ -110,6 +112,7 @@ export class DeliveryRepository extends Effect.Service<DeliveryRepository>()(
             patch.providerMessageId ?? null,
             timestampParameter(patch.sentAt),
             id,
+            patch.suppressedReason ?? null,
           ],
         )
         const row = rows[0]

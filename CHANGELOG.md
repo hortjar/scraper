@@ -14,6 +14,13 @@ This file starts at 0.2.0. For anything earlier, see the git history.
   one live fetch of an unsaved draft and returns extracted values, timings, resolved
   strategy, page title and warnings without persisting anything — the editor's
   backbone. `duplicate` copies extractors and schedule but lands disabled.
+- **Notifications are actually delivered.** The `notify` queue's handler was a stub
+  that logged `job.notify.stub` and returned, so every delivery sat `pending` forever
+  and no notification had ever been sent. `NotificationDispatcher` gains a `deliver`
+  seam that renders and sends for an existing delivery row, a loader rebuilds the
+  `NotificationMessage` from delivery → rule → monitor → changes → run with the
+  recipient's locale, and `notify-runner.live.ts` is wired into the worker the way
+  `scrape-runner.live.ts` wires scraping. A page change now reaches the channel.
 - **Run diff and snapshot, and a cross-monitor changes feed.**
   `GET /runs/:id/diff` diffs a run against its previous successful run, or against
   any other run of the same monitor via `?against=`. `GET /runs/:id/snapshot` returns

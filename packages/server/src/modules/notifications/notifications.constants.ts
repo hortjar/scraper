@@ -15,6 +15,12 @@ export const NOTIFICATIONS_OPERATION_ID = {
   retryDelivery: "retryDelivery",
 } as const
 
+export const WEB_PATH = {
+  monitor: (monitorId: string): string => `/monitors/${monitorId}`,
+  run: (runId: string): string => `/runs/${runId}`,
+  notificationSettings: "/settings/notifications",
+} as const
+
 export const STUB_AUTH_HEADER = "x-user-id"
 
 export const LOCAL_SERVICE_TAG = {

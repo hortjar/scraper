@@ -2,15 +2,12 @@ import { AppConfigLive, appConfig } from "@scraper/core/config"
 import { TranslatorLive } from "@scraper/core/i18n"
 import { loggerLayer } from "@scraper/core/observability"
 import { DatabaseLive } from "@scraper/db"
-import {
-  JobProducer,
-  NotifyRunnerLive,
-  QueueRegistry,
-  RateLimiter,
-  RedisClient,
-} from "@scraper/server/modules/jobs"
+import { JobProducer, QueueRegistry, RateLimiter, RedisClient } from "@scraper/server/modules/jobs"
 import { MonitorsLayer } from "@scraper/server/modules/monitors"
-import { NotificationsLayer } from "@scraper/server/modules/notifications"
+import {
+  NotificationsLayer,
+  NotificationsNotifyRunnerLive,
+} from "@scraper/server/modules/notifications"
 import { RunsLayer, RunsScrapeRunnerLive } from "@scraper/server/modules/runs"
 import { ScrapingLayer } from "@scraper/server/modules/scraping"
 import { Effect, Layer, ManagedRuntime } from "effect"
@@ -34,7 +31,7 @@ const WorkerBaseLayer = Layer.mergeAll(
   RunsLayer,
 )
 
-export const WorkerLayer = Layer.mergeAll(RunsScrapeRunnerLive, NotifyRunnerLive).pipe(
+export const WorkerLayer = Layer.mergeAll(RunsScrapeRunnerLive, NotificationsNotifyRunnerLive).pipe(
   Layer.provideMerge(WorkerBaseLayer),
 )
 

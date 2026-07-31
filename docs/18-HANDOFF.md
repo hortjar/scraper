@@ -21,6 +21,7 @@ passing on `main`.
 | Notification channel routes                 | ✅ built, mounted, CRUD + test verified over HTTP                         |
 | Notification rule routes                    | ✅ built, mounted, CRUD + ownership verified over HTTP                    |
 | Delivery routes                             | ✅ list with filters and retry, verified over HTTP                        |
+| Notify worker                               | ✅ real dispatcher; a change now reaches the channel, verified end to end |
 | `apps/web/src/features/auth`                | ✅ login, register, password reset, profile, password, sessions, API keys |
 | `apps/web/src/features/monitors`            | ✅ list, create, edit, detail, delete, run now                            |
 | `apps/web/src/features/runs`                | ✅ runs and changes panels, run detail, diff renderer                     |
@@ -99,31 +100,14 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **The notify worker is still a stub, so no notification has ever been sent.**
-   `modules/runs/rules/rule-evaluation.ts` inserts a `pending` delivery and enqueues
-   `notify({ deliveryId })`; `jobs/handlers/notify-runner.service.ts` logs
-   `job.notify.stub` and returns. Everything upstream works — verified end to end on
-   2026-07-31, a forced content change gave `changed: true`, a `changes` row and a
-   `pending` delivery — and then nothing. This is the product's core promise and the
-   single most valuable thing left.
-
-   `NotificationDispatcher.dispatch` is _not_ the seam: it inserts its own delivery
-   mid-flow, so calling it here would double-write. What is needed is a
-   `deliver(deliveryId)` path that reuses the dispatcher's decrypt → decode → render →
-   `withNotifyRetry` → `updateStatus` core against an existing row, plus a query that
-   rebuilds a `NotificationMessage` from delivery → rule → monitor → changes → run
-   (no builder exists yet) and the recipient's locale, then
-   `notifications/notify-runner.live.ts` wired into `WorkerLayer` the way
-   `runs/scrape-runner.live.ts` wires `ScrapeRunner`.
-
-2. **Remaining API operations.** `docs/09-API.md` specifies 58; 52 are served.
+1. **Remaining API operations.** `docs/09-API.md` specifies 58; 52 are served.
    Missing: monitor export/import, `GET /monitors/:id/series`,
    `POST /rules/:id/preview`, and the two `/admin` routes — there is no admin module
    yet.
-3. **`web/features/channels`** — the channel routes it needs now exist.
-4. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
+2. **`web/features/channels`** — the channel routes it needs now exist.
+3. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
    suppression is recorded but never delivered — `modules/runs/README.md` §Known gaps.
-5. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
+4. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
    Portainer — 23 documented variables are absent from the compose
    `x-app-environment` anchor, listed in `deploy/portainer/STACK.md` §3a.
 

@@ -96,12 +96,6 @@ the server's, and a window whose start equals its end is never quiet.
 
 ## Known gaps
 
-- **Nothing is ever delivered.** Rule evaluation inserts a `pending` delivery and
-  enqueues `notify({ deliveryId })`, but the `notify` queue's handler is still
-  `jobs/handlers/notify-runner.service.ts` — a stub that logs `job.notify.stub` and
-  returns. Deliveries therefore accumulate as `pending` forever. Verified end to end on
-  2026-07-31: a real content change produced `changed: true`, a `changes` row and a
-  `pending` delivery, and then stopped. See `docs/18-HANDOFF.md` §4.
 - Quiet-hours holds are written to `REDIS_KEY.digestBucket`, which only drains when a
   digest cron fires for that rule. Per-rule digest scheduling is stream **K**; until
   it lands, a quiet-hours suppression is recorded but not later delivered.
