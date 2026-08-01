@@ -37,6 +37,9 @@ COPY apps/api apps/api
 RUN pnpm install --frozen-lockfile --store-dir /build/.pnpm-store
 RUN pnpm deploy --filter @scraper/api --prod /app
 
+COPY deploy/verify-deploy.mjs /verify-deploy.mjs
+RUN node /verify-deploy.mjs /app/node_modules/@scraper/server
+
 FROM ${BUN_IMAGE}
 
 ARG APP_VERSION=""

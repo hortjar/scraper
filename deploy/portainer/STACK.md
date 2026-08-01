@@ -29,6 +29,18 @@ In Portainer:
 The first deploy builds three images and takes a few minutes. Later deploys reuse
 the layer cache unless the lockfile changed.
 
+### An image can no longer ship a half-copied package
+
+Both API and worker builds assert, after `pnpm deploy`, that every subpath in
+`@scraper/server`'s `exports` map actually exists in the deployed tree. If the copy
+is incomplete — the failure that produces `Cannot find module
+'@scraper/server/modules/logs'` at runtime — **the build fails instead of
+producing the image**, naming the missing subpaths.
+
+So a build that completes cannot be missing modules. If the API still fails that
+way, the container is running an older image than the build just produced; check
+the image's Created time against the build you just ran.
+
 ### Making sure you deployed what you think you deployed
 
 **If `IMAGE_REGISTRY` or `IMAGE_TAG` is set in the stack's environment, the stack
