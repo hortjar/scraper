@@ -4,7 +4,7 @@
 that cost real time, and what is left. Where it disagrees with another doc about
 current state, this page is right.
 
-Last verified **2026-07-31** at 0.8.0, workspace green: 0 lint, 0 typecheck, 583 tests, CI
+Last verified **2026-08-01** at 0.8.0, workspace green: 0 lint, 0 typecheck, 597 tests, CI
 passing on `main`.
 
 ## 1. What exists
@@ -25,7 +25,7 @@ passing on `main`.
 | `apps/web/src/features/auth`                | ✅ login, register, password reset, profile, password, sessions, API keys |
 | `apps/web/src/features/monitors`            | ✅ list, create, edit, detail, delete, run now                            |
 | `apps/web/src/features/runs`                | ✅ runs and changes panels, run detail, diff renderer                     |
-| `apps/web` channels feature                 | ❌ not started; the routes it needs now exist                             |
+| `apps/web` channels feature                 | ✅ list, editor from kind descriptors, deliveries feed, per-monitor rules |
 
 The API serves **40 paths** / 52 operations: `/health`, `/ready`, `/metrics`, `/meta`,
 13 under `/auth`, 13 under `/monitors` (CRUD plus preview, enable, disable, duplicate
@@ -104,7 +104,14 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
    Missing: monitor export/import, `GET /monitors/:id/series`,
    `POST /rules/:id/preview`, and the two `/admin` routes — there is no admin module
    yet.
-2. **`web/features/channels`** — the channel routes it needs now exist.
+2. **The browser strategy does not work under Bun.** Playwright's WebSocket client
+   waits for `node:http`'s `'upgrade'` event; Bun emits `'response'` for the 101, so
+   `connectOverCDP` hangs until the 45s timeout. Every `engine: browser` run fails
+   and auto-escalation produces a failed run rather than a rendered page. Proven both
+   ways against the same browserless container — `modules/runs/README.md` §Traps.
+   Two ways out: run the worker on Node, or drive browserless over its REST API
+   instead of CDP. That is a decision to make, not a bug to fix. Screenshots can be
+   stored and served today; they just cannot be captured.
 3. **Per-rule digest cron** (stream K). Until it exists, a digest or quiet-hours
    suppression is recorded but never delivered — `modules/runs/README.md` §Known gaps.
 4. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
