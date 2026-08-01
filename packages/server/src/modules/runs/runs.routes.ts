@@ -18,6 +18,7 @@ import {
   RunDiffDto,
   RunListDto,
   RunSnapshotDto,
+  SeriesDto,
 } from "./runs.schema.js"
 import { Runs } from "./runs.service.js"
 
@@ -26,6 +27,7 @@ const standardRunParameters = Schema.standardSchemaV1(RunIdParameters)
 const standardRunList = Schema.standardSchemaV1(RunListDto)
 const standardDiff = Schema.standardSchemaV1(RunDiffDto)
 const standardSnapshot = Schema.standardSchemaV1(RunSnapshotDto)
+const standardSeries = Schema.standardSchemaV1(SeriesDto)
 
 const againstFrom = (raw: string | undefined): RunId | null =>
   raw === undefined || raw === "" ? null : (raw as RunId)
@@ -84,6 +86,23 @@ const monitorScopedHandlers = (options: AuthPluginOptions<RunServices>) =>
         detail: {
           summary: "List a monitor's changes",
           operationId: RUN_OPERATION_ID.listChanges,
+          tags: [API_TAG.runs],
+        },
+      },
+    )
+    .get(
+      RUN_PATH.monitorSeries,
+      ({ runAuthFx, user, params, query }) =>
+        runAuthFx(
+          Effect.flatMap(Runs, (runs) => runs.series(user.userId, params.monitorId, query)),
+        ),
+      {
+        auth: { scopes: [READ_SCOPE] },
+        params: standardMonitorParameters,
+        response: { ...FAILURES, [HTTP_STATUS.ok]: standardSeries },
+        detail: {
+          summary: "Numeric history for one extractor",
+          operationId: RUN_OPERATION_ID.series,
           tags: [API_TAG.runs],
         },
       },

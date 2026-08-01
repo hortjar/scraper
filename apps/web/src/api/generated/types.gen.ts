@@ -10192,6 +10192,225 @@ export type ListRunsResponses = {
 
 export type ListRunsResponse = ListRunsResponses[keyof ListRunsResponses];
 
+export type GetMonitorSeriesData = {
+    body?: never;
+    path: {
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}/series';
+};
+
+export type GetMonitorSeriesErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type GetMonitorSeriesError = GetMonitorSeriesErrors[keyof GetMonitorSeriesErrors];
+
+export type GetMonitorSeriesResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        bucket: 'raw' | 'hour' | 'day';
+        /**
+         * a string matching the pattern ^[a-z][a-z0-9_]{0,63}$
+         */
+        extractorKey: string;
+        /**
+         * a Universally Unique Identifier
+         */
+        monitorId: string;
+        points: Array<{
+            at: string;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            count: number;
+            max: number;
+            min: number;
+            value: number;
+        }>;
+    };
+};
+
+export type GetMonitorSeriesResponse = GetMonitorSeriesResponses[keyof GetMonitorSeriesResponses];
+
 export type PreviewMonitorData = {
     body: {
         browserOptions?: {

@@ -86,6 +86,22 @@ export const RunSnapshotDto = Schema.Struct({
 
 export const RunDiffQuery = Schema.Struct({ against: Schema.optional(Schema.String) })
 
+export const SeriesPointDto = Schema.Struct({
+  at: Schema.String,
+  value: Schema.Number,
+  min: Schema.Number,
+  max: Schema.Number,
+  count: NonNegativeInt,
+})
+
+export const SeriesDto = Schema.Struct({
+  monitorId: MonitorId,
+  extractorKey: ExtractorKey,
+  bucket: Schema.Literal("raw", "hour", "day"),
+  points: Schema.Array(SeriesPointDto),
+})
+export type SeriesDto = typeof SeriesDto.Type
+
 export const RunListDto = Schema.Struct({
   items: Schema.Array(RunDto),
   nextCursor: Schema.NullOr(Schema.String),

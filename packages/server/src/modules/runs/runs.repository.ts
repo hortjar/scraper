@@ -22,6 +22,7 @@ import type {
   RunListFilter,
   StartRunInput,
 } from "./runs.repository.types.js"
+import { makeSeriesQueries } from "./series.repository.js"
 import { makeSnapshotQueries } from "./snapshots.repository.js"
 
 const decodeRunRow = decodeRow(Run, RUN_ENTITY)
@@ -174,6 +175,7 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
     })
 
     const snapshots = makeSnapshotQueries(database)
+    const seriesQueries = makeSeriesQueries(database)
 
     const list = Effect.fn(SPAN.runRepository.list)(function* (
       monitorId: MonitorId,
@@ -271,6 +273,7 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
       fieldValues,
       insertChanges,
       ...snapshots,
+      ...seriesQueries,
       list,
       findById,
       listChanges,

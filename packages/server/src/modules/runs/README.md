@@ -76,6 +76,27 @@ strategy ran, how big was the page, did anything change".
 Log message strings are `LOG_EVENT` in core telemetry, not literals, so a rename
 cannot silently orphan a dashboard query.
 
+## Series
+
+`GET /monitors/:id/series` reads numeric `field_values` joined to their run's
+`started_at`, restricted to successful runs — a failed run has no number worth
+plotting. `bucket=raw|hour|day`; bucketed queries return avg as the value plus min,
+max and count so a chart can draw a band without a second request. Raw points set
+min and max to the value itself, so the client renders one shape either way.
+
+Two traps, both found live:
+
+- **`date_trunc($1, …)` cannot be grouped by.** Passing the unit as a bind
+  parameter makes postgres treat the SELECT and GROUP BY expressions as different
+  ($1 vs $5), and it fails with 42803. The unit comes from a closed set, so there is
+  one fixed `sql` fragment per bucket and nothing is interpolated at all.
+- **A raw SQL expression is not a mapped column**, so `date_trunc` comes back as a
+  string rather than a Date — the same shape as the `sql.unsafe` timestamptz trap
+  below. `asPoint` coerces it.
+
+Results are capped at `MAX_SERIES_POINTS`. An unbounded series is the same
+disk-and-memory hazard as an unbounded diff.
+
 ## Diffing
 
 `diff/field-diff.ts` dispatches on the extractor's `valueType`:

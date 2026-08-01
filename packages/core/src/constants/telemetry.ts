@@ -59,6 +59,7 @@ export const SPAN = {
     list: "Runs.list",
     findById: "Runs.findById",
     listChanges: "Runs.listChanges",
+    series: "Runs.series",
     trigger: "Runs.trigger",
   },
   runRepository: {

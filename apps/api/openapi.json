@@ -45946,6 +45946,859 @@
         ]
       }
     },
+    "/monitors/{monitorId}/series": {
+      "get": {
+        "operationId": "getMonitorSeries",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "monitorId",
+            "required": true,
+            "schema": {
+              "description": "a Universally Unique Identifier",
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "bucket": {
+                      "enum": [
+                        "raw",
+                        "hour",
+                        "day"
+                      ],
+                      "type": "string"
+                    },
+                    "extractorKey": {
+                      "description": "a string matching the pattern ^[a-z][a-z0-9_]{0,63}$",
+                      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                      "type": "string"
+                    },
+                    "monitorId": {
+                      "description": "a Universally Unique Identifier",
+                      "format": "uuid",
+                      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                      "type": "string"
+                    },
+                    "points": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "at": {
+                            "type": "string"
+                          },
+                          "count": {
+                            "description": "a non-negative number",
+                            "minimum": 0,
+                            "title": "nonNegative",
+                            "type": "integer"
+                          },
+                          "max": {
+                            "type": "number"
+                          },
+                          "min": {
+                            "type": "number"
+                          },
+                          "value": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "at",
+                          "value",
+                          "min",
+                          "max",
+                          "count"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "monitorId",
+                    "extractorKey",
+                    "bucket",
+                    "points"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 200"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 400"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 403"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 404"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 409"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 422"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 429"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 500"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 503"
+          }
+        },
+        "summary": "Numeric history for one extractor",
+        "tags": [
+          "Runs"
+        ]
+      }
+    },
     "/monitors/preview": {
       "post": {
         "operationId": "previewMonitor",

@@ -1,6 +1,7 @@
 import { FIRST_ATTEMPT, ROUTE, RUN_TRIGGER, SERVICE_TAG, SPAN } from "@scraper/core/constants"
-import type { MonitorId, RunId, UserId } from "@scraper/core/domain"
-import { RunNotFound, ScreenshotNotFound } from "@scraper/core/errors"
+import type { ExtractorKey, MonitorId, RunId, UserId } from "@scraper/core/domain"
+import { RunNotFound, ScreenshotNotFound, ValidationFailed } from "@scraper/core/errors"
+import { MSG } from "@scraper/core/i18n"
 import { pageSize } from "@scraper/db"
 import { Effect } from "effect"
 
@@ -9,11 +10,30 @@ import { MonitorRepository } from "../monitors/index.js"
 import { ArtifactStore } from "../storage/index.js"
 
 import { diffText } from "./diff/text-diff.js"
-import { RUN_PATH } from "./runs.constants.js"
+import { RUN_PATH, SERIES_BUCKET, SERIES_EXTRACTOR_FIELD } from "./runs.constants.js"
+import type { SeriesBucket } from "./runs.constants.js"
 import { RunRepository } from "./runs.repository.js"
 
 const screenshotPath = (runId: RunId): string =>
   `${ROUTE.runs}/${runId}${RUN_PATH.screenshotSuffix}`
+
+export interface SeriesQuery {
+  readonly extractorKey?: string | undefined
+  readonly from?: string | undefined
+  readonly to?: string | undefined
+  readonly bucket?: string | undefined
+}
+
+const BUCKETS: readonly string[] = Object.values(SERIES_BUCKET)
+
+const toBucket = (raw: string | undefined): SeriesBucket =>
+  raw !== undefined && BUCKETS.includes(raw) ? (raw as SeriesBucket) : SERIES_BUCKET.raw
+
+const toDate = (raw: string | undefined): Date | null => {
+  if (raw === undefined || raw === "") return null
+  const parsed = new Date(raw)
+  return Number.isNaN(parsed.getTime()) ? null : parsed
+}
 
 export interface PageQuery {
   readonly cursor?: string | undefined
@@ -129,6 +149,43 @@ export class Runs extends Effect.Service<Runs>()(SERVICE_TAG.Runs, {
       return yield* diffAgainst(runId, named)
     })
 
+    const series = Effect.fn(SPAN.runs.series)(function* (
+      userId: UserId,
+      monitorId: MonitorId,
+      query: SeriesQuery,
+    ) {
+      yield* monitors.findById(userId, monitorId)
+
+      const extractorKey = query.extractorKey ?? ""
+      if (extractorKey === "") {
+        return yield* new ValidationFailed({
+          issues: [{ path: [SERIES_EXTRACTOR_FIELD], messageKey: MSG.errors.validationFailed }],
+        })
+      }
+
+      const key = extractorKey as ExtractorKey
+      const bucket = toBucket(query.bucket)
+      const points = yield* repository.series(monitorId, {
+        extractorKey: key,
+        from: toDate(query.from),
+        to: toDate(query.to),
+        bucket,
+      })
+
+      return {
+        monitorId,
+        extractorKey: key,
+        bucket,
+        points: points.map((point) => ({
+          at: point.at.toISOString(),
+          value: point.value,
+          min: point.min,
+          max: point.max,
+          count: point.count,
+        })),
+      }
+    })
+
     const activity = Effect.fn(SPAN.runs.listChanges)(function* (userId: UserId, query: PageQuery) {
       return yield* repository.listUserChanges(userId, {
         cursor: query.cursor,
@@ -139,6 +196,7 @@ export class Runs extends Effect.Service<Runs>()(SERVICE_TAG.Runs, {
     return {
       list,
       listChanges,
+      series,
       findById,
       trigger,
       snapshot,

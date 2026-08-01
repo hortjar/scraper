@@ -30,9 +30,24 @@ export const RUN_PLUGIN = {
   activityHandlers: "runs/activity-handlers",
 } as const
 
+export const SERIES_BUCKET = {
+  raw: "raw",
+  hour: "hour",
+  day: "day",
+} as const
+
+export type SeriesBucket = (typeof SERIES_BUCKET)[keyof typeof SERIES_BUCKET]
+
+export const SERIES_NUMERIC_COLUMNS = ["value", "min", "max", "count"] as const
+
+export const MAX_SERIES_POINTS = 1000
+
+export const SERIES_EXTRACTOR_FIELD = "extractorKey"
+
 export const RUN_PATH = {
   monitorRuns: "/:monitorId/runs",
   monitorChanges: "/:monitorId/changes",
+  monitorSeries: "/:monitorId/series",
   runNow: "/:monitorId/run",
   byId: "/:runId",
   diff: "/:runId/diff",
@@ -45,6 +60,7 @@ export const RUN_PATH = {
 export const RUN_OPERATION_ID = {
   list: "listRuns",
   listChanges: "listChanges",
+  series: "getMonitorSeries",
   get: "getRun",
   runNow: "runMonitorNow",
   diff: "getRunDiff",
