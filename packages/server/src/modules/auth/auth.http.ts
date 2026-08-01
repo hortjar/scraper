@@ -3,7 +3,7 @@ import { AppConfig, blankToUndefined } from "@scraper/core/config"
 import { APP_ENV, HEADER, HTTP_STATUS, LOG_FIELD } from "@scraper/core/constants"
 import type { AppError, HttpErrorBody } from "@scraper/core/errors"
 import { resolveLocale, Translator } from "@scraper/core/i18n"
-import { toHttpFailure } from "@scraper/core/observability"
+import { describeAppError, toHttpFailure } from "@scraper/core/observability"
 import { Effect, Either, type ManagedRuntime } from "effect"
 import { Elysia } from "elysia"
 
@@ -93,19 +93,6 @@ export interface ResponseSink {
 }
 
 const SERVER_FAILURE_LOG = "http.serverFailure"
-
-const asText = (value: unknown): string =>
-  typeof value === "string" ? value : JSON.stringify(value)
-
-const DESCRIBED_FIELDS = ["cause", "entity", "detail", "operation", "reason"] as const
-
-const describeAppError = (error: AppError): string => {
-  const record = error as unknown as Readonly<Record<string, unknown>>
-  const parts = DESCRIBED_FIELDS.filter(
-    (field) => record[field] !== undefined && record[field] !== null,
-  ).map((field) => `${field}=${asText(record[field])}`)
-  return parts.length === 0 ? error._tag : `${error._tag} ${parts.join(" ")}`
-}
 
 const failureResponse = (
   error: AppError,

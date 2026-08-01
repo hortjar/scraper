@@ -8,9 +8,12 @@ is `storageConfig` in `core/config` (`STORAGE_DRIVER`, `STORAGE_LOCAL_PATH`, the
 ## Two drivers, one contract
 
 `local` writes under `STORAGE_LOCAL_PATH`, which must be a mounted volume in
-production — the container filesystem is not one. `s3` uses `Bun.S3Client`, which
-is why this package needs no AWS SDK: the runtime already ships a SigV4 client, and
-adding a dependency to reach the same endpoint would be pure weight.
+production — the container filesystem is not one. `s3` signs requests with
+`aws4fetch` over the platform `fetch`, rather than the AWS SDK: it is a few
+kilobytes and it works on any runtime with `fetch`, which matters because this
+service is constructed in both processes and they are **not the same runtime** —
+the API is Bun and the worker is Node. Anything Bun-only here (`Bun.S3Client`,
+`Bun.file`) would work in one process and throw in the other.
 
 Both return the **key**, not a URL. Callers store the key; whoever serves it decides
 what URL shape to expose. That keeps a stored reference valid across a driver change

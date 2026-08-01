@@ -14,3 +14,9 @@ export const STORAGE_OPERATION = {
 export const ARTIFACT_ENTITY = "artifact.key"
 export const PARENT_SEGMENT = ".."
 export const DIRECTORY_MODE = 0o755
+
+export const FILE_NOT_FOUND = "ENOENT"
+
+export const AWS_SERVICE = { s3: "s3" } as const
+
+export const HTTP_METHOD = { get: "GET", put: "PUT" } as const

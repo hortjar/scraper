@@ -1,5 +1,6 @@
 import type { ExtractedField, Extractor, Monitor, MonitorConfig } from "@scraper/core/domain"
 import type { AppError } from "@scraper/core/errors"
+import { describeAppError } from "@scraper/core/observability"
 
 import { diffField } from "./diff/field-diff.js"
 import type { ChangeDraft, FieldSnapshot } from "./diff/field-diff.js"
@@ -96,8 +97,6 @@ export const reasonOf = (error: AppError): string | null => {
 }
 
 export const detailOf = (error: AppError): string => {
-  const detail = (error as { detail?: unknown }).detail
-  if (typeof detail === "string" && detail !== "") return detail
-  const message = (error as { message?: unknown }).message
-  return typeof message === "string" && message !== "" ? message : UNKNOWN_ERROR_DETAIL
+  const described = describeAppError(error)
+  return described === error._tag ? UNKNOWN_ERROR_DETAIL : described
 }

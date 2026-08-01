@@ -38,11 +38,11 @@ meant to sit behind your own reverse proxy, so it stays outside the dev block.
 
 ## 1. Images
 
-| Image            | Base                | Contents                                |
-| ---------------- | ------------------- | --------------------------------------- |
-| `scraper-api`    | `oven/bun:1-alpine` | Elysia server, migrations               |
-| `scraper-worker` | `oven/bun:1-debian` | BullMQ consumers, Playwright client     |
-| `scraper-web`    | `nginx:alpine`      | Static Vite build + runtime config shim |
+| Image            | Base                    | Contents                                |
+| ---------------- | ----------------------- | --------------------------------------- |
+| `scraper-api`    | `oven/bun:1-alpine`     | Elysia server, migrations               |
+| `scraper-worker` | `node:22-bookworm-slim` | BullMQ consumers, Playwright client     |
+| `scraper-web`    | `nginx:alpine`          | Static Vite build + runtime config shim |
 
 All three are **multi-stage** and share a `deps` stage that runs
 `pnpm install --frozen-lockfile` with `pnpm fetch` caching, then

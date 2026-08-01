@@ -64,7 +64,11 @@ const readCapped = (response: Response, maxBytes: number): Effect.Effect<string,
     },
     catch: (cause) =>
       isTooLarge(cause)
-        ? new ScrapeFailed({ reason: "too_large", retryable: false })
+        ? new ScrapeFailed({
+            reason: "too_large",
+            retryable: false,
+            detail: `response exceeded ${String(maxBytes)} bytes`,
+          })
         : new ScrapeFailed({ reason: "network", retryable: true, detail: String(cause) }),
   })
 
@@ -86,7 +90,12 @@ const fetchOnce = (
   }).pipe(
     Effect.timeoutFail({
       duration: Duration.millis(timeoutMs),
-      onTimeout: () => new ScrapeFailed({ reason: "timeout", retryable: true }),
+      onTimeout: () =>
+        new ScrapeFailed({
+          reason: "timeout",
+          retryable: true,
+          detail: `no response from ${request.url} within ${String(timeoutMs)}ms`,
+        }),
     }),
   )
 
@@ -101,7 +110,12 @@ const nextRedirectRequest = (
     const location = response.headers.get(HEADER.location)
     if (location === null) {
       return yield* Effect.fail(
-        new ScrapeFailed({ reason: "navigation", retryable: false, httpStatus: response.status }),
+        new ScrapeFailed({
+          reason: "navigation",
+          retryable: false,
+          httpStatus: response.status,
+          detail: `redirect ${String(response.status)} from ${request.url} had no location header`,
+        }),
       )
     }
     const nextUrl = new URL(location, request.url).href
@@ -123,7 +137,12 @@ const followRedirects = (
     if (isRedirectStatus(response.status)) {
       if (hop >= MAX_REDIRECTS) {
         return yield* Effect.fail(
-          new ScrapeFailed({ reason: "navigation", retryable: false, httpStatus: response.status }),
+          new ScrapeFailed({
+            reason: "navigation",
+            retryable: false,
+            httpStatus: response.status,
+            detail: `more than ${String(MAX_REDIRECTS)} redirects starting at ${request.url}`,
+          }),
         )
       }
       const nextRequest = yield* nextRedirectRequest(request, response, options.blockedHostPatterns)

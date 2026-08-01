@@ -188,12 +188,14 @@ the server's, and a window whose start equals its end is never quiet.
 - `previousRunFailed` is derived from "there is no previous successful run", so
   `run_recovered` fires on a monitor's first successful run. Distinguishing "never ran"
   from "recovered" needs the previous run regardless of status.
-- **The browser strategy cannot run under Bun.** Playwright's bundled WebSocket
-  client waits for `node:http`'s `'upgrade'` event; Bun emits `'response'` for the
-  101 instead, so `chromium.connectOverCDP` never resolves and every `engine:
-browser` run dies on the 45s timeout. Proven both ways against the same
-  browserless container: identical script succeeds under `node`, hangs under `bun`.
-  A raw `new WebSocket(...)` to the same URL connects in ~200ms, so it is
-  specifically playwright's `node:http` upgrade path, not Bun's sockets. Until this
-  is resolved, screenshots can be stored and served but never captured, and
-  auto-escalation produces a failed run rather than a browser-rendered one.
+- **The browser strategy cannot run under Bun**, which is why `apps/worker` runs on
+  Node while the API stays on Bun. Playwright's bundled WebSocket client waits for
+  `node:http`'s `'upgrade'` event and Bun emits `'response'` for the 101, so
+  `chromium.connectOverCDP` never resolved and every `engine: browser` run died on
+  the 45s timeout. Proven three ways against the same browserless container: the
+  identical script succeeded under `node`, hung under `bun`, and a raw
+  `new WebSocket(...)` to the same URL connected in ~200ms — so it is playwright's
+  `node:http` upgrade path, not Bun's sockets. **This took `engine: auto` down with
+  it**, because auto-escalation moves a run to the browser whenever the required
+  extractors do not match, so an ordinary selector mistake surfaced as a 45-second
+  browser timeout rather than as the missing extractor it was.

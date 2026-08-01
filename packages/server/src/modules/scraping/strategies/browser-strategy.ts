@@ -209,7 +209,11 @@ export const makeBrowserStrategy = (dependencies: BrowserStrategyDependencies): 
 
     if (dependencies.wsEndpoint === "") {
       return yield* Effect.fail(
-        new ScrapeFailed({ reason: "browser_unavailable", retryable: false }),
+        new ScrapeFailed({
+          reason: "browser_unavailable",
+          retryable: false,
+          detail: "BROWSER_WS_ENDPOINT is not configured",
+        }),
       )
     }
 
@@ -241,7 +245,12 @@ export const makeBrowserStrategy = (dependencies: BrowserStrategyDependencies): 
     ).pipe(
       Effect.timeoutFail({
         duration: Duration.millis(timeoutMs),
-        onTimeout: () => new ScrapeFailed({ reason: "timeout", retryable: true }),
+        onTimeout: () =>
+          new ScrapeFailed({
+            reason: "timeout",
+            retryable: true,
+            detail: `browser did not finish ${request.url} within ${String(timeoutMs)}ms`,
+          }),
       }),
     )
 
