@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next"
 
 import { MetricTile } from "../../../components/molecules"
 import { DataTable, type DataTableColumn } from "../../../components/organisms"
+import { Badge } from "../../../components/ui"
 import type { AdminStats } from "../types"
 
 type QueueRow = AdminStats["queues"][number]
@@ -47,6 +48,17 @@ export const StatsGrid = ({ stats }: StatsGridProperties) => {
       align: "end",
       cell: (row) => row.failed,
     },
+    {
+      id: "workers",
+      header: t("stats.queueColumns.workers"),
+      align: "end",
+      cell: (row) =>
+        row.workers === 0 ? (
+          <Badge tone="negative">{t("stats.noConsumer")}</Badge>
+        ) : (
+          <span className="font-mono text-mono-data tabular-nums">{row.workers}</span>
+        ),
+    },
   ]
 
   return (
@@ -60,6 +72,12 @@ export const StatsGrid = ({ stats }: StatsGridProperties) => {
         />
         <MetricTile label={t("stats.failed")} value={String(stats.runs.failed)} />
       </div>
+
+      {stats.queues.some((queue) => queue.workers === 0) ? (
+        <p className="rounded-md border border-negative/30 bg-negative-soft px-3 py-2 text-small text-negative-ink">
+          {t("stats.noConsumerHint")}
+        </p>
+      ) : null}
 
       <DataTable
         columns={columns}

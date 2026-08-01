@@ -159,7 +159,8 @@ GET    /health        liveness — { status, version, commit, time }  ← versio
 GET    /ready         readiness — DB + Redis reachable, workers heartbeating
 GET    /metrics       Prometheus
 GET    /meta          public: enabled channel kinds, locales, registration open?
-GET    /admin/stats   admin only
+GET    /admin/stats   admin only — per queue: depth + attached worker count
+                                  (workers: 0 ⇒ nobody will run these jobs)
 GET    /admin/queues  Bull Board, admin only, feature-flagged
 ```
 

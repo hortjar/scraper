@@ -10,6 +10,7 @@ import { COUNTED_STATES, RECENT_WINDOW } from "./admin.constants.js"
 
 export interface QueueDepth {
   readonly name: QueueName
+  readonly workers: number
   readonly waiting: number
   readonly active: number
   readonly delayed: number
@@ -41,7 +42,9 @@ const numberedDeliveries = (
     total: counter([row], DELIVERY_COLUMNS)("value"),
   }))
 
-const asDepth = (counts: Readonly<Record<string, number>>): Omit<QueueDepth, "name"> => ({
+const asDepth = (
+  counts: Readonly<Record<string, number>>,
+): Omit<QueueDepth, "name" | "workers"> => ({
   waiting: counts.waiting ?? 0,
   active: counts.active ?? 0,
   delayed: counts.delayed ?? 0,
@@ -126,12 +129,17 @@ export class AdminRepository extends Effect.Service<AdminRepository>()(
         }
       })
 
+      const depthFor = (name: QueueName) =>
+        Effect.promise(async () => {
+          const [counts, workers] = await Promise.all([
+            queues[name].getJobCounts(...COUNTED_STATES),
+            queues[name].getWorkersCount(),
+          ])
+          return { name, ...asDepth(counts), workers } satisfies QueueDepth
+        })
+
       const queueDepths = Effect.fn(SPAN.admin.queues)(function* () {
-        return yield* Effect.forEach(Object.values(QUEUE), (name) =>
-          Effect.promise(() => queues[name].getJobCounts(...COUNTED_STATES)).pipe(
-            Effect.map((counts): QueueDepth => ({ name, ...asDepth(counts) })),
-          ),
-        )
+        return yield* Effect.forEach(Object.values(QUEUE), (name) => depthFor(name))
       })
 
       return { stats, queueDepths } as const

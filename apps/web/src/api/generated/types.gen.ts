@@ -451,6 +451,12 @@ export type GetAdminStatsResponses = {
              * a non-negative number
              */
             waiting: number;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            workers: number;
         }>;
         runs: {
             /**

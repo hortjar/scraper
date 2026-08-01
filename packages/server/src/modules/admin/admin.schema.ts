@@ -3,6 +3,7 @@ import { Schema } from "effect"
 
 export const QueueDepthDto = Schema.Struct({
   name: Schema.String,
+  workers: NonNegativeInt,
   waiting: NonNegativeInt,
   active: NonNegativeInt,
   delayed: NonNegativeInt,

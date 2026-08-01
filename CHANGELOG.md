@@ -8,6 +8,18 @@ This file starts at 0.2.0. For anything earlier, see the git history.
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-08-01
+
+### Added
+
+- **`/admin/stats` reports how many workers are attached to each queue.** A depth on
+  its own cannot tell "busy" from "abandoned" — jobs sitting in `queued` look the
+  same whether a worker is working through them or none has been connected for a
+  day. Each queue now carries a `workers` count from Redis, and the admin queue table
+  shows `none` in red with an explanation when it is zero, so a stalled install says
+  why it is stalled instead of leaving the reader to guess. Verified both ways
+  against a live stack: 0 with the worker stopped, 1 with it running.
+
 ## [0.8.1] - 2026-08-01
 
 ### Fixed

@@ -19,9 +19,12 @@
       "waiting": "Čeká",
       "active": "Aktivní",
       "delayed": "Odloženo",
-      "failed": "Selhalo"
+      "failed": "Selhalo",
+      "workers": "Workery"
     },
-    "queueCaption": "Hloubka front podle stavu"
+    "queueCaption": "Hloubka front podle stavu",
+    "noConsumer": "žádný",
+    "noConsumerHint": "Fronta bez workeru drží úlohy donekonečna — běhy zůstanou ve frontě a nic se nepohne. Zkontrolujte, že kontejner workeru běží a míří na stejný Redis."
   },
   "logs": {
     "title": "Logy",

@@ -13,6 +13,16 @@ failed/changed, deliveries grouped by status, and the depth of all four queues.
 `windowHours` is in the response rather than assumed by the caller, so a dashboard
 never has to hard-code the window this endpoint happens to use.
 
+### Each queue reports how many workers are attached
+
+A depth on its own cannot distinguish "busy" from "abandoned": ten waiting jobs
+look identical whether the worker is chewing through them or has been dead for a
+day. `getWorkersCount()` asks Redis how many clients hold that queue's blocking
+connection, so `workers: 0` is a positive statement that nothing will ever pick
+these jobs up — the condition behind every "my run is stuck in queued" report.
+It is per queue rather than per process because a worker can fail to register one
+queue while serving the rest, and a global heartbeat would call that healthy.
+
 **The counts come back from postgres as strings.** `count(*) filter (…)` is a
 bigint, and the driver hands it over as text even though drizzle types it `number`
 — the same trap that broke change decoding. Every aggregate goes through

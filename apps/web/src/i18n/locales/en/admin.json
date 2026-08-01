@@ -19,9 +19,12 @@
       "waiting": "Waiting",
       "active": "Active",
       "delayed": "Delayed",
-      "failed": "Failed"
+      "failed": "Failed",
+      "workers": "Workers"
     },
-    "queueCaption": "Queue depth by state"
+    "queueCaption": "Queue depth by state",
+    "noConsumer": "none",
+    "noConsumerHint": "A queue with no worker holds its jobs indefinitely — runs stay queued and nothing progresses. Check that the worker container is running and pointed at this Redis."
   },
   "logs": {
     "title": "Logs",

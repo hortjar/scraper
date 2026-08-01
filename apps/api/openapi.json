@@ -930,10 +930,17 @@
                             "minimum": 0,
                             "title": "nonNegative",
                             "type": "integer"
+                          },
+                          "workers": {
+                            "description": "a non-negative number",
+                            "minimum": 0,
+                            "title": "nonNegative",
+                            "type": "integer"
                           }
                         },
                         "required": [
                           "name",
+                          "workers",
                           "waiting",
                           "active",
                           "delayed",
