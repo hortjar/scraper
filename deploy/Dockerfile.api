@@ -1,3 +1,5 @@
+ARG BUN_IMAGE=oven/bun:1.3.10-alpine
+
 FROM node:22-alpine AS deps
 
 WORKDIR /build
@@ -35,7 +37,7 @@ COPY apps/api apps/api
 RUN pnpm install --frozen-lockfile --store-dir /build/.pnpm-store
 RUN pnpm deploy --filter @scraper/api --prod /app
 
-FROM oven/bun:1-alpine
+FROM ${BUN_IMAGE}
 
 ARG APP_VERSION=""
 ARG GIT_SHA=""
