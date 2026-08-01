@@ -144,6 +144,8 @@ export const SPAN = {
     enqueueScrape: "JobProducer.enqueueScrape",
     enqueueNotify: "JobProducer.enqueueNotify",
     enqueueDigest: "JobProducer.enqueueDigest",
+    upsertDigestSchedule: "JobProducer.upsertDigestSchedule",
+    removeDigestSchedule: "JobProducer.removeDigestSchedule",
     enqueueMaintenance: "JobProducer.enqueueMaintenance",
     ensureMaintenanceSchedules: "JobProducer.ensureMaintenanceSchedules",
   },

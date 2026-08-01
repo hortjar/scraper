@@ -21,8 +21,8 @@ export type NotifyJobPayload = typeof NotifyJobPayload.Type
 
 export const DigestJobPayload = Schema.Struct({
   ruleId: RuleId,
-  windowStart: Schema.String,
-  windowEnd: Schema.String,
+  windowStart: Schema.optional(Schema.String),
+  windowEnd: Schema.optional(Schema.String),
 })
 export type DigestJobPayload = typeof DigestJobPayload.Type
 

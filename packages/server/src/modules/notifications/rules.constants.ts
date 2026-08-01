@@ -16,3 +16,5 @@ export const RULE_OPERATION_ID = {
 } as const
 
 export const PREVIEW_CHANGE_LIMIT = 5
+
+export const DIGEST_FALLBACK_TIMEZONE = "UTC"

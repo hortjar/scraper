@@ -182,9 +182,9 @@ the server's, and a window whose start equals its end is never quiet.
 
 ## Known gaps
 
-- Quiet-hours holds are written to `REDIS_KEY.digestBucket`, which only drains when a
-  digest cron fires for that rule. Per-rule digest scheduling is stream **K**; until
-  it lands, a quiet-hours suppression is recorded but not later delivered.
+- Quiet-hours and digest holds are written to `REDIS_KEY.digestBucket` and drained
+  by the per-rule cron in `notifications` §Digest scheduling. A rule with no
+  `digestCron` still holds forever — the bucket has no owner to flush it.
 - `previousRunFailed` is derived from "there is no previous successful run", so
   `run_recovered` fires on a monitor's first successful run. Distinguishing "never ran"
   from "recovered" needs the previous run regardless of status.

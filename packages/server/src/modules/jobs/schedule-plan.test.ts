@@ -1,7 +1,11 @@
-import { CronExpression, MonitorId, Timezone } from "@scraper/core/domain"
+import { CronExpression, MonitorId, RuleId, Timezone } from "@scraper/core/domain"
 import { describe, expect, it } from "vitest"
 
-import { buildScrapeSchedulerPlan, type ScrapeSchedulerSource } from "./schedule-plan.js"
+import {
+  buildDigestSchedulerPlan,
+  buildScrapeSchedulerPlan,
+  type ScrapeSchedulerSource,
+} from "./schedule-plan.js"
 
 const CONFIG = { scrapeMaxAttempts: 3, backoffBaseMs: 30_000 }
 
@@ -74,5 +78,38 @@ describe("buildScrapeSchedulerPlan", () => {
 
     expect(plan.opts.attempts).toBe(7)
     expect(plan.opts.backoff).toEqual({ type: "exponential", delay: 1234 })
+  })
+})
+
+describe("buildDigestSchedulerPlan", () => {
+  const RULE_ID = RuleId.make("44444444-4444-4444-4444-444444444444")
+
+  it("registers a cron scheduler keyed by rule so one rule maps to one flush", () => {
+    const plan = buildDigestSchedulerPlan(
+      { id: RULE_ID, digestCron: "0 9 * * *", timezone: "Europe/Prague" },
+      1000,
+    )
+
+    expect(plan.id).toBe(`digest:${RULE_ID}`)
+    expect(plan.repeat).toEqual({ pattern: "0 9 * * *", tz: "Europe/Prague" })
+    expect(plan.name).toBe("digest")
+  })
+
+  it("carries only the ruleId — a cron template cannot know the window it will fire in", () => {
+    const plan = buildDigestSchedulerPlan(
+      { id: RULE_ID, digestCron: "0 9 * * *", timezone: "UTC" },
+      1000,
+    )
+
+    expect(plan.data).toEqual({ ruleId: RULE_ID })
+  })
+
+  it("takes the backoff base from configuration", () => {
+    const plan = buildDigestSchedulerPlan(
+      { id: RULE_ID, digestCron: "0 9 * * *", timezone: "UTC" },
+      4321,
+    )
+
+    expect(plan.opts.backoff).toEqual({ type: "exponential", delay: 4321 })
   })
 })

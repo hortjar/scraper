@@ -8,7 +8,7 @@ import {
   SPAN,
   type MaintenanceTask,
 } from "@scraper/core/constants"
-import type { MonitorId } from "@scraper/core/domain"
+import type { MonitorId, RuleId } from "@scraper/core/domain"
 import { QueueUnavailable } from "@scraper/core/errors"
 import { Effect } from "effect"
 
@@ -31,7 +31,12 @@ import type {
   ScrapeJobPayload,
 } from "./jobs.schema.js"
 import { QueueRegistry } from "./queue-registry.service.js"
-import { buildScrapeSchedulerPlan, type MonitorScheduleInput } from "./schedule-plan.js"
+import {
+  buildDigestSchedulerPlan,
+  buildScrapeSchedulerPlan,
+  type DigestScheduleInput,
+  type MonitorScheduleInput,
+} from "./schedule-plan.js"
 
 const asQueueUnavailable = (queue: string) => (cause: unknown) =>
   new QueueUnavailable({ queue, cause })
@@ -77,6 +82,44 @@ export class JobProducer extends Effect.Service<JobProducer>()(SERVICE_TAG.JobPr
       monitorId: MonitorId,
     ) {
       yield* removeScheduleById(SCHEDULER_ID.monitor(monitorId))
+    })
+
+    const removeDigestScheduleById = (id: string) =>
+      Effect.tryPromise({
+        try: () => queues.digest.removeJobScheduler(id),
+        catch: asQueueUnavailable(QUEUE.digest),
+      })
+
+    const upsertDigestSchedule = Effect.fn(SPAN.jobProducer.upsertDigestSchedule)(function* (
+      rule: DigestScheduleInput,
+    ) {
+      const schedulerId = SCHEDULER_ID.digestRule(rule.id)
+
+      if (!rule.enabled || rule.digestCron === null) {
+        yield* removeDigestScheduleById(schedulerId)
+        return
+      }
+
+      const plan = buildDigestSchedulerPlan(
+        { id: rule.id, digestCron: rule.digestCron, timezone: rule.timezone },
+        config.redis.backoffBaseMs,
+      )
+
+      yield* Effect.tryPromise({
+        try: () =>
+          queues.digest.upsertJobScheduler(plan.id, plan.repeat, {
+            name: plan.name,
+            data: plan.data,
+            opts: plan.opts,
+          }),
+        catch: asQueueUnavailable(QUEUE.digest),
+      })
+    })
+
+    const removeDigestSchedule = Effect.fn(SPAN.jobProducer.removeDigestSchedule)(function* (
+      ruleId: RuleId,
+    ) {
+      yield* removeDigestScheduleById(SCHEDULER_ID.digestRule(ruleId))
     })
 
     const enqueueScrape = Effect.fn(SPAN.jobProducer.enqueueScrape)(function* (
@@ -174,6 +217,8 @@ export class JobProducer extends Effect.Service<JobProducer>()(SERVICE_TAG.JobPr
       enqueueScrape,
       enqueueNotify,
       enqueueDigest,
+      upsertDigestSchedule,
+      removeDigestSchedule,
       enqueueMaintenance,
       ensureMaintenanceSchedules,
     } as const

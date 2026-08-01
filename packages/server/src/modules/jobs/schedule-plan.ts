@@ -5,10 +5,14 @@ import {
   SCHEDULE_KIND,
   SCHEDULER_ID,
 } from "@scraper/core/constants"
-import type { Monitor, MonitorId, Schedule } from "@scraper/core/domain"
+import type { Monitor, MonitorId, RuleId, Schedule } from "@scraper/core/domain"
 
 import { deterministicJitterMs } from "./jitter.js"
-import { SCRAPE_JOB_RETENTION } from "./jobs.constants.js"
+import {
+  DIGEST_JOB_RETENTION,
+  DIGEST_MAX_ATTEMPTS,
+  SCRAPE_JOB_RETENTION,
+} from "./jobs.constants.js"
 import type { ScrapeJobPayload } from "./jobs.schema.js"
 
 export interface ScrapeSchedulerSource {
@@ -70,3 +74,45 @@ export const buildScrapeSchedulerPlan = (
     },
   }
 }
+
+export interface DigestScheduleInput {
+  readonly id: RuleId
+  readonly enabled: boolean
+  readonly digestCron: string | null
+  readonly timezone: string
+}
+
+export interface DigestSchedulerSource {
+  readonly id: RuleId
+  readonly digestCron: string
+  readonly timezone: string
+}
+
+export interface DigestSchedulerPlan {
+  readonly id: string
+  readonly repeat: { readonly pattern: string; readonly tz: string }
+  readonly name: string
+  readonly data: { readonly ruleId: RuleId }
+  readonly opts: {
+    readonly attempts: number
+    readonly backoff: { readonly type: "exponential"; readonly delay: number }
+    readonly removeOnComplete: (typeof DIGEST_JOB_RETENTION)["removeOnComplete"]
+    readonly removeOnFail: (typeof DIGEST_JOB_RETENTION)["removeOnFail"]
+  }
+}
+
+export const buildDigestSchedulerPlan = (
+  rule: DigestSchedulerSource,
+  backoffBaseMs: number,
+): DigestSchedulerPlan => ({
+  id: SCHEDULER_ID.digestRule(rule.id),
+  repeat: { pattern: rule.digestCron, tz: rule.timezone },
+  name: JOB_NAME.digest,
+  data: { ruleId: rule.id },
+  opts: {
+    attempts: DIGEST_MAX_ATTEMPTS,
+    backoff: { type: "exponential", delay: backoffBaseMs },
+    removeOnComplete: DIGEST_JOB_RETENTION.removeOnComplete,
+    removeOnFail: DIGEST_JOB_RETENTION.removeOnFail,
+  },
+})

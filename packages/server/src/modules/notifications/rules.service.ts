@@ -1,15 +1,18 @@
 import { AppConfig } from "@scraper/core/config"
-import { SERVICE_TAG, SPAN } from "@scraper/core/constants"
-import type { MonitorId, RuleId, UserId } from "@scraper/core/domain"
+import { DELIVERY_MODE, SERVICE_TAG, SPAN } from "@scraper/core/constants"
+import type { MonitorId, NotificationRule, RuleId, UserId } from "@scraper/core/domain"
 import { ChannelNotFound, MonitorNotFound } from "@scraper/core/errors"
 import { resolveLocale } from "@scraper/core/i18n"
 import { Database } from "@scraper/db"
 import { Effect, Option } from "effect"
 
+import { JobProducer } from "../jobs/index.js"
+
 import { ChannelRepository, ChannelRepositoryLive } from "./channel.repository.js"
 import { ChannelRegistry, ChannelRegistryLive } from "./channels/index.js"
 import type { RuleInsert, RulePatch } from "./rule.repository.crud.js"
 import { RuleRepository, RuleRepositoryLive } from "./rule.repository.js"
+import { DIGEST_FALLBACK_TIMEZONE } from "./rules.constants.js"
 import { makePreviewMessageBuilder } from "./rules.preview.js"
 import type { CreateRuleBody, UpdateRuleBody } from "./rules.schema.js"
 import { TemplateRenderer, TemplateRendererLive } from "./template/template-renderer.service.js"
@@ -51,6 +54,7 @@ export class Rules extends Effect.Service<Rules>()(SERVICE_TAG.Rules, {
     const rules = yield* RuleRepository
     const channels = yield* ChannelRepository
     const registry = yield* ChannelRegistry
+    const jobs = yield* JobProducer
     const renderer = yield* TemplateRenderer
     const database = yield* Database
     const config = yield* AppConfig
@@ -73,7 +77,9 @@ export class Rules extends Effect.Service<Rules>()(SERVICE_TAG.Rules, {
       const isOwned = yield* rules.ownsMonitor(userId, monitorId)
       if (!isOwned) return yield* Effect.fail(new MonitorNotFound({ id: monitorId }))
       yield* channels.findById(userId, body.channelId)
-      return yield* rules.insert({ monitorId, ...columnsFrom(body) })
+      const created = yield* rules.insert({ monitorId, ...columnsFrom(body) })
+      yield* syncDigestSchedule(created)
+      return created
     })
 
     const update = Effect.fn(SPAN.rules.update)(function* (
@@ -82,12 +88,23 @@ export class Rules extends Effect.Service<Rules>()(SERVICE_TAG.Rules, {
       body: UpdateRuleBody,
     ) {
       if (body.channelId !== undefined) yield* channels.findById(userId, body.channelId)
-      return yield* rules.update(userId, ruleId, patchFrom(body))
+      const updated = yield* rules.update(userId, ruleId, patchFrom(body))
+      yield* syncDigestSchedule(updated)
+      return updated
     })
 
     const remove = Effect.fn(SPAN.rules.remove)(function* (userId: UserId, ruleId: RuleId) {
       yield* rules.remove(userId, ruleId)
+      yield* jobs.removeDigestSchedule(ruleId)
     })
+
+    const syncDigestSchedule = (rule: NotificationRule) =>
+      jobs.upsertDigestSchedule({
+        id: rule.id,
+        enabled: rule.enabled && rule.deliveryMode === DELIVERY_MODE.digest,
+        digestCron: rule.digestCron,
+        timezone: rule.quietHours?.timezone ?? DIGEST_FALLBACK_TIMEZONE,
+      })
 
     const preview = Effect.fn(SPAN.notifications.render)(function* (
       userId: UserId,
@@ -126,6 +143,7 @@ export class Rules extends Effect.Service<Rules>()(SERVICE_TAG.Rules, {
     return { list, create, update, remove, preview } as const
   }),
   dependencies: [
+    JobProducer.Default,
     RuleRepositoryLive,
     ChannelRepositoryLive,
     ChannelRegistryLive,

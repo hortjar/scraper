@@ -1,5 +1,5 @@
-import { QUEUE, SCHEDULE_KIND, SPAN } from "@scraper/core/constants"
-import { CronExpression, MonitorId, Timezone } from "@scraper/core/domain"
+import { DELIVERY_MODE, QUEUE, SCHEDULE_KIND, SPAN } from "@scraper/core/constants"
+import { CronExpression, MonitorId, RuleId, Timezone } from "@scraper/core/domain"
 import type { Schedule } from "@scraper/core/domain"
 import { QueueUnavailable } from "@scraper/core/errors"
 import { Database } from "@scraper/db"
@@ -11,6 +11,8 @@ import { JobProducer } from "../job-producer.service.js"
 import { QueueRegistry } from "../queue-registry.service.js"
 
 const MONITOR_SCHEDULER_PREFIX = "monitor:"
+const DIGEST_SCHEDULER_PREFIX = "digest:"
+const DIGEST_FALLBACK_TIMEZONE = "UTC"
 
 interface MonitorScheduleRow {
   readonly id: string
@@ -76,6 +78,8 @@ export const reconcileSchedules = Effect.fn(SPAN.maintenance.reconcileSchedules)
     catch: (cause) => new QueueUnavailable({ queue: QUEUE.scrape, cause }),
   })
 
+  yield* reconcileDigests(database, producer, queues)
+
   const orphaned = schedulers.filter(
     (scheduler) => scheduler.key.startsWith(MONITOR_SCHEDULER_PREFIX) && !known.has(scheduler.key),
   )
@@ -90,3 +94,62 @@ export const reconcileSchedules = Effect.fn(SPAN.maintenance.reconcileSchedules)
     { discard: true },
   )
 })
+
+interface DigestRuleRow {
+  readonly id: string
+  readonly enabled: boolean
+  readonly deliveryMode: string
+  readonly digestCron: string | null
+  readonly quietHours: { readonly timezone: string } | null
+}
+
+const reconcileDigests = (database: Database, producer: JobProducer, queues: QueueRegistry) =>
+  Effect.gen(function* () {
+    const rows: readonly DigestRuleRow[] = yield* database.query((database_) =>
+      database_
+        .select({
+          id: schema.notificationRules.id,
+          enabled: schema.notificationRules.enabled,
+          deliveryMode: schema.notificationRules.deliveryMode,
+          digestCron: schema.notificationRules.digestCron,
+          quietHours: schema.notificationRules.quietHours,
+        })
+        .from(schema.notificationRules),
+    )
+
+    const digestRules = rows.filter(
+      (row) => row.enabled && row.deliveryMode === DELIVERY_MODE.digest && row.digestCron !== null,
+    )
+    const known = new Set(digestRules.map((row) => `${DIGEST_SCHEDULER_PREFIX}${row.id}`))
+
+    yield* Effect.forEach(
+      digestRules,
+      (row) =>
+        producer.upsertDigestSchedule({
+          id: RuleId.make(row.id),
+          enabled: true,
+          digestCron: row.digestCron,
+          timezone: row.quietHours?.timezone ?? DIGEST_FALLBACK_TIMEZONE,
+        }),
+      { discard: true },
+    )
+
+    const schedulers = yield* Effect.tryPromise({
+      try: () => queues.digest.getJobSchedulers(),
+      catch: (cause) => new QueueUnavailable({ queue: QUEUE.digest, cause }),
+    })
+
+    const orphaned = schedulers.filter(
+      (scheduler) => scheduler.key.startsWith(DIGEST_SCHEDULER_PREFIX) && !known.has(scheduler.key),
+    )
+
+    yield* Effect.forEach(
+      orphaned,
+      (scheduler) =>
+        Effect.tryPromise({
+          try: () => queues.digest.removeJobScheduler(scheduler.key),
+          catch: (cause) => new QueueUnavailable({ queue: QUEUE.digest, cause }),
+        }),
+      { discard: true },
+    )
+  })
