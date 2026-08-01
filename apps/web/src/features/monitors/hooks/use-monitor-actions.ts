@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
+import { monitorRunsQueryKey } from "../../runs"
 import {
   deleteMonitorMutationOptions,
   monitorListRootKey,
@@ -26,9 +27,12 @@ export const useMonitorActions = (notice: MonitorNoticeController): MonitorActio
 
   const runMutation = useMutation({
     ...runMonitorNowMutationOptions(),
-    onSuccess: () => {
+    onSuccess: (_result, variables) => {
       notice.succeed(TOAST_KEY.runQueued)
       invalidateLists()
+      void queryClient.invalidateQueries({
+        queryKey: monitorRunsQueryKey(variables.path.monitorId),
+      })
     },
     onError: (error) => {
       notice.fail(error)

@@ -8,4 +8,5 @@ export {
   type RunDetailContainerProperties,
 } from "./containers/RunDetailContainer"
 export { DiffRenderer, type DiffRendererProperties } from "./components/DiffRenderer"
+export { monitorRunsQueryKey } from "./api"
 export type { ChangeSummary, DiffHunk, RunDetail, RunFieldValue, RunSummary } from "./types"

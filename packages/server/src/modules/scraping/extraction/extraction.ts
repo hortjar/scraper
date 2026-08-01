@@ -136,8 +136,12 @@ export interface ScopedDocument {
 export const scopeDocument = (html: string, contentSelector: string | null): ScopedDocument => {
   const { body, document } = parseFragment(html)
   const trimmedSelector = contentSelector?.trim() ?? ""
-  const root = trimmedSelector === "" ? body : (document.querySelector(trimmedSelector) ?? body)
-  return { document, root }
+
+  if (trimmedSelector === "") {
+    return { document, root: document.documentElement ?? body }
+  }
+
+  return { document, root: document.querySelector(trimmedSelector) ?? body }
 }
 
 export const selectRaw = (

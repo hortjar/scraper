@@ -12,6 +12,8 @@ export const STALE_TIME = {
 export const REFETCH_INTERVAL = {
   health: 60_000,
   activity: 15_000,
+  runs: 15_000,
+  runsActive: 3000,
 } as const
 
 const MAX_RETRIES = 2

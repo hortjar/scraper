@@ -211,3 +211,48 @@ describe("selectRaw / whole_page", () => {
     }
   })
 })
+
+describe("selectRaw / document scope", () => {
+  const WITH_HEAD = `<!doctype html><html><head>
+      <title>Page Title</title>
+      <meta property="og:price:amount" content="49.90">
+    </head><body><h1>Hello</h1></body></html>`
+
+  it("reaches <head>, where title and meta tags live", async () => {
+    const exit = await run(WITH_HEAD, null, extractor({ selectorKind: "css", selector: "title" }))
+
+    expect(exit).toEqual(
+      Exit.succeed({ raw: "Page Title", rawList: null, missing: false, matchCount: 1 }),
+    )
+  })
+
+  it("reads a meta attribute — the most common price selector there is", async () => {
+    const exit = await run(
+      WITH_HEAD,
+      null,
+      extractor({
+        selectorKind: "css",
+        selector: 'meta[property="og:price:amount"]',
+        attribute: "content",
+      }),
+    )
+
+    expect(exit).toEqual(
+      Exit.succeed({ raw: "49.90", rawList: null, missing: false, matchCount: 1 }),
+    )
+  })
+
+  it("still reaches the body", async () => {
+    const exit = await run(WITH_HEAD, null, extractor({ selectorKind: "css", selector: "h1" }))
+
+    expect(exit).toEqual(
+      Exit.succeed({ raw: "Hello", rawList: null, missing: false, matchCount: 1 }),
+    )
+  })
+
+  it("narrows to the content selector when one is set, head included or not", async () => {
+    const exit = await run(WITH_HEAD, "body", extractor({ selectorKind: "css", selector: "title" }))
+
+    expect(exit).toEqual(Exit.succeed({ raw: null, rawList: null, missing: true, matchCount: 0 }))
+  })
+})
