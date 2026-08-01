@@ -23510,6 +23510,9 @@
                   "$schema": "http://json-schema.org/draft-07/schema#",
                   "additionalProperties": false,
                   "properties": {
+                    "builtAt": {
+                      "type": "string"
+                    },
                     "commit": {
                       "type": "string"
                     },
@@ -23530,6 +23533,7 @@
                     "status",
                     "version",
                     "commit",
+                    "builtAt",
                     "time"
                   ],
                   "type": "object"

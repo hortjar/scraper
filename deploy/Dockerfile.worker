@@ -33,6 +33,7 @@ RUN groupadd -g 10001 -r scraper && useradd -u 10001 -r -g scraper scraper
 COPY --from=deploy /app .
 
 RUN mkdir -p /tmp /data/snapshots && chown -R scraper:scraper /app /tmp /data
+RUN date -u +%Y-%m-%dT%H:%M:%SZ > /app/BUILD_AT
 
 ENV APP_VERSION=$APP_VERSION \
     GIT_SHA=$GIT_SHA \
@@ -40,4 +41,4 @@ ENV APP_VERSION=$APP_VERSION \
 
 USER scraper
 
-CMD ["node_modules/.bin/tsx", "src/main.ts"]
+CMD ["sh", "-c", "BUILD_AT=$(cat /app/BUILD_AT) exec node_modules/.bin/tsx src/main.ts"]

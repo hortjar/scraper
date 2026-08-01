@@ -64,7 +64,13 @@ const app = createApp({
 app.listen({ hostname: config.http.host, port: config.http.port }, () => {
   runtime.runFork(
     Effect.logInfo("api.listening").pipe(
-      Effect.annotateLogs({ host: config.http.host, port: config.http.port }),
+      Effect.annotateLogs({
+        host: config.http.host,
+        port: config.http.port,
+        version: config.app.version,
+        commit: config.app.gitSha,
+        builtAt: config.app.builtAt,
+      }),
     ),
   )
 })

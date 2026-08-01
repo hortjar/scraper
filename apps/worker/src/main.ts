@@ -44,7 +44,13 @@ runtime.runFork(
 
 runtime.runFork(
   Effect.logInfo("worker.listening").pipe(
-    Effect.annotateLogs({ workerId, queues: workers.length }),
+    Effect.annotateLogs({
+      workerId,
+      queues: workers.length,
+      version: config.app.version,
+      commit: config.app.gitSha,
+      builtAt: config.app.builtAt,
+    }),
   ),
 )
 

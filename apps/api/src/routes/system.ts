@@ -33,6 +33,7 @@ const healthEffect = Effect.gen(function* () {
     status: HEALTH_STATUS.ok,
     version: config.app.version,
     commit: config.app.gitSha,
+    builtAt: config.app.builtAt,
     time: new Date(millis).toISOString(),
   }
 })

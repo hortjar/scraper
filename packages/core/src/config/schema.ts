@@ -39,6 +39,7 @@ export const appConfig = Config.all({
   appUrl: Config.string("APP_URL"),
   version: Config.string("APP_VERSION").pipe(Config.withDefault("0.0.0-dev")),
   gitSha: Config.string("GIT_SHA").pipe(Config.withDefault("local")),
+  builtAt: Config.string("BUILD_AT").pipe(Config.withDefault("unknown")),
   logLevel: Config.string("LOG_LEVEL").pipe(Config.withDefault("info")),
   logFormat: Config.literal("json", "pretty")("LOG_FORMAT").pipe(Config.withDefault("json")),
   defaultLocale: Config.string("DEFAULT_LOCALE").pipe(Config.withDefault("en")),

@@ -33,6 +33,11 @@ export const ENV_SPEC: readonly EnvironmentVariable[] = [
     required("APP_URL", "Public URL, used in emails, links and origin checks"),
     optional("APP_VERSION", "0.0.0-dev", "Baked at build time, reported by /health"),
     optional("GIT_SHA", "local", "Baked at build time, shown next to the version"),
+    optional(
+      "BUILD_AT",
+      "unknown",
+      "Image build timestamp; the container sets it from /app/BUILD_AT",
+    ),
     optional("LOG_LEVEL", "info", "trace | debug | info | warn | error | fatal"),
     optional("LOG_FORMAT", "json", "json | pretty"),
     optional("DEFAULT_LOCALE", "en", "Fallback locale"),

@@ -5814,6 +5814,7 @@ export type GetHealthResponses = {
      * Response for status 200
      */
     200: {
+        builtAt: string;
         commit: string;
         status: 'ok';
         time: string;

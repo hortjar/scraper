@@ -50,6 +50,7 @@ COPY --from=deploy /app .
 COPY apps/api/scripts/healthcheck.ts ./healthcheck.ts
 
 RUN mkdir -p /tmp /data/snapshots && chown -R scraper:scraper /app /tmp /data
+RUN date -u +%Y-%m-%dT%H:%M:%SZ > /app/BUILD_AT
 
 ENV APP_VERSION=$APP_VERSION \
     GIT_SHA=$GIT_SHA \
@@ -62,4 +63,4 @@ HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
 
 EXPOSE 9300
 
-CMD ["bun", "start"]
+CMD ["sh", "-c", "BUILD_AT=$(cat /app/BUILD_AT) exec bun src/main.ts"]

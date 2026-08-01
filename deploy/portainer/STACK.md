@@ -29,6 +29,33 @@ In Portainer:
 The first deploy builds three images and takes a few minutes. Later deploys reuse
 the layer cache unless the lockfile changed.
 
+### Making sure you deployed what you think you deployed
+
+**"Update the stack" re-runs Compose against the clone Portainer already has. It
+does not fetch.** Use **Pull and redeploy** (or enable GitOps auto-update) when the
+point is to pick up new commits — otherwise Compose faithfully rebuilds the old
+tree and nothing looks wrong.
+
+Every image stamps its build time, and both services report it:
+
+```bash
+curl -s http://<host>:9300/api/v1/health
+# {"status":"ok","version":"0.8.0","commit":"...","builtAt":"2026-08-01T17:03:11Z",...}
+
+docker logs <worker-container> | head -1
+# {"message":"worker.listening","version":"0.8.0","builtAt":"2026-08-01T17:03:11Z",...}
+```
+
+If `builtAt` predates the commit you expect, the clone is behind — pull and
+redeploy. If the API will not start at all, ask the image directly:
+
+```bash
+docker run --rm --entrypoint sh <image> -c 'ls node_modules/@scraper/server/src/modules'
+```
+
+A missing module there means the same thing: the image was built from an older
+tree.
+
 ### 2. Configure Environment Variables
 
 On the stack editor screen, scroll to **Environment variables** and load

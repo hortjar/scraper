@@ -6,6 +6,7 @@ export const HealthResponse = Schema.Struct({
   status: Schema.Literal(HEALTH_STATUS.ok),
   version: Schema.String,
   commit: Schema.String,
+  builtAt: Schema.String,
   time: Schema.String,
 })
 export type HealthResponse = typeof HealthResponse.Type
