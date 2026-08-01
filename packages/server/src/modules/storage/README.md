@@ -40,3 +40,19 @@ would be false.
 
 Keys are grouped by monitor so a monitor's artifacts can be swept in one prefix
 delete when it is removed, instead of scanning every key for a match.
+
+## The volume has to be writable by uid 10001
+
+`STORAGE_LOCAL_PATH` defaults to `/data/snapshots`, which is a Docker named volume
+in production. Docker initialises a fresh named volume from whatever the image has
+at that path — and if the image has nothing there, the mount point ends up
+`root:root`, so the containers' non-root user cannot `mkdir` and every screenshot
+fails with `EACCES`. The run still succeeds, because a failed capture is not
+allowed to fail change detection, so this shows up only as a `screenshot.failed`
+warning per run.
+
+Both images therefore create `/data/snapshots` and chown it, and **the API mounts
+the same volume as the worker**. The worker writes screenshots; the API serves
+them from `GET /runs/:id/screenshot`. With the volume on the worker alone — which
+is how the compose file started out — every screenshot would be stored and none
+could ever be read back.

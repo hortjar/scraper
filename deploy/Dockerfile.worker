@@ -32,7 +32,7 @@ RUN groupadd -g 10001 -r scraper && useradd -u 10001 -r -g scraper scraper
 
 COPY --from=deploy /app .
 
-RUN mkdir -p /tmp && chown -R scraper:scraper /app /tmp
+RUN mkdir -p /tmp /data/snapshots && chown -R scraper:scraper /app /tmp /data
 
 ENV APP_VERSION=$APP_VERSION \
     GIT_SHA=$GIT_SHA \

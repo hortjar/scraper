@@ -49,7 +49,7 @@ RUN addgroup -g 10001 -S scraper && adduser -u 10001 -S scraper -G scraper
 COPY --from=deploy /app .
 COPY apps/api/scripts/healthcheck.ts ./healthcheck.ts
 
-RUN mkdir -p /tmp && chown -R scraper:scraper /app /tmp
+RUN mkdir -p /tmp /data/snapshots && chown -R scraper:scraper /app /tmp /data
 
 ENV APP_VERSION=$APP_VERSION \
     GIT_SHA=$GIT_SHA \

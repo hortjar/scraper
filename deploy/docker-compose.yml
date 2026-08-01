@@ -128,6 +128,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    volumes:
+      - snapshots:/data/snapshots
     healthcheck:
       test: ["CMD", "bun", "run", "healthcheck.ts"]
       interval: 15s
