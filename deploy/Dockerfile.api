@@ -1,44 +1,19 @@
 ARG BUN_IMAGE=oven/bun:1.3.10-alpine
 
-FROM node:22-alpine AS deps
-
-WORKDIR /build
-
-RUN corepack enable && corepack prepare pnpm@9 --activate
-
-COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm fetch --frozen-lockfile --store-dir /build/.pnpm-store
-
 FROM node:22-alpine AS build
 
 WORKDIR /build
 
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
-COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY --from=deps /build/.pnpm-store ./.pnpm-store
+COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY packages packages
 COPY apps/api apps/api
 
-RUN pnpm install --frozen-lockfile --store-dir /build/.pnpm-store
-RUN pnpm --filter @scraper/api build
-
-FROM node:22-alpine AS deploy
-
-WORKDIR /build
-
-RUN corepack enable && corepack prepare pnpm@9 --activate
-
-COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY --from=deps /build/.pnpm-store ./.pnpm-store
-COPY packages packages
-COPY apps/api apps/api
-
-RUN pnpm install --frozen-lockfile --store-dir /build/.pnpm-store
-RUN pnpm deploy --filter @scraper/api --prod /app
+RUN pnpm install --frozen-lockfile --prod
 
 COPY deploy/verify-deploy.mjs /verify-deploy.mjs
-RUN node /verify-deploy.mjs /app/node_modules/@scraper/server
+RUN node /verify-deploy.mjs /build/apps/api/node_modules/@scraper/server
 
 FROM ${BUN_IMAGE}
 
@@ -49,7 +24,7 @@ WORKDIR /app
 
 RUN addgroup -g 10001 -S scraper && adduser -u 10001 -S scraper -G scraper
 
-COPY --from=deploy /app .
+COPY --from=build /build /app
 COPY apps/api/scripts/healthcheck.ts ./healthcheck.ts
 
 RUN mkdir -p /tmp /data/snapshots && chown -R scraper:scraper /app /tmp /data
@@ -61,8 +36,10 @@ ENV APP_VERSION=$APP_VERSION \
 
 USER scraper
 
+WORKDIR /app/apps/api
+
 HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
-    CMD bun run healthcheck.ts || exit 1
+    CMD bun run /app/healthcheck.ts || exit 1
 
 EXPOSE 9300
 

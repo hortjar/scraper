@@ -29,9 +29,22 @@ In Portainer:
 The first deploy builds three images and takes a few minutes. Later deploys reuse
 the layer cache unless the lockfile changed.
 
+### The images no longer copy the workspace packages
+
+`pnpm deploy` used to assemble a standalone `/app` by **copying** each workspace
+package into `node_modules`. That copy is what went stale in practice: an image
+built at 19:07 was found carrying a `@scraper/server` whose modules matched the
+source from roughly two hours earlier, which is how a container ends up unable to
+find a module that has existed in the repository all afternoon.
+
+The build now installs in place and runs from the workspace it just copied in, so
+`node_modules/@scraper/server` is a symlink to `packages/server` inside the same
+image. There is no second copy to drift, and nothing that can be older than the
+`COPY` that produced it.
+
 ### An image can no longer ship a half-copied package
 
-Both API and worker builds assert, after `pnpm deploy`, that every subpath in
+Both API and worker builds assert, after installing, that every subpath in
 `@scraper/server`'s `exports` map actually exists in the deployed tree. If the copy
 is incomplete — the failure that produces `Cannot find module
 '@scraper/server/modules/logs'` at runtime — **the build fails instead of
