@@ -38,11 +38,19 @@ meant to sit behind your own reverse proxy, so it stays outside the dev block.
 
 ## 1. Images
 
-| Image            | Base                    | Contents                                |
-| ---------------- | ----------------------- | --------------------------------------- |
-| `scraper-api`    | `oven/bun:1-alpine`     | Elysia server, migrations               |
-| `scraper-worker` | `node:22-bookworm-slim` | BullMQ consumers, Playwright client     |
-| `scraper-web`    | `nginx:alpine`          | Static Vite build + runtime config shim |
+| Image            | Base                     | Contents                            |
+| ---------------- | ------------------------ | ----------------------------------- |
+| `scraper-api`    | `oven/bun:1.3.10-alpine` | Elysia server, migrations           |
+| `scraper-worker` | `node:22-bookworm-slim`  | BullMQ consumers, Playwright client |
+
+**Base images are pinned to an exact version, not a floating major.** `oven/bun:1`
+moved from 1.2 to 1.3.14 and the API stopped booting: elysia's router dependency
+`memoirist` is loaded with `require()`, and 1.3.14 refuses `require()` of an async
+module. Nothing in the repository changed — the tag moved underneath it. The pin is
+the `BUN_IMAGE` build arg, so trying a newer runtime is one flag rather than an
+edit. Verified by building the same tree three ways: 1.3.14 crashes on boot, 1.3.10
+and 1.2.23 both reach `api.listening`.
+| `scraper-web` | `nginx:alpine` | Static Vite build + runtime config shim |
 
 All three are **multi-stage** and share a `deps` stage that runs
 `pnpm install --frozen-lockfile` with `pnpm fetch` caching, then
