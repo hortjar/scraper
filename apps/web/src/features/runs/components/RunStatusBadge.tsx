@@ -1,4 +1,10 @@
-import { CircleCheckIcon, CircleSlashIcon, CircleXIcon, LoaderCircleIcon } from "lucide-react"
+import {
+  CircleCheckIcon,
+  CircleSlashIcon,
+  CircleXIcon,
+  ClockIcon,
+  LoaderCircleIcon,
+} from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { Badge } from "../../../components/ui"
@@ -8,6 +14,7 @@ import { RUN_STATUS_KEY, RUN_STATUS_TONE } from "../format"
 import type { RunStatus } from "../types"
 
 const STATUS_ICON = {
+  [RUN_STATUS.queued]: ClockIcon,
   [RUN_STATUS.running]: LoaderCircleIcon,
   [RUN_STATUS.success]: CircleCheckIcon,
   [RUN_STATUS.failed]: CircleXIcon,

@@ -20,6 +20,7 @@
     "attempt": "Attempt"
   },
   "status": {
+    "queued": "Queued",
     "running": "Running",
     "success": "Success",
     "failed": "Failed",

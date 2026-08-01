@@ -20,6 +20,7 @@
     "attempt": "Pokus"
   },
   "status": {
+    "queued": "Ve frontě",
     "running": "Probíhá",
     "success": "Úspěch",
     "failed": "Selhalo",

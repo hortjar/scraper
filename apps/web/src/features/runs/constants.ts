@@ -2,6 +2,7 @@ import { covering } from "./exhaustive"
 import type { ChangeKind, DiffHunkKind, RunStatus, RunTrigger } from "./types"
 
 export const RUN_STATUS = covering<RunStatus>()({
+  queued: "queued",
   running: "running",
   success: "success",
   failed: "failed",

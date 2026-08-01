@@ -54,7 +54,7 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
             .values({
               monitorId: input.monitorId,
               trigger: input.trigger,
-              status: RUN_STATUS.running,
+              status: input.status ?? RUN_STATUS.running,
               startedAt: input.startedAt,
               attempt: input.attempt,
               jobId: input.jobId,
@@ -63,6 +63,22 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
         )
         .pipe(Effect.mapError((error) => constraintFailure(error, RUN_ENTITY)))
       return yield* decodeRunRow(toDomainRun(rows[0] as never))
+    })
+
+    const markRunning = Effect.fn(SPAN.runRepository.start)(function* (
+      runId: RunId,
+      startedAt: Date,
+      jobId: string | null,
+    ) {
+      const rows = yield* database.query((executor) =>
+        executor
+          .update(schema.runs)
+          .set({ status: RUN_STATUS.running, startedAt, jobId })
+          .where(eq(schema.runs.id, runId))
+          .returning(),
+      )
+      const row = rows[0]
+      return row === undefined ? null : yield* decodeRunRow(toDomainRun(row))
     })
 
     const finish = Effect.fn(SPAN.runRepository.finish)(function* (
@@ -267,6 +283,7 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
     return {
       findByJobId,
       start,
+      markRunning,
       finish,
       previousSuccessful,
       insertFieldValues,

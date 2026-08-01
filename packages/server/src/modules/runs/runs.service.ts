@@ -1,9 +1,16 @@
-import { FIRST_ATTEMPT, ROUTE, RUN_TRIGGER, SERVICE_TAG, SPAN } from "@scraper/core/constants"
+import {
+  FIRST_ATTEMPT,
+  ROUTE,
+  RUN_STATUS,
+  RUN_TRIGGER,
+  SERVICE_TAG,
+  SPAN,
+} from "@scraper/core/constants"
 import type { ExtractorKey, MonitorId, RunId, UserId } from "@scraper/core/domain"
 import { RunNotFound, ScreenshotNotFound, ValidationFailed } from "@scraper/core/errors"
 import { MSG } from "@scraper/core/i18n"
 import { pageSize } from "@scraper/db"
-import { Effect } from "effect"
+import { Clock, Effect } from "effect"
 
 import { JobProducer } from "../jobs/index.js"
 import { MonitorRepository } from "../monitors/index.js"
@@ -85,11 +92,25 @@ export class Runs extends Effect.Service<Runs>()(SERVICE_TAG.Runs, {
 
     const trigger = Effect.fn(SPAN.runs.trigger)(function* (userId: UserId, monitorId: MonitorId) {
       yield* monitors.findById(userId, monitorId)
+
+      const queuedAt = new Date(yield* Clock.currentTimeMillis)
+      const run = yield* repository.start({
+        monitorId,
+        trigger: RUN_TRIGGER.manual,
+        jobId: null,
+        attempt: FIRST_ATTEMPT,
+        startedAt: queuedAt,
+        status: RUN_STATUS.queued,
+      })
+
       yield* jobs.enqueueScrape({
         monitorId,
         trigger: RUN_TRIGGER.manual,
         attempt: FIRST_ATTEMPT,
+        runId: run.id,
       })
+
+      return run
     })
 
     const snapshot = Effect.fn(SPAN.runs.findById)(function* (userId: UserId, runId: RunId) {

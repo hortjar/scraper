@@ -15,6 +15,7 @@ export const RunTrigger = Schema.Literal(
 export type RunTrigger = typeof RunTrigger.Type
 
 export const RunStatus = Schema.Literal(
+  RUN_STATUS.queued,
   RUN_STATUS.running,
   RUN_STATUS.success,
   RUN_STATUS.failed,

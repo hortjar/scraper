@@ -6,6 +6,7 @@ export interface StartRunInput {
   readonly jobId: string | null
   readonly attempt: number
   readonly startedAt: Date
+  readonly status?: RunStatus | undefined
 }
 
 export interface FinishRunInput {

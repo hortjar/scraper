@@ -6,6 +6,7 @@ import type { ChangeKind, RunStatus, RunTrigger } from "./types"
 export type BadgeTone = NonNullable<BadgeProperties["tone"]>
 
 export const RUN_STATUS_TONE = {
+  queued: "neutral",
   running: "info",
   success: "positive",
   failed: "negative",
@@ -13,6 +14,7 @@ export const RUN_STATUS_TONE = {
 } as const satisfies Record<RunStatus, BadgeTone>
 
 export const RUN_STATUS_KEY = {
+  queued: "status.queued",
   running: "status.running",
   success: "status.success",
   failed: "status.failed",

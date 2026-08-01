@@ -34,6 +34,7 @@ describe("sortMigrationFiles", () => {
       "0001_monitor_stats.sql",
       "0002_change_dedupe.sql",
       "0003_app_logs.sql",
+      "0004_run_status_queued.sql",
     ])
   })
 })

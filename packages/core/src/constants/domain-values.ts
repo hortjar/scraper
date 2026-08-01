@@ -79,6 +79,7 @@ export const RUN_TRIGGER = {
 } as const
 
 export const RUN_STATUS = {
+  queued: "queued",
   running: "running",
   success: "success",
   failed: "failed",

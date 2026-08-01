@@ -11081,7 +11081,7 @@ export type ListRunsResponses = {
              */
             monitorId: string;
             startedAt: string;
-            status: 'running' | 'success' | 'failed' | 'skipped';
+            status: 'queued' | 'running' | 'success' | 'failed' | 'skipped';
             strategyUsed: string | unknown;
             trigger: 'schedule' | 'manual' | 'retry' | 'test';
         }>;
@@ -13218,7 +13218,7 @@ export type GetRunResponses = {
         monitorId: string;
         screenshotUrl: string | unknown;
         startedAt: string;
-        status: 'running' | 'success' | 'failed' | 'skipped';
+        status: 'queued' | 'running' | 'success' | 'failed' | 'skipped';
         strategyUsed: string | unknown;
         trigger: 'schedule' | 'manual' | 'retry' | 'test';
     };

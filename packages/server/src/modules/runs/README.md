@@ -5,6 +5,28 @@ The change-detection pipeline. Consumes `scraping`, `monitors`, `jobs` and
 [docs/05-SCRAPING.md](../../../../../docs/05-SCRAPING.md) §6 and
 [docs/07-SCHEDULING.md](../../../../../docs/07-SCHEDULING.md) §4.
 
+## A queued run exists before a worker touches it
+
+`POST /monitors/:id/run` returns 202 and used to do nothing else: the `runs` row
+was created by the worker, in `runPipeline`. So between the click and a worker
+picking the job up there was **no row to show** — the UI had nothing to render, and
+refreshing could not help. If the worker was down the silence was permanent, and
+the 202 looked like a lie.
+
+`Runs.trigger` now inserts the run as `queued` and passes its id in the job
+payload; the pipeline adopts that row via `markRunning` instead of inserting its
+own. The scheduler still enqueues without a run id, so scheduled runs create their
+row on pickup as before.
+
+`queued` is a real status rather than reusing `running`, because those are
+different facts: one means a worker has it, the other means nothing has it yet.
+Conflating them would have hidden exactly the failure that made this visible — a
+queue with no consumer.
+
+If the pre-created row has since been deleted, `markRunning` returns null and the
+pipeline falls back to inserting one, so a stale job can never fail on a missing
+row.
+
 ## The pipeline
 
 `run-pipeline.ts` is the 14 steps of 07-SCHEDULING §4 in order. The shape worth

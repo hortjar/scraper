@@ -45,6 +45,7 @@ export interface RunRequest {
   readonly trigger: RunTrigger
   readonly attempt: number
   readonly jobId: string | null
+  readonly runId?: RunId | undefined
 }
 
 const hostOf = (url: string): string => new URL(url).hostname
@@ -269,7 +270,16 @@ export const runPipeline = Effect.fn(SPAN.runs.execute)(function* (request: RunR
   const runs = yield* RunRepository
   const rateLimiter = yield* RateLimiter
 
-  const resumed = request.jobId === null ? null : yield* runs.findByJobId(request.jobId)
+  const claimed =
+    request.runId === undefined
+      ? null
+      : yield* runs.markRunning(
+          request.runId,
+          new Date(yield* Clock.currentTimeMillis),
+          request.jobId,
+        )
+  const resumed =
+    claimed ?? (request.jobId === null ? null : yield* runs.findByJobId(request.jobId))
   if (resumed !== null && resumed.status !== RUN_STATUS.running) return resumed
 
   const monitor = yield* monitors.findAnyById(request.monitorId)

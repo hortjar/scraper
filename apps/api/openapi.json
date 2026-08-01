@@ -48353,6 +48353,7 @@
                           },
                           "status": {
                             "enum": [
+                              "queued",
                               "running",
                               "success",
                               "failed",
@@ -59939,6 +59940,7 @@
                     },
                     "status": {
                       "enum": [
+                        "queued",
                         "running",
                         "success",
                         "failed",

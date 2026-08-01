@@ -50,6 +50,7 @@ export const ScrapeRunnerLive = Layer.effect(
           trigger: payload.trigger,
           attempt: payload.attempt,
           jobId,
+          runId: payload.runId,
         }).pipe(Effect.asVoid, Effect.provide(context)),
     }),
   ),
