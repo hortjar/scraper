@@ -38,8 +38,16 @@ tree and nothing looks wrong.
 
 Every image stamps its build time, and both services report it:
 
+**There are two `/health` endpoints and they answer different questions.** `/health`
+on the web host is nginx's own liveness probe for its container; the API's is at
+`/api/v1/health`. Both now report the build they came from, so neither is a dead
+end:
+
 ```bash
-curl -s http://<host>:9300/api/v1/health
+curl -s http://<host>/health          # web container (nginx)
+# {"status":"ok","service":"web","builtAt":"2026-08-01T17:09:16Z"}
+
+curl -s http://<host>/api/v1/health   # API, through the nginx proxy
 # {"status":"ok","version":"0.8.0","commit":"...","builtAt":"2026-08-01T17:03:11Z",...}
 
 docker logs <worker-container> | head -1
