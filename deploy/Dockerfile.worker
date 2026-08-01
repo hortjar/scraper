@@ -28,7 +28,6 @@ ARG GIT_SHA=""
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@9 --activate
 RUN groupadd -g 10001 -r scraper && useradd -u 10001 -r -g scraper scraper
 
 COPY --from=deploy /app .
@@ -41,4 +40,4 @@ ENV APP_VERSION=$APP_VERSION \
 
 USER scraper
 
-CMD ["pnpm", "start"]
+CMD ["node_modules/.bin/tsx", "src/main.ts"]
