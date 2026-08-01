@@ -31,6 +31,28 @@ the layer cache unless the lockfile changed.
 
 ### Making sure you deployed what you think you deployed
 
+**If `IMAGE_REGISTRY` or `IMAGE_TAG` is set in the stack's environment, the stack
+stops building.** `pull_policy: build` means "build when the image is absent" — so
+once a matching image exists locally, whether pulled or built earlier, Compose
+reuses it and your new commits never reach a container. The symptom is a deploy
+that reports success while running old code. Leave both unset for a
+build-from-source stack, or point them at a tag you actually publish on every
+change.
+
+**"Re-pull image" does nothing for a build-from-source stack.** `docker compose
+pull` reports `Skipped` for any service that has a `build:` section, which is all
+three of ours. Rebuilding is what you want, and plain `docker compose up -d`
+already rebuilds when the clone's contents change.
+
+If a redeploy is not picking up new commits, this settles it on the host, in the
+stack's clone directory:
+
+```bash
+git log --oneline -1                       # is the clone actually at your commit?
+docker compose -f deploy/docker-compose.yml build --no-cache api worker
+docker compose -f deploy/docker-compose.yml up -d
+```
+
 **"Update the stack" re-runs Compose against the clone Portainer already has. It
 does not fetch.** Use **Pull and redeploy** (or enable GitOps auto-update) when the
 point is to pick up new commits — otherwise Compose faithfully rebuilds the old
