@@ -88,5 +88,13 @@
     "modified": "Modified",
     "increased": "Increased",
     "decreased": "Decreased"
+  },
+  "screenshot": {
+    "title": "Screenshot",
+    "description": "Full-page capture taken at the end of this run.",
+    "alt": "Full-page screenshot of the monitored page",
+    "openFull": "Open full size",
+    "emptyTitle": "No screenshot",
+    "emptyDescription": "Screenshots are captured only when the monitor runs in a browser with capture enabled."
   }
 }

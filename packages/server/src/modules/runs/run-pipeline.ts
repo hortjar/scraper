@@ -32,9 +32,11 @@ import {
   draftFieldChanges,
   isOperatorFault,
   previousByKey,
+  reasonOf,
   toFieldValueInput,
   toMonitorConfig,
 } from "./run-pipeline.mappers.js"
+import { storeScreenshot } from "./run-screenshot.js"
 import { MONITOR_ARCHIVED_REASON, MONITOR_DISABLED_REASON } from "./runs.constants.js"
 import { RunRepository } from "./runs.repository.js"
 
@@ -97,7 +99,13 @@ const execute = Effect.fn(SPAN.runs.persist)(function* (input: ExecuteInput) {
     input.monitor.id,
     outcome.fields.map((field) => toFieldValueInput(field)),
   )
-  yield* runs.insertSnapshot(input.runId, input.monitor.id, outcome.normalized)
+
+  const screenshotReference = yield* storeScreenshot(
+    input.monitor.id,
+    input.runId,
+    outcome.response.screenshot,
+  )
+  yield* runs.insertSnapshot(input.runId, input.monitor.id, outcome.normalized, screenshotReference)
 
   const logIdentity = { monitorId: input.monitor.id, runId: input.runId }
 
@@ -227,6 +235,7 @@ const failRun = Effect.fn(SPAN.runs.persist)(function* (input: FailureInput) {
     { monitorId: input.monitor.id, runId: input.runId },
     {
       errorTag: input.error._tag,
+      reason: reasonOf(input.error),
       cause: detailOf(input.error),
       durationMs: finishedAtMs - input.startedAtMs,
     },

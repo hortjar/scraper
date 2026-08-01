@@ -194,6 +194,15 @@ export class ConfigInvalid extends Data.TaggedError("ConfigInvalid")<{
   readonly problems: readonly string[]
 }> {}
 
+export class ScreenshotNotFound extends Data.TaggedError("ScreenshotNotFound")<{
+  readonly id: string
+}> {}
+
+export class StorageUnavailable extends Data.TaggedError("StorageUnavailable")<{
+  readonly operation: string
+  readonly cause: unknown
+}> {}
+
 export type AppError =
   | ValidationFailed
   | Unauthenticated
@@ -234,6 +243,8 @@ export type AppError =
   | QueueUnavailable
   | InvalidJobPayload
   | ConfigInvalid
+  | ScreenshotNotFound
+  | StorageUnavailable
 
 export interface HttpErrorBody {
   readonly code: ErrorCode

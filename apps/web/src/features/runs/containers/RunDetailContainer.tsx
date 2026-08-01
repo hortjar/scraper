@@ -5,6 +5,7 @@ import { ErrorState, LoadingState } from "../../../components/organisms"
 import { cn } from "../../../lib/utils"
 import { runDetailQueryOptions } from "../api"
 import { RunFieldValuesTable } from "../components/RunFieldValuesTable"
+import { RunScreenshotCard } from "../components/RunScreenshotCard"
 import { RunSummaryCard } from "../components/RunSummaryCard"
 import { toRunDetail } from "../transforms"
 
@@ -40,6 +41,7 @@ export const RunDetailContainer = ({ runId, className }: RunDetailContainerPrope
         <h2 className="text-heading text-ink">{t("fields.title")}</h2>
         <RunFieldValuesTable fields={run.fields} />
       </div>
+      <RunScreenshotCard screenshotUrl={run.screenshotUrl} />
     </div>
   )
 }

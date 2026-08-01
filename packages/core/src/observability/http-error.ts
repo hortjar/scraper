@@ -61,6 +61,7 @@ export const toHttpFailure: (error: AppError) => HttpFailure = Match.type<AppErr
       }),
     MonitorNotFound: (error) => notFound(MSG.errors.monitorNotFound, error.id),
     RunNotFound: (error) => notFound(MSG.errors.runNotFound, error.id),
+    ScreenshotNotFound: (error) => notFound(MSG.errors.screenshotNotFound, error.id),
     ChannelNotFound: (error) => notFound(MSG.errors.channelNotFound, error.id),
     RuleNotFound: (error) => notFound(MSG.errors.ruleNotFound, error.id),
     DeliveryNotFound: (error) => notFound(MSG.errors.deliveryNotFound, error.id),
@@ -131,6 +132,12 @@ export const toHttpFailure: (error: AppError) => HttpFailure = Match.type<AppErr
     DeliveryFailed: (error) =>
       unprocessable(MSG.errors.deliveryFailed, { channel: error.channelKind }),
     QueueUnavailable: () =>
+      failure(
+        HTTP_STATUS.serviceUnavailable,
+        ERROR_CODE.serviceUnavailable,
+        MSG.errors.serviceUnavailable,
+      ),
+    StorageUnavailable: () =>
       failure(
         HTTP_STATUS.serviceUnavailable,
         ERROR_CODE.serviceUnavailable,

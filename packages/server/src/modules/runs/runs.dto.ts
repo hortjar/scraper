@@ -41,9 +41,14 @@ export const toFieldValueDto = (row: StoredFieldRow): FieldValueDto => ({
   missing: row.missing,
 })
 
-export const toRunDetailDto = (run: Run, fields: readonly StoredFieldRow[]): RunDetailDto => ({
+export const toRunDetailDto = (
+  run: Run,
+  fields: readonly StoredFieldRow[],
+  screenshotUrl: string | null,
+): RunDetailDto => ({
   ...toRunDto(run),
   fields: fields.map((field) => toFieldValueDto(field)),
+  screenshotUrl,
 })
 
 export const toChangeDto = (change: Change): ChangeDto => ({

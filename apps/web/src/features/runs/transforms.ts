@@ -66,6 +66,7 @@ export const toRunFieldValue = (item: RunFieldValueResponse): RunFieldValue => (
 export const toRunDetail = (item: RunDetailResponse): RunDetail => ({
   ...toRunSummary(item),
   fields: item.fields.map((field) => toRunFieldValue(field)),
+  screenshotUrl: asString(item.screenshotUrl),
 })
 
 export const toChangeSummary = (item: ChangeListItem): ChangeSummary => ({

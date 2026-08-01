@@ -70,12 +70,18 @@ export const logRunFinished = (
 
 export const logRunFailed = (
   run: RunLogIdentity,
-  detail: { readonly errorTag: string; readonly cause: string; readonly durationMs: number },
+  detail: {
+    readonly errorTag: string
+    readonly reason: string | null
+    readonly cause: string
+    readonly durationMs: number
+  },
 ) =>
   Effect.logError(LOG_EVENT.run.failed).pipe(
     Effect.annotateLogs({
       ...identity(run),
       [LOG_FIELD.errorTag]: detail.errorTag,
+      ...(detail.reason !== null && { [LOG_FIELD.reason]: detail.reason }),
       [LOG_FIELD.cause]: detail.cause,
       [LOG_FIELD.durationMs]: detail.durationMs,
     }),

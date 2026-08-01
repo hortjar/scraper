@@ -1,10 +1,11 @@
-import { API_TAG, HTTP_STATUS, ROUTE } from "@scraper/core/constants"
+import { API_TAG, HEADER, HTTP_STATUS, ROUTE } from "@scraper/core/constants"
 import type { RunId } from "@scraper/core/domain"
 import { Effect, Schema } from "effect"
 import { Elysia } from "elysia"
 
 import type { AuthPluginOptions } from "../auth/index.js"
 import { authBase, FAILURES, requireUser, standardNoContent } from "../auth/index.js"
+import { SCREENSHOT_CONTENT_TYPE } from "../storage/index.js"
 
 import { RUN_ACTION, RUN_OPERATION_ID, RUN_PATH, RUN_PLUGIN } from "./runs.constants.js"
 import { toChangeDto, toRunDetailDto, toRunDto } from "./runs.dto.js"
@@ -128,6 +129,23 @@ const runScopedHandlers = (options: AuthPluginOptions<RunServices>) =>
       },
     )
     .get(
+      RUN_PATH.screenshot,
+      ({ runAuthFx, user, params, set }) => {
+        set.headers[HEADER.contentType] = SCREENSHOT_CONTENT_TYPE
+        return runAuthFx(Effect.flatMap(Runs, (runs) => runs.screenshot(user.userId, params.runId)))
+      },
+      {
+        auth: { scopes: [READ_SCOPE] },
+        params: standardRunParameters,
+        response: FAILURES,
+        detail: {
+          summary: "Get the full-page screenshot captured for a run",
+          operationId: RUN_OPERATION_ID.screenshot,
+          tags: [API_TAG.runs],
+        },
+      },
+    )
+    .get(
       RUN_PATH.diff,
       ({ runAuthFx, user, params, query }) =>
         runAuthFx(
@@ -154,8 +172,8 @@ const runScopedHandlers = (options: AuthPluginOptions<RunServices>) =>
             runs
               .findById(user.userId, params.runId)
               .pipe(
-                Effect.map(({ fields, run }) =>
-                  toRunDetailDto(run, fields as readonly StoredFieldRow[]),
+                Effect.map(({ fields, run, screenshotUrl }) =>
+                  toRunDetailDto(run, fields as readonly StoredFieldRow[], screenshotUrl),
                 ),
               ),
           ),

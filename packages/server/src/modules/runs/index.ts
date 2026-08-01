@@ -1,5 +1,7 @@
 import { Layer } from "effect"
 
+import { ArtifactStore } from "../storage/index.js"
+
 import { RunRepository } from "./runs.repository.js"
 import { Runs } from "./runs.service.js"
 
@@ -33,6 +35,7 @@ export { matchTrigger } from "./rules/trigger-match.js"
 export type { TriggerContext } from "./rules/trigger-match.js"
 
 export { runPipeline } from "./run-pipeline.js"
+export { storeScreenshot } from "./run-screenshot.js"
 export {
   detailOf,
   draftFieldChanges,
@@ -67,4 +70,4 @@ export {
 
 export { Runs, RunsLive } from "./runs.service.js"
 
-export const RunsLayer = Layer.mergeAll(Runs.Default, RunRepository.Default)
+export const RunsLayer = Layer.mergeAll(Runs.Default, RunRepository.Default, ArtifactStore.Default)

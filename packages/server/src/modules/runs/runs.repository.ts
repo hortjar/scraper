@@ -21,6 +21,7 @@ import type {
   RunListFilter,
   StartRunInput,
 } from "./runs.repository.types.js"
+import { makeSnapshotQueries } from "./snapshots.repository.js"
 
 const decodeRunRow = decodeRow(Run, RUN_ENTITY)
 const decodeRunRows = decodeRows(Run, RUN_ENTITY)
@@ -171,31 +172,7 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
       return yield* decodeChangeRows(rows)
     })
 
-    const insertSnapshot = Effect.fn(SPAN.runRepository.insertSnapshot)(function* (
-      runId: RunId,
-      monitorId: MonitorId,
-      content: string,
-    ) {
-      yield* database.query((executor) =>
-        executor.insert(schema.snapshots).values({
-          runId,
-          monitorId,
-          content,
-          sizeBytes: Buffer.byteLength(content, "utf8"),
-        }),
-      )
-    })
-
-    const latestSnapshot = Effect.fn(SPAN.runRepository.fieldValues)(function* (runId: RunId) {
-      const rows = yield* database.query((executor) =>
-        executor
-          .select({ content: schema.snapshots.content })
-          .from(schema.snapshots)
-          .where(eq(schema.snapshots.runId, runId))
-          .limit(1),
-      )
-      return rows[0]?.content ?? null
-    })
+    const snapshots = makeSnapshotQueries(database)
 
     const list = Effect.fn(SPAN.runRepository.list)(function* (
       monitorId: MonitorId,
@@ -292,8 +269,7 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
       insertFieldValues,
       fieldValues,
       insertChanges,
-      insertSnapshot,
-      latestSnapshot,
+      ...snapshots,
       list,
       findById,
       listChanges,

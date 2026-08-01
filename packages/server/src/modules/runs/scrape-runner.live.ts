@@ -18,12 +18,14 @@ import type {
   TransformPipeline,
   UrlGuard,
 } from "../scraping/index.js"
+import type { ArtifactStore } from "../storage/index.js"
 
 import { runPipeline } from "./run-pipeline.js"
 import type { RunRepository } from "./runs.repository.js"
 
 export type RunPipelineServices =
   | AppConfig
+  | ArtifactStore
   | ContentNormalizer
   | DeliveryRepository
   | Extraction

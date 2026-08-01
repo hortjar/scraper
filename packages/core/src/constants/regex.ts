@@ -17,4 +17,5 @@ export const PATTERN = {
   bearerToken: /^Bearer\s+(.+)$/i,
   apiKeyFormat: /^sk_([a-zA-Z0-9]{8})_([A-Za-z0-9_-]{20,})$/,
   localePart: /^[a-z]{2}(-[A-Z]{2})?$/,
+  artifactKeySegment: /^[A-Za-z0-9._-]+$/,
 } as const

@@ -48,6 +48,7 @@ export interface RunFieldValue {
 
 export interface RunDetail extends RunSummary {
   readonly fields: readonly RunFieldValue[]
+  readonly screenshotUrl: string | null
 }
 
 export interface ChangeSummary {

@@ -10,6 +10,7 @@ import {
 } from "@scraper/server/modules/notifications"
 import { RunsLayer, RunsScrapeRunnerLive } from "@scraper/server/modules/runs"
 import { ScrapingLayer } from "@scraper/server/modules/scraping"
+import { ArtifactStore } from "@scraper/server/modules/storage"
 import { Effect, Layer, ManagedRuntime } from "effect"
 
 const LoggerLive = Layer.unwrapEffect(
@@ -29,6 +30,7 @@ const WorkerBaseLayer = Layer.mergeAll(
   MonitorsLayer,
   NotificationsLayer,
   RunsLayer,
+  ArtifactStore.Default,
 )
 
 export const WorkerLayer = Layer.mergeAll(RunsScrapeRunnerLive, NotificationsNotifyRunnerLive).pipe(

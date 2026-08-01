@@ -50,6 +50,7 @@ export type FieldValueDto = typeof FieldValueDto.Type
 export const RunDetailDto = Schema.Struct({
   ...RunDto.fields,
   fields: Schema.Array(FieldValueDto),
+  screenshotUrl: Schema.NullOr(Schema.String),
 })
 export type RunDetailDto = typeof RunDetailDto.Type
 
@@ -80,6 +81,7 @@ export const RunDiffDto = Schema.Struct({
 export const RunSnapshotDto = Schema.Struct({
   runId: RunId,
   content: Schema.String,
+  screenshotUrl: Schema.NullOr(Schema.String),
 })
 
 export const RunDiffQuery = Schema.Struct({ against: Schema.optional(Schema.String) })

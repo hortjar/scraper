@@ -83,8 +83,22 @@ describe("toRunFieldValue and toRunDetail", () => {
   })
 
   it("attaches parsed fields to the run summary", () => {
-    const detail: RunDetailResponse = { ...runItem, fields: [field] }
+    const detail: RunDetailResponse = { ...runItem, fields: [field], screenshotUrl: null }
     expect(toRunDetail(detail).fields).toHaveLength(1)
+  })
+
+  it("normalizes a missing screenshot url to null so the card can branch on it", () => {
+    const detail = { ...runItem, fields: [field], screenshotUrl: null } as RunDetailResponse
+    expect(toRunDetail(detail).screenshotUrl).toBeNull()
+  })
+
+  it("keeps the screenshot url the API returned", () => {
+    const detail = {
+      ...runItem,
+      fields: [field],
+      screenshotUrl: "/runs/run-1/screenshot",
+    } as RunDetailResponse
+    expect(toRunDetail(detail).screenshotUrl).toBe("/runs/run-1/screenshot")
   })
 })
 

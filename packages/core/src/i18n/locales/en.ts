@@ -5,6 +5,7 @@ export const en = {
   "errors.notFound": "Not found.",
   "errors.monitorNotFound": "That monitor no longer exists.",
   "errors.runNotFound": "That run no longer exists.",
+  "errors.screenshotNotFound": "This run did not capture a screenshot.",
   "errors.channelNotFound": "That channel no longer exists.",
   "errors.deliveryNotFound": "That delivery no longer exists.",
   "errors.ruleNotFound": "That rule no longer exists.",

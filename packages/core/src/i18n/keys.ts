@@ -6,6 +6,7 @@ export const MSG = {
     notFound: "errors.notFound",
     monitorNotFound: "errors.monitorNotFound",
     runNotFound: "errors.runNotFound",
+    screenshotNotFound: "errors.screenshotNotFound",
     channelNotFound: "errors.channelNotFound",
     ruleNotFound: "errors.ruleNotFound",
     deliveryNotFound: "errors.deliveryNotFound",

@@ -7,6 +7,7 @@ export const cs: Catalog = {
   "errors.notFound": "Nenalezeno.",
   "errors.monitorNotFound": "Tento monitor už neexistuje.",
   "errors.runNotFound": "Tento běh už neexistuje.",
+  "errors.screenshotNotFound": "Tento běh nepořídil snímek obrazovky.",
   "errors.channelNotFound": "Tento kanál už neexistuje.",
   "errors.deliveryNotFound": "Toto doručení už neexistuje.",
   "errors.ruleNotFound": "Toto pravidlo už neexistuje.",

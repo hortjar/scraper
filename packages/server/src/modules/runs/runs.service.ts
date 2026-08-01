@@ -1,14 +1,19 @@
-import { FIRST_ATTEMPT, RUN_TRIGGER, SERVICE_TAG, SPAN } from "@scraper/core/constants"
+import { FIRST_ATTEMPT, ROUTE, RUN_TRIGGER, SERVICE_TAG, SPAN } from "@scraper/core/constants"
 import type { MonitorId, RunId, UserId } from "@scraper/core/domain"
-import { RunNotFound } from "@scraper/core/errors"
+import { RunNotFound, ScreenshotNotFound } from "@scraper/core/errors"
 import { pageSize } from "@scraper/db"
 import { Effect } from "effect"
 
 import { JobProducer } from "../jobs/index.js"
 import { MonitorRepository } from "../monitors/index.js"
+import { ArtifactStore } from "../storage/index.js"
 
 import { diffText } from "./diff/text-diff.js"
+import { RUN_PATH } from "./runs.constants.js"
 import { RunRepository } from "./runs.repository.js"
+
+const screenshotPath = (runId: RunId): string =>
+  `${ROUTE.runs}/${runId}${RUN_PATH.screenshotSuffix}`
 
 export interface PageQuery {
   readonly cursor?: string | undefined
@@ -23,6 +28,7 @@ export class Runs extends Effect.Service<Runs>()(SERVICE_TAG.Runs, {
     const repository = yield* RunRepository
     const monitors = yield* MonitorRepository
     const jobs = yield* JobProducer
+    const store = yield* ArtifactStore
 
     const list = Effect.fn(SPAN.runs.list)(function* (
       userId: UserId,
@@ -53,7 +59,8 @@ export class Runs extends Effect.Service<Runs>()(SERVICE_TAG.Runs, {
       if (run === null) return yield* new RunNotFound({ id: runId })
       yield* monitors.findById(userId, run.monitorId)
       const fields = yield* repository.fieldValues(runId)
-      return { run, fields }
+      const reference = yield* repository.screenshotReference(runId)
+      return { run, fields, screenshotUrl: reference === null ? null : screenshotPath(runId) }
     })
 
     const trigger = Effect.fn(SPAN.runs.trigger)(function* (userId: UserId, monitorId: MonitorId) {
@@ -71,7 +78,21 @@ export class Runs extends Effect.Service<Runs>()(SERVICE_TAG.Runs, {
       yield* monitors.findById(userId, run.monitorId)
       const content = yield* repository.latestSnapshot(runId)
       if (content === null) return yield* new RunNotFound({ id: runId })
-      return { runId, content }
+      const reference = yield* repository.screenshotReference(runId)
+      return { runId, content, screenshotUrl: reference === null ? null : screenshotPath(runId) }
+    })
+
+    const screenshot = Effect.fn(SPAN.runs.findById)(function* (userId: UserId, runId: RunId) {
+      const run = yield* repository.findById(runId)
+      if (run === null) return yield* new RunNotFound({ id: runId })
+      yield* monitors.findById(userId, run.monitorId)
+
+      const reference = yield* repository.screenshotReference(runId)
+      if (reference === null) return yield* new ScreenshotNotFound({ id: runId })
+
+      const bytes = yield* store.get(reference)
+      if (bytes === null) return yield* new ScreenshotNotFound({ id: runId })
+      return bytes
     })
 
     const diffAgainst = Effect.fn(SPAN.runs.diff)(function* (
@@ -115,9 +136,23 @@ export class Runs extends Effect.Service<Runs>()(SERVICE_TAG.Runs, {
       })
     })
 
-    return { list, listChanges, findById, trigger, snapshot, diff, activity } as const
+    return {
+      list,
+      listChanges,
+      findById,
+      trigger,
+      snapshot,
+      screenshot,
+      diff,
+      activity,
+    } as const
   }),
-  dependencies: [RunRepository.Default, MonitorRepository.Default, JobProducer.Default],
+  dependencies: [
+    RunRepository.Default,
+    MonitorRepository.Default,
+    JobProducer.Default,
+    ArtifactStore.Default,
+  ],
 }) {}
 
 export const RunsLive = Runs.Default

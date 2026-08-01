@@ -37,6 +37,8 @@ export const RUN_PATH = {
   byId: "/:runId",
   diff: "/:runId/diff",
   snapshot: "/:runId/snapshot",
+  screenshot: "/:runId/screenshot",
+  screenshotSuffix: "/screenshot",
   activity: "",
 } as const
 
@@ -47,6 +49,7 @@ export const RUN_OPERATION_ID = {
   runNow: "runMonitorNow",
   diff: "getRunDiff",
   snapshot: "getRunSnapshot",
+  screenshot: "getRunScreenshot",
   activity: "listActivity",
 } as const
 

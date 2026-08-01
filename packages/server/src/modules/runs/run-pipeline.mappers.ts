@@ -90,6 +90,11 @@ export const isOperatorFault = (error: AppError): boolean =>
   error._tag === "ScrapeFailed" &&
   (error as { reason?: string }).reason === BROWSER_UNAVAILABLE_REASON
 
+export const reasonOf = (error: AppError): string | null => {
+  const reason = (error as { reason?: unknown }).reason
+  return typeof reason === "string" && reason !== "" ? reason : null
+}
+
 export const detailOf = (error: AppError): string => {
   const detail = (error as { detail?: unknown }).detail
   if (typeof detail === "string" && detail !== "") return detail

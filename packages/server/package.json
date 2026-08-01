@@ -10,7 +10,8 @@
     "./modules/scraping": "./src/modules/scraping/index.ts",
     "./modules/notifications": "./src/modules/notifications/index.ts",
     "./modules/jobs": "./src/modules/jobs/index.ts",
-    "./modules/runs": "./src/modules/runs/index.ts"
+    "./modules/runs": "./src/modules/runs/index.ts",
+    "./modules/storage": "./src/modules/storage/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

@@ -27,6 +27,25 @@ knowing:
   the monitor `degraded` and never counts toward auto-pause: the user did not break
   anything, the operator's browser container did.
 
+## Screenshots
+
+A browser run's full-page PNG goes to `storage`'s `ArtifactStore` under
+`screenshots/<monitorId>/<runId>.png`, and the key is written to
+`snapshots.screenshot_ref`. Three deliberate choices:
+
+- **A failed capture never fails the run.** `run-screenshot.ts` catches the store
+  error, logs `screenshot.failed` with the cause, and returns null. A screenshot is
+  evidence, not the product; an unwritable volume must not throw away the change
+  detection that already succeeded.
+- **The key is derived, never stored user input**, and `isSafeKey` re-validates on
+  the way out. `screenshot_ref` is read back from the database and joined onto a
+  filesystem root — that is a path-traversal sink even though the value looks
+  internal. A key that fails validation is `DataCorruption`, not
+  `StorageUnavailable`: retrying will never help, and the 503's "try again shortly"
+  would be a lie.
+- **`screenshotUrl` is API-relative** (`/runs/:id/screenshot`), so the client
+  prefixes its own base URL rather than the server guessing at one.
+
 `run-pipeline.mappers.ts` holds the pure part — row-to-snapshot conversion, the
 per-extractor diff fan-out, error classification. Split out so the orchestration
 file stays readable and the mapping is testable without a database.
@@ -138,5 +157,12 @@ the server's, and a window whose start equals its end is never quiet.
 - `previousRunFailed` is derived from "there is no previous successful run", so
   `run_recovered` fires on a monitor's first successful run. Distinguishing "never ran"
   from "recovered" needs the previous run regardless of status.
-- Screenshots are not stored; `snapshots.screenshot_ref` stays null until
-  `SERVICE_TAG.ObjectStore` exists.
+- **The browser strategy cannot run under Bun.** Playwright's bundled WebSocket
+  client waits for `node:http`'s `'upgrade'` event; Bun emits `'response'` for the
+  101 instead, so `chromium.connectOverCDP` never resolves and every `engine:
+browser` run dies on the 45s timeout. Proven both ways against the same
+  browserless container: identical script succeeds under `node`, hangs under `bun`.
+  A raw `new WebSocket(...)` to the same URL connects in ~200ms, so it is
+  specifically playwright's `node:http` upgrade path, not Bun's sockets. Until this
+  is resolved, screenshots can be stored and served but never captured, and
+  auto-escalation produces a failed run rather than a browser-rendered one.
