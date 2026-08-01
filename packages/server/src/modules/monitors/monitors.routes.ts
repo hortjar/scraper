@@ -31,6 +31,7 @@ import {
   UpdateMonitorBody,
 } from "./monitors.schema.js"
 import { Monitors } from "./monitors.service.js"
+import { portabilityHandlers } from "./portability.routes.js"
 
 const standardCreate = Schema.standardSchemaV1(CreateMonitorBody)
 const standardUpdate = Schema.standardSchemaV1(UpdateMonitorBody)
@@ -281,3 +282,4 @@ export const monitorRoutes = (options: AuthPluginOptions<MonitorServices>) =>
   })
     .use(monitorHandlers(options))
     .use(extractorHandlers(options))
+    .use(portabilityHandlers(options))

@@ -6,6 +6,7 @@ export const MONITOR_PLUGIN = {
   routes: "monitors/routes",
   handlers: "monitors/handlers",
   extractorHandlers: "monitors/extractor-handlers",
+  portabilityHandlers: "monitors/portability-handlers",
 } as const
 
 export const MONITOR_OPERATION_ID = {
@@ -19,6 +20,8 @@ export const MONITOR_OPERATION_ID = {
   enable: "enableMonitor",
   disable: "disableMonitor",
   duplicate: "duplicateMonitor",
+  export: "exportMonitor",
+  import: "importMonitors",
   listExtractors: "listExtractors",
   addExtractor: "addExtractor",
   updateExtractor: "updateExtractor",
@@ -33,6 +36,8 @@ export const MONITOR_PATH = {
   enable: "/:monitorId/enable",
   disable: "/:monitorId/disable",
   duplicate: "/:monitorId/duplicate",
+  export: "/:monitorId/export",
+  import: "/import",
   extractors: "/:monitorId/extractors",
   extractorById: "/:monitorId/extractors/:extractorId",
 } as const
@@ -46,6 +51,8 @@ export const MONITOR_ACTION = {
   enable: "monitor_enable",
   disable: "monitor_disable",
   duplicate: "monitor_duplicate",
+  export: "monitor_export",
+  import: "monitor_import",
   extractorAdd: "extractor_add",
   extractorUpdate: "extractor_update",
   extractorRemove: "extractor_remove",
@@ -56,3 +63,7 @@ export const DEFAULT_JITTER_SECONDS = 30
 export const PREVIEW_MONITOR_ID = "00000000-0000-4000-8000-000000000000"
 
 export const DUPLICATE_NAME_SUFFIX = " (copy)"
+
+export const MONITOR_EXPORT_VERSION = 1
+
+export const MAX_IMPORT_MONITORS = 100

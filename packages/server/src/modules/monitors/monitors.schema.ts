@@ -67,6 +67,26 @@ export const UpdateMonitorBody = Schema.Struct({
 })
 export type UpdateMonitorBody = typeof UpdateMonitorBody.Type
 
+export const MonitorConfigDto = Schema.Struct({
+  version: NonNegativeInt,
+  name: NonEmptyString,
+  url: HttpUrl,
+  schedule: Schedule,
+  engine: Engine,
+  request: RequestOptions,
+  browserOptions: BrowserOptions,
+  contentSelector: Schema.NullOr(Schema.String),
+  ignoreRules: Schema.Array(IgnoreRule),
+  respectRobots: Schema.Boolean,
+  jitterSeconds: NonNegativeInt,
+  tags: Schema.Array(Schema.String),
+  extractors: Schema.Array(ExtractorInput),
+})
+export type MonitorConfigDto = typeof MonitorConfigDto.Type
+
+export const ImportMonitorsBody = Schema.Array(MonitorConfigDto)
+export type ImportMonitorsBody = typeof ImportMonitorsBody.Type
+
 export const MonitorIdParameters = Schema.Struct({ monitorId: MonitorId })
 
 export const ExtractorParameters = Schema.Struct({
@@ -144,6 +164,8 @@ export const MonitorDetailDto = Schema.Struct({
 export type MonitorDetailDto = typeof MonitorDetailDto.Type
 
 export const ExtractorListDto = Schema.Struct({ items: Schema.Array(ExtractorDto) })
+
+export const MonitorImportResultDto = Schema.Struct({ items: Schema.Array(MonitorDto) })
 
 export const MonitorListDto = Schema.Struct({
   items: Schema.Array(MonitorDto),

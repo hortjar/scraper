@@ -35031,6 +35031,1471 @@
         ]
       }
     },
+    "/monitors/{monitorId}/export": {
+      "get": {
+        "operationId": "exportMonitor",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "monitorId",
+            "required": true,
+            "schema": {
+              "description": "a Universally Unique Identifier",
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "browserOptions": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "blockResources": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "screenshot": {
+                          "type": "boolean"
+                        },
+                        "steps": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "click",
+                                  "fill",
+                                  "select",
+                                  "scroll",
+                                  "wait_for"
+                                ],
+                                "type": "string"
+                              },
+                              "selector": {
+                                "type": "string"
+                              },
+                              "timeoutMs": {
+                                "description": "a positive number",
+                                "exclusiveMinimum": 0,
+                                "title": "positive",
+                                "type": "integer"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "viewport": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "height": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            },
+                            "width": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "width",
+                            "height"
+                          ],
+                          "type": "object"
+                        },
+                        "waitForSelector": {
+                          "type": "string"
+                        },
+                        "waitMs": {
+                          "description": "a non-negative number",
+                          "minimum": 0,
+                          "title": "nonNegative",
+                          "type": "integer"
+                        },
+                        "waitUntil": {
+                          "enum": [
+                            "load",
+                            "domcontentloaded",
+                            "networkidle"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [],
+                      "type": "object"
+                    },
+                    "contentSelector": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "engine": {
+                      "enum": [
+                        "http",
+                        "browser",
+                        "auto"
+                      ],
+                      "type": "string"
+                    },
+                    "extractors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "attribute": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "key": {
+                            "description": "a string matching the pattern ^[a-z][a-z0-9_]{0,63}$",
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "label": {
+                            "description": "a string with no leading or trailing whitespace",
+                            "minLength": 1,
+                            "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                            "title": "trimmed",
+                            "type": "string"
+                          },
+                          "occurrence": {
+                            "enum": [
+                              "first",
+                              "last",
+                              "all",
+                              "nth"
+                            ],
+                            "type": "string"
+                          },
+                          "occurrenceIndex": {
+                            "anyOf": [
+                              {
+                                "description": "a non-negative number",
+                                "minimum": 0,
+                                "title": "nonNegative",
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "selector": {
+                            "type": "string"
+                          },
+                          "selectorKind": {
+                            "enum": [
+                              "css",
+                              "xpath",
+                              "jsonpath",
+                              "regex",
+                              "json_ld",
+                              "whole_page"
+                            ],
+                            "type": "string"
+                          },
+                          "transforms": {
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "trim"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "lowercase"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "uppercase"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "collapse_whitespace"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "strip_html"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "group": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "regex_extract"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "pattern": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "pattern"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "regex_replace"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "pattern": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    },
+                                    "replacement": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "pattern",
+                                    "replacement"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "end": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "slice"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "start": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "start"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "decimal": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_number"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "locale": {
+                                      "type": "string"
+                                    },
+                                    "thousands": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "currency": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_price"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "format": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_date"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "timezone": {
+                                      "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                      "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "map_values"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "mapping": {
+                                      "additionalProperties": {
+                                        "type": "string"
+                                      },
+                                      "properties": {},
+                                      "required": [],
+                                      "type": "object"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "mapping"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "default"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "value"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "json_path"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "path": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "path"
+                                  ],
+                                  "type": "object"
+                                }
+                              ]
+                            },
+                            "type": "array"
+                          },
+                          "valueType": {
+                            "enum": [
+                              "text",
+                              "number",
+                              "price",
+                              "boolean",
+                              "url",
+                              "date",
+                              "list"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "label",
+                          "selectorKind",
+                          "selector",
+                          "valueType"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "ignoreRules": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "kind": {
+                            "enum": [
+                              "selector",
+                              "regex"
+                            ],
+                            "type": "string"
+                          },
+                          "value": {
+                            "description": "a string with no leading or trailing whitespace",
+                            "minLength": 1,
+                            "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                            "title": "trimmed",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "jitterSeconds": {
+                      "description": "a non-negative number",
+                      "minimum": 0,
+                      "title": "nonNegative",
+                      "type": "integer"
+                    },
+                    "name": {
+                      "description": "a string with no leading or trailing whitespace",
+                      "minLength": 1,
+                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                      "title": "trimmed",
+                      "type": "string"
+                    },
+                    "request": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "body": {
+                          "type": "string"
+                        },
+                        "cookies": {
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {},
+                          "required": [],
+                          "type": "object"
+                        },
+                        "followRedirects": {
+                          "type": "boolean"
+                        },
+                        "headers": {
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {},
+                          "required": [],
+                          "type": "object"
+                        },
+                        "method": {
+                          "enum": [
+                            "GET",
+                            "POST",
+                            "HEAD"
+                          ],
+                          "type": "string"
+                        },
+                        "timeoutMs": {
+                          "description": "a positive number",
+                          "exclusiveMinimum": 0,
+                          "title": "positive",
+                          "type": "integer"
+                        },
+                        "userAgent": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [],
+                      "type": "object"
+                    },
+                    "respectRobots": {
+                      "type": "boolean"
+                    },
+                    "schedule": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "intervalSeconds": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            },
+                            "kind": {
+                              "enum": [
+                                "interval"
+                              ],
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "intervalSeconds",
+                            "timezone"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "expression": {
+                              "description": "a string matching the pattern ^(\\*|[0-5]?\\d)(\\/\\d+)?(,(\\*|[0-5]?\\d))*\\s+(\\*|1?\\d|2[0-3])(\\/\\d+)?(,(\\*|1?\\d|2[0-3]))*\\s+(\\*|[12]?\\d|3[01])(\\/\\d+)?\\s+(\\*|[1-9]|1[0-2])(\\/\\d+)?\\s+(\\*|[0-6])(\\/\\d+)?$",
+                              "pattern": "^(\\*|[0-5]?\\d)(\\/\\d+)?(,(\\*|[0-5]?\\d))*\\s+(\\*|1?\\d|2[0-3])(\\/\\d+)?(,(\\*|1?\\d|2[0-3]))*\\s+(\\*|[12]?\\d|3[01])(\\/\\d+)?\\s+(\\*|[1-9]|1[0-2])(\\/\\d+)?\\s+(\\*|[0-6])(\\/\\d+)?$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "enum": [
+                                "cron"
+                              ],
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "expression",
+                            "timezone"
+                          ],
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "tags": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "description": "a non-negative number",
+                      "minimum": 0,
+                      "title": "nonNegative",
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "name",
+                    "url",
+                    "schedule",
+                    "engine",
+                    "request",
+                    "browserOptions",
+                    "contentSelector",
+                    "ignoreRules",
+                    "respectRobots",
+                    "jitterSeconds",
+                    "tags",
+                    "extractors"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 200"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 400"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 403"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 404"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 409"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 422"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 429"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 500"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 503"
+          }
+        },
+        "summary": "Export a monitor's portable configuration",
+        "tags": [
+          "Monitors"
+        ]
+      }
+    },
     "/monitors/{monitorId}/extractors": {
       "get": {
         "operationId": "listExtractors",
@@ -46796,6 +48261,3035 @@
         "summary": "Numeric history for one extractor",
         "tags": [
           "Runs"
+        ]
+      }
+    },
+    "/monitors/import": {
+      "post": {
+        "operationId": "importMonitors",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "browserOptions": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "blockResources": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "screenshot": {
+                          "type": "boolean"
+                        },
+                        "steps": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "click",
+                                  "fill",
+                                  "select",
+                                  "scroll",
+                                  "wait_for"
+                                ],
+                                "type": "string"
+                              },
+                              "selector": {
+                                "type": "string"
+                              },
+                              "timeoutMs": {
+                                "description": "a positive number",
+                                "exclusiveMinimum": 0,
+                                "title": "positive",
+                                "type": "integer"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "viewport": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "height": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            },
+                            "width": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "width",
+                            "height"
+                          ],
+                          "type": "object"
+                        },
+                        "waitForSelector": {
+                          "type": "string"
+                        },
+                        "waitMs": {
+                          "description": "a non-negative number",
+                          "minimum": 0,
+                          "title": "nonNegative",
+                          "type": "integer"
+                        },
+                        "waitUntil": {
+                          "enum": [
+                            "load",
+                            "domcontentloaded",
+                            "networkidle"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [],
+                      "type": "object"
+                    },
+                    "contentSelector": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "engine": {
+                      "enum": [
+                        "http",
+                        "browser",
+                        "auto"
+                      ],
+                      "type": "string"
+                    },
+                    "extractors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "attribute": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "key": {
+                            "description": "a string matching the pattern ^[a-z][a-z0-9_]{0,63}$",
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "label": {
+                            "description": "a string with no leading or trailing whitespace",
+                            "minLength": 1,
+                            "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                            "title": "trimmed",
+                            "type": "string"
+                          },
+                          "occurrence": {
+                            "enum": [
+                              "first",
+                              "last",
+                              "all",
+                              "nth"
+                            ],
+                            "type": "string"
+                          },
+                          "occurrenceIndex": {
+                            "anyOf": [
+                              {
+                                "description": "a non-negative number",
+                                "minimum": 0,
+                                "title": "nonNegative",
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "selector": {
+                            "type": "string"
+                          },
+                          "selectorKind": {
+                            "enum": [
+                              "css",
+                              "xpath",
+                              "jsonpath",
+                              "regex",
+                              "json_ld",
+                              "whole_page"
+                            ],
+                            "type": "string"
+                          },
+                          "transforms": {
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "trim"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "lowercase"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "uppercase"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "collapse_whitespace"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "strip_html"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "group": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "regex_extract"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "pattern": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "pattern"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "regex_replace"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "pattern": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    },
+                                    "replacement": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "pattern",
+                                    "replacement"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "end": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "slice"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "start": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "start"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "decimal": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_number"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "locale": {
+                                      "type": "string"
+                                    },
+                                    "thousands": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "currency": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_price"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "format": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_date"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "timezone": {
+                                      "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                      "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "map_values"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "mapping": {
+                                      "additionalProperties": {
+                                        "type": "string"
+                                      },
+                                      "properties": {},
+                                      "required": [],
+                                      "type": "object"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "mapping"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "default"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "value"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "json_path"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "path": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "path"
+                                  ],
+                                  "type": "object"
+                                }
+                              ]
+                            },
+                            "type": "array"
+                          },
+                          "valueType": {
+                            "enum": [
+                              "text",
+                              "number",
+                              "price",
+                              "boolean",
+                              "url",
+                              "date",
+                              "list"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "label",
+                          "selectorKind",
+                          "selector",
+                          "valueType"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "ignoreRules": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "kind": {
+                            "enum": [
+                              "selector",
+                              "regex"
+                            ],
+                            "type": "string"
+                          },
+                          "value": {
+                            "description": "a string with no leading or trailing whitespace",
+                            "minLength": 1,
+                            "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                            "title": "trimmed",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "jitterSeconds": {
+                      "description": "a non-negative number",
+                      "minimum": 0,
+                      "title": "nonNegative",
+                      "type": "integer"
+                    },
+                    "name": {
+                      "description": "a string with no leading or trailing whitespace",
+                      "minLength": 1,
+                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                      "title": "trimmed",
+                      "type": "string"
+                    },
+                    "request": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "body": {
+                          "type": "string"
+                        },
+                        "cookies": {
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {},
+                          "required": [],
+                          "type": "object"
+                        },
+                        "followRedirects": {
+                          "type": "boolean"
+                        },
+                        "headers": {
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {},
+                          "required": [],
+                          "type": "object"
+                        },
+                        "method": {
+                          "enum": [
+                            "GET",
+                            "POST",
+                            "HEAD"
+                          ],
+                          "type": "string"
+                        },
+                        "timeoutMs": {
+                          "description": "a positive number",
+                          "exclusiveMinimum": 0,
+                          "title": "positive",
+                          "type": "integer"
+                        },
+                        "userAgent": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [],
+                      "type": "object"
+                    },
+                    "respectRobots": {
+                      "type": "boolean"
+                    },
+                    "schedule": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "intervalSeconds": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            },
+                            "kind": {
+                              "enum": [
+                                "interval"
+                              ],
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "intervalSeconds",
+                            "timezone"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "expression": {
+                              "description": "a string matching the pattern ^(\\*|[0-5]?\\d)(\\/\\d+)?(,(\\*|[0-5]?\\d))*\\s+(\\*|1?\\d|2[0-3])(\\/\\d+)?(,(\\*|1?\\d|2[0-3]))*\\s+(\\*|[12]?\\d|3[01])(\\/\\d+)?\\s+(\\*|[1-9]|1[0-2])(\\/\\d+)?\\s+(\\*|[0-6])(\\/\\d+)?$",
+                              "pattern": "^(\\*|[0-5]?\\d)(\\/\\d+)?(,(\\*|[0-5]?\\d))*\\s+(\\*|1?\\d|2[0-3])(\\/\\d+)?(,(\\*|1?\\d|2[0-3]))*\\s+(\\*|[12]?\\d|3[01])(\\/\\d+)?\\s+(\\*|[1-9]|1[0-2])(\\/\\d+)?\\s+(\\*|[0-6])(\\/\\d+)?$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "enum": [
+                                "cron"
+                              ],
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "expression",
+                            "timezone"
+                          ],
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "tags": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "description": "a non-negative number",
+                      "minimum": 0,
+                      "title": "nonNegative",
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "name",
+                    "url",
+                    "schedule",
+                    "engine",
+                    "request",
+                    "browserOptions",
+                    "contentSelector",
+                    "ignoreRules",
+                    "respectRobots",
+                    "jitterSeconds",
+                    "tags",
+                    "extractors"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "browserOptions": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "blockResources": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "screenshot": {
+                          "type": "boolean"
+                        },
+                        "steps": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "click",
+                                  "fill",
+                                  "select",
+                                  "scroll",
+                                  "wait_for"
+                                ],
+                                "type": "string"
+                              },
+                              "selector": {
+                                "type": "string"
+                              },
+                              "timeoutMs": {
+                                "description": "a positive number",
+                                "exclusiveMinimum": 0,
+                                "title": "positive",
+                                "type": "integer"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "viewport": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "height": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            },
+                            "width": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "width",
+                            "height"
+                          ],
+                          "type": "object"
+                        },
+                        "waitForSelector": {
+                          "type": "string"
+                        },
+                        "waitMs": {
+                          "description": "a non-negative number",
+                          "minimum": 0,
+                          "title": "nonNegative",
+                          "type": "integer"
+                        },
+                        "waitUntil": {
+                          "enum": [
+                            "load",
+                            "domcontentloaded",
+                            "networkidle"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [],
+                      "type": "object"
+                    },
+                    "contentSelector": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "engine": {
+                      "enum": [
+                        "http",
+                        "browser",
+                        "auto"
+                      ],
+                      "type": "string"
+                    },
+                    "extractors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "attribute": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "key": {
+                            "description": "a string matching the pattern ^[a-z][a-z0-9_]{0,63}$",
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "label": {
+                            "description": "a string with no leading or trailing whitespace",
+                            "minLength": 1,
+                            "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                            "title": "trimmed",
+                            "type": "string"
+                          },
+                          "occurrence": {
+                            "enum": [
+                              "first",
+                              "last",
+                              "all",
+                              "nth"
+                            ],
+                            "type": "string"
+                          },
+                          "occurrenceIndex": {
+                            "anyOf": [
+                              {
+                                "description": "a non-negative number",
+                                "minimum": 0,
+                                "title": "nonNegative",
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "selector": {
+                            "type": "string"
+                          },
+                          "selectorKind": {
+                            "enum": [
+                              "css",
+                              "xpath",
+                              "jsonpath",
+                              "regex",
+                              "json_ld",
+                              "whole_page"
+                            ],
+                            "type": "string"
+                          },
+                          "transforms": {
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "trim"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "lowercase"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "uppercase"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "collapse_whitespace"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "strip_html"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "group": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "regex_extract"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "pattern": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "pattern"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "regex_replace"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "pattern": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    },
+                                    "replacement": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "pattern",
+                                    "replacement"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "end": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "slice"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "start": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "start"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "decimal": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_number"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "locale": {
+                                      "type": "string"
+                                    },
+                                    "thousands": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "currency": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_price"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "format": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_date"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "timezone": {
+                                      "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                      "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "map_values"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "mapping": {
+                                      "additionalProperties": {
+                                        "type": "string"
+                                      },
+                                      "properties": {},
+                                      "required": [],
+                                      "type": "object"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "mapping"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "default"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "value"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "json_path"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "path": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "path"
+                                  ],
+                                  "type": "object"
+                                }
+                              ]
+                            },
+                            "type": "array"
+                          },
+                          "valueType": {
+                            "enum": [
+                              "text",
+                              "number",
+                              "price",
+                              "boolean",
+                              "url",
+                              "date",
+                              "list"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "label",
+                          "selectorKind",
+                          "selector",
+                          "valueType"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "ignoreRules": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "kind": {
+                            "enum": [
+                              "selector",
+                              "regex"
+                            ],
+                            "type": "string"
+                          },
+                          "value": {
+                            "description": "a string with no leading or trailing whitespace",
+                            "minLength": 1,
+                            "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                            "title": "trimmed",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "jitterSeconds": {
+                      "description": "a non-negative number",
+                      "minimum": 0,
+                      "title": "nonNegative",
+                      "type": "integer"
+                    },
+                    "name": {
+                      "description": "a string with no leading or trailing whitespace",
+                      "minLength": 1,
+                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                      "title": "trimmed",
+                      "type": "string"
+                    },
+                    "request": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "body": {
+                          "type": "string"
+                        },
+                        "cookies": {
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {},
+                          "required": [],
+                          "type": "object"
+                        },
+                        "followRedirects": {
+                          "type": "boolean"
+                        },
+                        "headers": {
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {},
+                          "required": [],
+                          "type": "object"
+                        },
+                        "method": {
+                          "enum": [
+                            "GET",
+                            "POST",
+                            "HEAD"
+                          ],
+                          "type": "string"
+                        },
+                        "timeoutMs": {
+                          "description": "a positive number",
+                          "exclusiveMinimum": 0,
+                          "title": "positive",
+                          "type": "integer"
+                        },
+                        "userAgent": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [],
+                      "type": "object"
+                    },
+                    "respectRobots": {
+                      "type": "boolean"
+                    },
+                    "schedule": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "intervalSeconds": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            },
+                            "kind": {
+                              "enum": [
+                                "interval"
+                              ],
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "intervalSeconds",
+                            "timezone"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "expression": {
+                              "description": "a string matching the pattern ^(\\*|[0-5]?\\d)(\\/\\d+)?(,(\\*|[0-5]?\\d))*\\s+(\\*|1?\\d|2[0-3])(\\/\\d+)?(,(\\*|1?\\d|2[0-3]))*\\s+(\\*|[12]?\\d|3[01])(\\/\\d+)?\\s+(\\*|[1-9]|1[0-2])(\\/\\d+)?\\s+(\\*|[0-6])(\\/\\d+)?$",
+                              "pattern": "^(\\*|[0-5]?\\d)(\\/\\d+)?(,(\\*|[0-5]?\\d))*\\s+(\\*|1?\\d|2[0-3])(\\/\\d+)?(,(\\*|1?\\d|2[0-3]))*\\s+(\\*|[12]?\\d|3[01])(\\/\\d+)?\\s+(\\*|[1-9]|1[0-2])(\\/\\d+)?\\s+(\\*|[0-6])(\\/\\d+)?$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "enum": [
+                                "cron"
+                              ],
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "expression",
+                            "timezone"
+                          ],
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "tags": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "description": "a non-negative number",
+                      "minimum": 0,
+                      "title": "nonNegative",
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "name",
+                    "url",
+                    "schedule",
+                    "engine",
+                    "request",
+                    "browserOptions",
+                    "contentSelector",
+                    "ignoreRules",
+                    "respectRobots",
+                    "jitterSeconds",
+                    "tags",
+                    "extractors"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "browserOptions": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "blockResources": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "screenshot": {
+                          "type": "boolean"
+                        },
+                        "steps": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "click",
+                                  "fill",
+                                  "select",
+                                  "scroll",
+                                  "wait_for"
+                                ],
+                                "type": "string"
+                              },
+                              "selector": {
+                                "type": "string"
+                              },
+                              "timeoutMs": {
+                                "description": "a positive number",
+                                "exclusiveMinimum": 0,
+                                "title": "positive",
+                                "type": "integer"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "viewport": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "height": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            },
+                            "width": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "width",
+                            "height"
+                          ],
+                          "type": "object"
+                        },
+                        "waitForSelector": {
+                          "type": "string"
+                        },
+                        "waitMs": {
+                          "description": "a non-negative number",
+                          "minimum": 0,
+                          "title": "nonNegative",
+                          "type": "integer"
+                        },
+                        "waitUntil": {
+                          "enum": [
+                            "load",
+                            "domcontentloaded",
+                            "networkidle"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [],
+                      "type": "object"
+                    },
+                    "contentSelector": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "engine": {
+                      "enum": [
+                        "http",
+                        "browser",
+                        "auto"
+                      ],
+                      "type": "string"
+                    },
+                    "extractors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "attribute": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "key": {
+                            "description": "a string matching the pattern ^[a-z][a-z0-9_]{0,63}$",
+                            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                            "type": "string"
+                          },
+                          "label": {
+                            "description": "a string with no leading or trailing whitespace",
+                            "minLength": 1,
+                            "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                            "title": "trimmed",
+                            "type": "string"
+                          },
+                          "occurrence": {
+                            "enum": [
+                              "first",
+                              "last",
+                              "all",
+                              "nth"
+                            ],
+                            "type": "string"
+                          },
+                          "occurrenceIndex": {
+                            "anyOf": [
+                              {
+                                "description": "a non-negative number",
+                                "minimum": 0,
+                                "title": "nonNegative",
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "selector": {
+                            "type": "string"
+                          },
+                          "selectorKind": {
+                            "enum": [
+                              "css",
+                              "xpath",
+                              "jsonpath",
+                              "regex",
+                              "json_ld",
+                              "whole_page"
+                            ],
+                            "type": "string"
+                          },
+                          "transforms": {
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "trim"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "lowercase"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "uppercase"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "collapse_whitespace"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "strip_html"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "group": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "regex_extract"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "pattern": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "pattern"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "regex_replace"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "pattern": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    },
+                                    "replacement": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "pattern",
+                                    "replacement"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "end": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "slice"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "start": {
+                                      "description": "a non-negative number",
+                                      "minimum": 0,
+                                      "title": "nonNegative",
+                                      "type": "integer"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "start"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "decimal": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_number"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "locale": {
+                                      "type": "string"
+                                    },
+                                    "thousands": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "currency": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_price"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "format": {
+                                      "type": "string"
+                                    },
+                                    "kind": {
+                                      "enum": [
+                                        "parse_date"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "timezone": {
+                                      "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                      "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "map_values"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "mapping": {
+                                      "additionalProperties": {
+                                        "type": "string"
+                                      },
+                                      "properties": {},
+                                      "required": [],
+                                      "type": "object"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "mapping"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "default"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "value"
+                                  ],
+                                  "type": "object"
+                                },
+                                {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "json_path"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "path": {
+                                      "description": "a string with no leading or trailing whitespace",
+                                      "minLength": 1,
+                                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                                      "title": "trimmed",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "path"
+                                  ],
+                                  "type": "object"
+                                }
+                              ]
+                            },
+                            "type": "array"
+                          },
+                          "valueType": {
+                            "enum": [
+                              "text",
+                              "number",
+                              "price",
+                              "boolean",
+                              "url",
+                              "date",
+                              "list"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "label",
+                          "selectorKind",
+                          "selector",
+                          "valueType"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "ignoreRules": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "kind": {
+                            "enum": [
+                              "selector",
+                              "regex"
+                            ],
+                            "type": "string"
+                          },
+                          "value": {
+                            "description": "a string with no leading or trailing whitespace",
+                            "minLength": 1,
+                            "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                            "title": "trimmed",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "jitterSeconds": {
+                      "description": "a non-negative number",
+                      "minimum": 0,
+                      "title": "nonNegative",
+                      "type": "integer"
+                    },
+                    "name": {
+                      "description": "a string with no leading or trailing whitespace",
+                      "minLength": 1,
+                      "pattern": "^\\S[\\s\\S]*\\S$|^\\S$|^$",
+                      "title": "trimmed",
+                      "type": "string"
+                    },
+                    "request": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "body": {
+                          "type": "string"
+                        },
+                        "cookies": {
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {},
+                          "required": [],
+                          "type": "object"
+                        },
+                        "followRedirects": {
+                          "type": "boolean"
+                        },
+                        "headers": {
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {},
+                          "required": [],
+                          "type": "object"
+                        },
+                        "method": {
+                          "enum": [
+                            "GET",
+                            "POST",
+                            "HEAD"
+                          ],
+                          "type": "string"
+                        },
+                        "timeoutMs": {
+                          "description": "a positive number",
+                          "exclusiveMinimum": 0,
+                          "title": "positive",
+                          "type": "integer"
+                        },
+                        "userAgent": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [],
+                      "type": "object"
+                    },
+                    "respectRobots": {
+                      "type": "boolean"
+                    },
+                    "schedule": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "intervalSeconds": {
+                              "description": "a positive number",
+                              "exclusiveMinimum": 0,
+                              "title": "positive",
+                              "type": "integer"
+                            },
+                            "kind": {
+                              "enum": [
+                                "interval"
+                              ],
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "intervalSeconds",
+                            "timezone"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "expression": {
+                              "description": "a string matching the pattern ^(\\*|[0-5]?\\d)(\\/\\d+)?(,(\\*|[0-5]?\\d))*\\s+(\\*|1?\\d|2[0-3])(\\/\\d+)?(,(\\*|1?\\d|2[0-3]))*\\s+(\\*|[12]?\\d|3[01])(\\/\\d+)?\\s+(\\*|[1-9]|1[0-2])(\\/\\d+)?\\s+(\\*|[0-6])(\\/\\d+)?$",
+                              "pattern": "^(\\*|[0-5]?\\d)(\\/\\d+)?(,(\\*|[0-5]?\\d))*\\s+(\\*|1?\\d|2[0-3])(\\/\\d+)?(,(\\*|1?\\d|2[0-3]))*\\s+(\\*|[12]?\\d|3[01])(\\/\\d+)?\\s+(\\*|[1-9]|1[0-2])(\\/\\d+)?\\s+(\\*|[0-6])(\\/\\d+)?$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "enum": [
+                                "cron"
+                              ],
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "expression",
+                            "timezone"
+                          ],
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "tags": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "description": "a non-negative number",
+                      "minimum": 0,
+                      "title": "nonNegative",
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "name",
+                    "url",
+                    "schedule",
+                    "engine",
+                    "request",
+                    "browserOptions",
+                    "contentSelector",
+                    "ignoreRules",
+                    "respectRobots",
+                    "jitterSeconds",
+                    "tags",
+                    "extractors"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "consecutiveFailures": {
+                            "description": "a non-negative number",
+                            "minimum": 0,
+                            "title": "nonNegative",
+                            "type": "integer"
+                          },
+                          "contentSelector": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "engine": {
+                            "enum": [
+                              "http",
+                              "browser",
+                              "auto"
+                            ],
+                            "type": "string"
+                          },
+                          "engineResolved": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "id": {
+                            "description": "a Universally Unique Identifier",
+                            "format": "uuid",
+                            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                            "type": "string"
+                          },
+                          "jitterSeconds": {
+                            "description": "a non-negative number",
+                            "minimum": 0,
+                            "title": "nonNegative",
+                            "type": "integer"
+                          },
+                          "lastChangeAt": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "lastRunAt": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "nextRunAt": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "respectRobots": {
+                            "type": "boolean"
+                          },
+                          "schedule": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "intervalSeconds": {
+                                    "description": "a positive number",
+                                    "exclusiveMinimum": 0,
+                                    "title": "positive",
+                                    "type": "integer"
+                                  },
+                                  "kind": {
+                                    "enum": [
+                                      "interval"
+                                    ],
+                                    "type": "string"
+                                  },
+                                  "timezone": {
+                                    "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                    "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "kind",
+                                  "intervalSeconds",
+                                  "timezone"
+                                ],
+                                "type": "object"
+                              },
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "expression": {
+                                    "description": "a string matching the pattern ^(\\*|[0-5]?\\d)(\\/\\d+)?(,(\\*|[0-5]?\\d))*\\s+(\\*|1?\\d|2[0-3])(\\/\\d+)?(,(\\*|1?\\d|2[0-3]))*\\s+(\\*|[12]?\\d|3[01])(\\/\\d+)?\\s+(\\*|[1-9]|1[0-2])(\\/\\d+)?\\s+(\\*|[0-6])(\\/\\d+)?$",
+                                    "pattern": "^(\\*|[0-5]?\\d)(\\/\\d+)?(,(\\*|[0-5]?\\d))*\\s+(\\*|1?\\d|2[0-3])(\\/\\d+)?(,(\\*|1?\\d|2[0-3]))*\\s+(\\*|[12]?\\d|3[01])(\\/\\d+)?\\s+(\\*|[1-9]|1[0-2])(\\/\\d+)?\\s+(\\*|[0-6])(\\/\\d+)?$",
+                                    "type": "string"
+                                  },
+                                  "kind": {
+                                    "enum": [
+                                      "cron"
+                                    ],
+                                    "type": "string"
+                                  },
+                                  "timezone": {
+                                    "description": "a string matching the pattern ^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                    "pattern": "^[A-Za-z]+(?:\\/[A-Za-z0-9_+-]+)+$|^UTC$",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "kind",
+                                  "expression",
+                                  "timezone"
+                                ],
+                                "type": "object"
+                              }
+                            ]
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "url",
+                          "engine",
+                          "engineResolved",
+                          "schedule",
+                          "jitterSeconds",
+                          "enabled",
+                          "status",
+                          "consecutiveFailures",
+                          "contentSelector",
+                          "respectRobots",
+                          "tags",
+                          "lastRunAt",
+                          "nextRunAt",
+                          "lastChangeAt",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 201"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 400"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 403"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 404"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 409"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 422"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 429"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 500"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "messageKey": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ]
+                            },
+                            "properties": {},
+                            "required": [],
+                            "type": "object"
+                          },
+                          "path": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "messageKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "messageKey": {
+                      "type": "string"
+                    },
+                    "messageParams": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "properties": {},
+                      "required": [],
+                      "type": "object"
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "messageKey",
+                    "message",
+                    "requestId"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Response for status 503"
+          }
+        },
+        "summary": "Import monitors from exported configurations",
+        "tags": [
+          "Monitors"
         ]
       }
     },

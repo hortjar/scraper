@@ -100,9 +100,9 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **Remaining API operations.** `docs/09-API.md` specifies 58; 55 are served.
-   Missing: monitor export/import and the two `/admin` routes — there is no admin
-   module yet, and Bull Board brings its own auth and feature-flag story.
+1. **Remaining API operations.** `docs/09-API.md` specifies 58; 56 are served.
+   Missing: only the two `/admin` routes — there is no admin module yet, and Bull
+   Board brings its own auth and feature-flag story.
 2. **The browser strategy does not work under Bun.** Playwright's WebSocket client
    waits for `node:http`'s `'upgrade'` event; Bun emits `'response'` for the 101, so
    `connectOverCDP` hangs until the 45s timeout. Every `engine: browser` run fails

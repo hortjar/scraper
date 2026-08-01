@@ -10,10 +10,13 @@ import { previewScrape, UrlGuard } from "../scraping/index.js"
 
 import { DEFAULT_JITTER_SECONDS, DUPLICATE_NAME_SUFFIX } from "./monitors.constants.js"
 import { toExtractorInput, toPreviewConfig } from "./monitors.mappers.js"
+import { importRejection, toConfigDocument } from "./monitors.portability.js"
 import { MonitorRepository } from "./monitors.repository.js"
 import type {
   CreateMonitorBody,
   ExtractorInput,
+  ImportMonitorsBody,
+  MonitorConfigDto,
   PreviewMonitorBody,
   UpdateExtractorBody,
   UpdateMonitorBody,
@@ -189,6 +192,51 @@ export class Monitors extends Effect.Service<Monitors>()(SERVICE_TAG.Monitors, {
       return yield* detail(userId, copy.id)
     })
 
+    const exportConfig = Effect.fn(SPAN.monitors.findById)(function* (
+      userId: UserId,
+      id: MonitorId,
+    ) {
+      const source = yield* detail(userId, id)
+      return toConfigDocument(source.monitor, source.extractors)
+    })
+
+    const importOne = Effect.fn(SPAN.monitors.create)(function* (
+      userId: UserId,
+      document: MonitorConfigDto,
+    ) {
+      yield* assertWithinPlan(userId)
+      yield* assertScheduleWithinFloor(document.schedule, minInterval)
+      yield* urlGuard.check(document.url)
+
+      const monitor = yield* repository.insert(userId, {
+        name: document.name,
+        url: document.url,
+        engine: document.engine,
+        request: document.request,
+        browserOptions: document.browserOptions,
+        contentSelector: document.contentSelector,
+        ignoreRules: [...document.ignoreRules],
+        respectRobots: document.respectRobots,
+        jitterSeconds: document.jitterSeconds,
+        enabled: false,
+        tags: [...document.tags],
+        ...scheduleColumns(document.schedule),
+      })
+
+      yield* repository.replaceExtractors(monitor.id, document.extractors)
+      yield* jobs.upsertSchedule(monitor)
+      return monitor
+    })
+
+    const importConfigs = Effect.fn(SPAN.monitors.create)(function* (
+      userId: UserId,
+      documents: ImportMonitorsBody,
+    ) {
+      const rejection = importRejection(documents)
+      if (rejection !== null) return yield* rejection
+      return yield* Effect.forEach(documents, (document) => importOne(userId, document))
+    })
+
     const listExtractors = Effect.fn(SPAN.monitors.findById)(function* (
       userId: UserId,
       id: MonitorId,
@@ -238,6 +286,8 @@ export class Monitors extends Effect.Service<Monitors>()(SERVICE_TAG.Monitors, {
       detail,
       setEnabled,
       duplicate,
+      exportConfig,
+      importConfigs,
       preview,
       listExtractors,
       addExtractor,
