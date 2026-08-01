@@ -12,14 +12,14 @@ coverage/
 
 .DS_Store
 *.log
-logs/
+/logs/
 
 .vscode/*
 !.vscode/extensions.json
 .idea/
 
-data/
-snapshots/
+/data/
+/snapshots/
 test-results/
 playwright-report/
 blob-report/
