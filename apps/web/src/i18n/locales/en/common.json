@@ -61,7 +61,8 @@
     "apiUnknown": "Server version unknown",
     "skewTitle": "A newer version is available",
     "skewDescription": "This tab is running {{client}}; the server is on {{server}}.",
-    "skewAction": "Reload to update"
+    "skewAction": "Reload to update",
+    "builtAt": "Built {{at}}"
   },
   "theme": {
     "label": "Theme",

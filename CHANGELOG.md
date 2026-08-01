@@ -8,6 +8,44 @@ This file starts at 0.2.0. For anything earlier, see the git history.
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-08-01
+
+### Fixed
+
+- **The `logs` module was never committed.** `.gitignore` carried `logs/`, the usual
+  rule for log output, and it also matched `packages/server/src/modules/logs/`. Ten
+  files existed only on one machine, so every deployed API crashed with
+  `Cannot find module '@scraper/server/modules/logs'` while local builds passed and
+  `git status` reported a clean tree. The rule is anchored to the repository root
+  now, along with `data/` and `snapshots/` for the same reason, and a test asserts
+  every subpath in a package's `exports` map is tracked by git rather than merely
+  present on disk.
+- **A queued run was invisible until a worker claimed it.** `POST /monitors/:id/run`
+  returned 202 and only enqueued; the `runs` row was created by the worker, so
+  nothing appeared in the UI until one picked the job up — permanently, if none was
+  running. Triggering now inserts the run as `queued` and the worker adopts it.
+- **`<head>` selectors extracted nothing.** Extraction was scoped to `<body>`, so
+  `title`, `meta[property=…]` and `link[rel=canonical]` silently matched zero
+  elements and reported `missing`, indistinguishable from a wrong selector.
+- **Scraping failed for every engine.** Playwright's WebSocket client hangs under
+  Bun, which broke browser runs and — through auto-escalation — `engine: auto` as
+  well. The worker runs on Node now. Failures also carry a usable detail instead of
+  `unknown`.
+- Deployment: the worker image ran a package manager as a user with no writable
+  home; `oven/bun:1` moved to 1.3.14 and stopped booting elysia; the snapshots
+  volume was root-owned and the API never mounted it; images assembled a
+  `pnpm deploy` copy that could go stale.
+
+### Added
+
+- **Admin.** `GET /admin/stats`, Bull Board behind `ENABLE_BULL_BOARD`, and a log
+  viewer fed by a capped Redis stream with warnings and errors persisted to
+  postgres. Completes the 58 operations in `docs/09-API.md`.
+- Monitor export/import, `GET /monitors/:id/series`, `POST /rules/:id/preview`, the
+  per-rule digest cron, screenshots, and the channels/rules/deliveries UI.
+- Every image stamps its build time; `/api/v1/health` reports it and the sidebar
+  shows the API's version and build alongside the client's.
+
 ## [0.8.0] - 2026-07-31
 
 ### Added

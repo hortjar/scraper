@@ -61,7 +61,8 @@
     "apiUnknown": "Verze serveru není známa",
     "skewTitle": "Je dostupná novější verze",
     "skewDescription": "Tento panel běží na {{client}}, server má {{server}}.",
-    "skewAction": "Načíst znovu a aktualizovat"
+    "skewAction": "Načíst znovu a aktualizovat",
+    "builtAt": "Sestaveno {{at}}"
   },
   "theme": {
     "label": "Motiv",

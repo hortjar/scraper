@@ -5,7 +5,7 @@
   "info": {
     "description": "Web scraping and change-monitoring platform API.",
     "title": "Scraper API",
-    "version": "0.8.0"
+    "version": "0.8.1"
   },
   "openapi": "3.0.3",
   "paths": {

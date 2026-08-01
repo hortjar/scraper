@@ -22,6 +22,7 @@ export const AppStatus = ({ className }: AppStatusProperties) => {
         version={status.version}
         commit={status.commit}
         serverVersion={status.serverVersion}
+        serverBuiltAt={status.serverBuiltAt}
         onReload={reload}
       />
     </div>

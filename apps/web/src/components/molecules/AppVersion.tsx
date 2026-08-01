@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next"
 
+import { useFormat } from "../../lib/format"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/Button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/Tooltip"
@@ -10,6 +11,7 @@ export interface AppVersionProperties {
   readonly version: string
   readonly commit: string
   readonly serverVersion?: string | undefined
+  readonly serverBuiltAt?: string | undefined
   readonly onReload?: (() => void) | undefined
   readonly className?: string | undefined
 }
@@ -18,10 +20,12 @@ export const AppVersion = ({
   version,
   commit,
   serverVersion,
+  serverBuiltAt,
   onReload,
   className,
 }: AppVersionProperties) => {
   const { t } = useTranslation("common")
+  const format = useFormat()
   const isSkewed = hasVersionSkew(version, serverVersion)
 
   return (
@@ -33,11 +37,17 @@ export const AppVersion = ({
           </p>
         </TooltipTrigger>
         <TooltipContent>
-          {serverVersion === undefined
+          {serverBuiltAt === undefined
             ? t("version.apiUnknown")
-            : t("version.api", { version: serverVersion })}
+            : t("version.builtAt", { at: format.dateTime(serverBuiltAt) })}
         </TooltipContent>
       </Tooltip>
+
+      <p className="text-mono-micro text-ink-subtle tabular-nums" data-numeric>
+        {serverVersion === undefined
+          ? t("version.apiUnknown")
+          : t("version.api", { version: serverVersion })}
+      </p>
 
       {isSkewed ? (
         <div className="rounded-md border border-line bg-brand-soft px-2 py-1.5">

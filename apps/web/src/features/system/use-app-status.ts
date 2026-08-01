@@ -30,6 +30,7 @@ export const deriveConnection = ({
 
 export interface AppStatusSnapshot {
   readonly version: string
+  readonly serverBuiltAt: string | undefined
   readonly commit: string
   readonly serverVersion: string | undefined
   readonly connection: ConnectionState
@@ -43,6 +44,7 @@ export const useAppStatus = (): AppStatusSnapshot => {
     version: appConfig.version,
     commit: appConfig.commit,
     serverVersion: health.data?.version,
+    serverBuiltAt: health.data?.builtAt,
     connection: deriveConnection({
       online: isOnline,
       hasError: health.isError,

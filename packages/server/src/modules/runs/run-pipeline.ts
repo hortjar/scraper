@@ -19,6 +19,7 @@ import { scrapeAndExtract } from "../scraping/index.js"
 import { diffWholePage } from "./diff/field-diff.js"
 import { nextMonitorState } from "./monitor-state.js"
 import { evaluateRules } from "./rules/rule-evaluation.js"
+import { claimExistingRun } from "./run-claim.js"
 import {
   logRunDiffed,
   logRunFailed,
@@ -270,16 +271,7 @@ export const runPipeline = Effect.fn(SPAN.runs.execute)(function* (request: RunR
   const runs = yield* RunRepository
   const rateLimiter = yield* RateLimiter
 
-  const claimed =
-    request.runId === undefined
-      ? null
-      : yield* runs.markRunning(
-          request.runId,
-          new Date(yield* Clock.currentTimeMillis),
-          request.jobId,
-        )
-  const resumed =
-    claimed ?? (request.jobId === null ? null : yield* runs.findByJobId(request.jobId))
+  const resumed = yield* claimExistingRun(runs, request)
   if (resumed !== null && resumed.status !== RUN_STATUS.running) return resumed
 
   const monitor = yield* monitors.findAnyById(request.monitorId)
