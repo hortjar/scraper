@@ -20,6 +20,14 @@ import { diffWholePage } from "./diff/field-diff.js"
 import { nextMonitorState } from "./monitor-state.js"
 import { evaluateRules } from "./rules/rule-evaluation.js"
 import {
+  logRunDiffed,
+  logRunFailed,
+  logRunFinished,
+  logRunSkipped,
+  logRunStarted,
+  logRunUnchanged,
+} from "./run-log.js"
+import {
   detailOf,
   draftFieldChanges,
   isOperatorFault,
@@ -27,6 +35,7 @@ import {
   toFieldValueInput,
   toMonitorConfig,
 } from "./run-pipeline.mappers.js"
+import { MONITOR_ARCHIVED_REASON, MONITOR_DISABLED_REASON } from "./runs.constants.js"
 import { RunRepository } from "./runs.repository.js"
 
 export interface RunRequest {
@@ -90,6 +99,8 @@ const execute = Effect.fn(SPAN.runs.persist)(function* (input: ExecuteInput) {
   )
   yield* runs.insertSnapshot(input.runId, input.monitor.id, outcome.normalized)
 
+  const logIdentity = { monitorId: input.monitor.id, runId: input.runId }
+
   if (isUnchanged) {
     yield* runs.finish(input.runId, {
       status: RUN_STATUS.success,
@@ -100,6 +111,15 @@ const execute = Effect.fn(SPAN.runs.persist)(function* (input: ExecuteInput) {
       httpStatus: outcome.response.httpStatus,
       bytes: outcome.response.html.length,
       contentHash: outcome.contentHash,
+    })
+    yield* logRunUnchanged(logIdentity, outcome.contentHash)
+    yield* logRunFinished(logIdentity, {
+      status: RUN_STATUS.success,
+      durationMs,
+      isChanged: false,
+      strategy: outcome.strategyUsed,
+      httpStatus: outcome.response.httpStatus,
+      bytes: outcome.response.html.length,
     })
     yield* recordMonitorState(
       input.monitor.id,
@@ -130,6 +150,16 @@ const execute = Effect.fn(SPAN.runs.persist)(function* (input: ExecuteInput) {
     httpStatus: outcome.response.httpStatus,
     bytes: outcome.response.html.length,
     contentHash: outcome.contentHash,
+  })
+
+  yield* logRunDiffed(logIdentity, drafts.length)
+  yield* logRunFinished(logIdentity, {
+    status: RUN_STATUS.success,
+    durationMs,
+    isChanged: drafts.length > 0,
+    strategy: outcome.strategyUsed,
+    httpStatus: outcome.response.httpStatus,
+    bytes: outcome.response.html.length,
   })
 
   yield* recordMonitorState(
@@ -193,6 +223,15 @@ const failRun = Effect.fn(SPAN.runs.persist)(function* (input: FailureInput) {
     errorMessage: detailOf(input.error),
   })
 
+  yield* logRunFailed(
+    { monitorId: input.monitor.id, runId: input.runId },
+    {
+      errorTag: input.error._tag,
+      cause: detailOf(input.error),
+      durationMs: finishedAtMs - input.startedAtMs,
+    },
+  )
+
   yield* recordMonitorState(
     input.monitor.id,
     input.monitor,
@@ -238,12 +277,26 @@ export const runPipeline = Effect.fn(SPAN.runs.execute)(function* (request: RunR
       durationMs: 0,
       changed: false,
     })
+    yield* logRunSkipped(
+      { monitorId: request.monitorId, runId: skipped.id },
+      monitor.enabled ? MONITOR_ARCHIVED_REASON : MONITOR_DISABLED_REASON,
+    )
     return skipped
   }
 
   yield* rateLimiter.checkDomain(hostOf(monitor.url))
 
   const run = resumed ?? (yield* runs.start({ ...request, startedAt }))
+
+  yield* logRunStarted(
+    { monitorId: request.monitorId, runId: run.id },
+    {
+      trigger: request.trigger,
+      attempt: request.attempt,
+      url: monitor.url,
+      isResumed: resumed !== null,
+    },
+  )
   const previousRun = yield* runs.previousSuccessful(request.monitorId, startedAt)
   const autoPauseAfterFailures = config.scraping.autoPauseAfterFailures
 

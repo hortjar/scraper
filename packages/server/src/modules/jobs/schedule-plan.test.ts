@@ -60,10 +60,10 @@ describe("buildScrapeSchedulerPlan", () => {
     expect(buildScrapeSchedulerPlan(cronMonitor, CONFIG).repeat.offset).toBe(plan.repeat.offset)
   })
 
-  it("carries the schedule trigger and a zero starting attempt, never the schedule value itself", () => {
+  it("starts at attempt 1, never 0 — runs.attempt is CHECK (attempt >= 1)", () => {
     const plan = buildScrapeSchedulerPlan(cronMonitor, CONFIG)
 
-    expect(plan.data).toEqual({ monitorId: cronMonitor.id, trigger: "schedule", attempt: 0 })
+    expect(plan.data).toEqual({ monitorId: cronMonitor.id, trigger: "schedule", attempt: 1 })
   })
 
   it("applies attempts and backoff from configuration, not a hardcoded value", () => {

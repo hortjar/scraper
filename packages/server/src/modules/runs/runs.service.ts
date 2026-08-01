@@ -1,4 +1,4 @@
-import { RUN_TRIGGER, SERVICE_TAG, SPAN } from "@scraper/core/constants"
+import { FIRST_ATTEMPT, RUN_TRIGGER, SERVICE_TAG, SPAN } from "@scraper/core/constants"
 import type { MonitorId, RunId, UserId } from "@scraper/core/domain"
 import { RunNotFound } from "@scraper/core/errors"
 import { pageSize } from "@scraper/db"
@@ -8,7 +8,6 @@ import { JobProducer } from "../jobs/index.js"
 import { MonitorRepository } from "../monitors/index.js"
 
 import { diffText } from "./diff/text-diff.js"
-import { FIRST_ATTEMPT } from "./runs.constants.js"
 import { RunRepository } from "./runs.repository.js"
 
 export interface PageQuery {

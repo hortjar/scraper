@@ -1,4 +1,4 @@
-import { MAINTENANCE_TASK, RUN_TRIGGER } from "@scraper/core/constants"
+import { FIRST_ATTEMPT, MAINTENANCE_TASK, RUN_TRIGGER } from "@scraper/core/constants"
 import { DeliveryId, MonitorId, RuleId } from "@scraper/core/domain"
 import { Schema } from "effect"
 
@@ -10,7 +10,7 @@ export const ScrapeJobPayload = Schema.Struct({
     RUN_TRIGGER.retry,
     RUN_TRIGGER.test,
   ),
-  attempt: Schema.Number.pipe(Schema.int(), Schema.nonNegative()),
+  attempt: Schema.Number.pipe(Schema.int(), Schema.greaterThanOrEqualTo(FIRST_ATTEMPT)),
 })
 export type ScrapeJobPayload = typeof ScrapeJobPayload.Type
 

@@ -12,7 +12,8 @@ export const DEDUPE_TTL_FLOOR_SECONDS = 3600
 export const BROWSER_UNAVAILABLE_REASON = "browser_unavailable"
 export const UNKNOWN_ERROR_DETAIL = "unknown"
 
-export const FIRST_ATTEMPT = 1
+export const MONITOR_DISABLED_REASON = "monitor_disabled"
+export const MONITOR_ARCHIVED_REASON = "monitor_archived"
 
 export const WHOLE_PAGE_KEY = null
 

@@ -160,6 +160,10 @@ export const SPAN = {
     pruneRobots: "Maintenance.pruneRobots",
     schedulerHealth: "Maintenance.schedulerHealth",
   },
+  storage: {
+    put: "ArtifactStore.put",
+    get: "ArtifactStore.get",
+  },
   db: {
     query: "Database.query",
     transaction: "Database.transaction",
@@ -182,6 +186,37 @@ export const METRIC = {
   httpDuration: "http_request_duration_seconds",
 } as const
 
+export const LOG_EVENT = {
+  run: {
+    started: "run.started",
+    resumed: "run.resumed",
+    skipped: "run.skipped",
+    unchanged: "run.unchanged",
+    diffed: "run.diffed",
+    finished: "run.finished",
+    failed: "run.failed",
+  },
+  scrape: {
+    robots: "scrape.robots",
+    strategy: "scrape.strategy",
+    fetched: "scrape.fetched",
+    escalated: "scrape.escalated",
+    extracted: "scrape.extracted",
+    warning: "scrape.warning",
+    normalized: "scrape.normalized",
+  },
+  browser: {
+    connected: "browser.connected",
+    navigated: "browser.navigated",
+    step: "browser.step",
+    captured: "browser.captured",
+  },
+  screenshot: {
+    stored: "screenshot.stored",
+    failed: "screenshot.failed",
+  },
+} as const
+
 export const LOG_FIELD = {
   requestId: "requestId",
   userId: "userId",
@@ -200,6 +235,24 @@ export const LOG_FIELD = {
   cause: "cause",
   migrationFile: "migrationFile",
   migrationsApplied: "migrationsApplied",
+  trigger: "trigger",
+  attempt: "attempt",
+  url: "url",
+  finalUrl: "finalUrl",
+  httpStatus: "httpStatus",
+  bytes: "bytes",
+  contentHash: "contentHash",
+  status: "status",
+  changed: "changed",
+  changeCount: "changeCount",
+  fieldCount: "fieldCount",
+  missingCount: "missingCount",
+  warningCount: "warningCount",
+  warningCode: "warningCode",
+  allowed: "allowed",
+  reason: "reason",
+  stepKind: "stepKind",
+  screenshotRef: "screenshotRef",
 } as const
 
 export const REDACTED_KEYS = [

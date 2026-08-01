@@ -1,4 +1,10 @@
-import { JOB_NAME, RUN_TRIGGER, SCHEDULE_KIND, SCHEDULER_ID } from "@scraper/core/constants"
+import {
+  FIRST_ATTEMPT,
+  JOB_NAME,
+  RUN_TRIGGER,
+  SCHEDULE_KIND,
+  SCHEDULER_ID,
+} from "@scraper/core/constants"
 import type { Monitor, MonitorId, Schedule } from "@scraper/core/domain"
 
 import { deterministicJitterMs } from "./jitter.js"
@@ -55,7 +61,7 @@ export const buildScrapeSchedulerPlan = (
     id: SCHEDULER_ID.monitor(monitor.id),
     repeat,
     name: JOB_NAME.scrape,
-    data: { monitorId: monitor.id, trigger: RUN_TRIGGER.schedule, attempt: 0 },
+    data: { monitorId: monitor.id, trigger: RUN_TRIGGER.schedule, attempt: FIRST_ATTEMPT },
     opts: {
       attempts: config.scrapeMaxAttempts,
       backoff: { type: "exponential", delay: config.backoffBaseMs },

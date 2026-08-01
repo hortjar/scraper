@@ -17,7 +17,7 @@ describe("ScrapeJobPayload", () => {
     const result = Schema.decodeUnknownEither(ScrapeJobPayload)({
       monitorId: MONITOR_ID,
       trigger: "schedule",
-      attempt: 0,
+      attempt: 1,
     })
 
     expect(Either.isRight(result)).toBe(true)
@@ -27,6 +27,16 @@ describe("ScrapeJobPayload", () => {
     const result = Schema.decodeUnknownEither(ScrapeJobPayload)({
       monitorId: MONITOR_ID,
       trigger: "cron",
+      attempt: 1,
+    })
+
+    expect(Either.isLeft(result)).toBe(true)
+  })
+
+  it("rejects attempt 0 — runs.attempt is CHECK (attempt >= 1) and the insert would fail", () => {
+    const result = Schema.decodeUnknownEither(ScrapeJobPayload)({
+      monitorId: MONITOR_ID,
+      trigger: "schedule",
       attempt: 0,
     })
 
@@ -47,7 +57,7 @@ describe("ScrapeJobPayload", () => {
     const result = Schema.decodeUnknownEither(ScrapeJobPayload)({
       monitorId: "not-a-uuid",
       trigger: "manual",
-      attempt: 0,
+      attempt: 1,
     })
 
     expect(Either.isLeft(result)).toBe(true)

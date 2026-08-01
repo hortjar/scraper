@@ -3,6 +3,8 @@ export const PAGINATION = {
   maxLimit: 100,
 } as const
 
+export const FIRST_ATTEMPT = 1
+
 export const RETRY = {
   scrapeAttempts: 3,
   notifyAttempts: 5,

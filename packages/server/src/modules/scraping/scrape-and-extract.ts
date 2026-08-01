@@ -23,6 +23,15 @@ import { Extraction } from "./extraction/extraction.service.js"
 import { ContentNormalizer } from "./normalize/content-normalizer.service.js"
 import { coerceList, coerceScalar, missingField } from "./preview/coerce.js"
 import { RobotsCache } from "./robots/robots-cache.service.js"
+import {
+  logEscalated,
+  logExtracted,
+  logFetched,
+  logNormalized,
+  logRobotsDecision,
+  logStrategyResolved,
+  logWarnings,
+} from "./scrape-log.js"
 import type { ScrapeRequest } from "./scraping.schema.js"
 import { UrlGuard } from "./security/url-guard.service.js"
 import { shouldEscalate } from "./strategies/auto-escalation.js"
@@ -140,19 +149,24 @@ export const scrapeAndExtract = Effect.fn(SPAN.scraping.fetch)(function* (monito
 
   if (monitor.respectRobots) {
     const decision = yield* robots.check(monitor.url, userAgent)
+    yield* logRobotsDecision(monitor.url, decision.allowed)
     if (!decision.allowed) return yield* Effect.fail(new RobotsDisallowed({ url: monitor.url }))
   }
 
   const request = toScrapeRequest(monitor)
   const initialStrategy = yield* registry.resolve(monitor)
+  yield* logStrategyResolved(monitor.url, initialStrategy.kind)
 
   let response = yield* initialStrategy.fetch(request)
   let strategyUsed = initialStrategy.kind
+  yield* logFetched(strategyUsed, response)
+
   let rawFields = yield* extraction.extractAll(
     response.html,
     monitor.contentSelector,
     monitor.extractors,
   )
+  yield* logExtracted(rawFields)
 
   const canEscalate =
     monitor.engine === ENGINE.auto &&
@@ -169,17 +183,22 @@ export const scrapeAndExtract = Effect.fn(SPAN.scraping.fetch)(function* (monito
 
     if (isEscalate) {
       warnings.push({ code: "escalated_to_browser", messageKey: MSG.warnings.jsRenderedDetected })
+      yield* logEscalated(monitor.url)
       response = yield* registry.browser.fetch(request)
       strategyUsed = STRATEGY.browser
+      yield* logFetched(strategyUsed, response)
+
       rawFields = yield* extraction.extractAll(
         response.html,
         monitor.contentSelector,
         monitor.extractors,
       )
+      yield* logExtracted(rawFields)
     }
   }
 
   warnings.push(...selectorWarnings(monitor.extractors, rawFields))
+  yield* logWarnings(warnings)
 
   const fields = yield* Effect.forEach(monitor.extractors, (extractor, index) =>
     processExtractor(
@@ -194,6 +213,7 @@ export const scrapeAndExtract = Effect.fn(SPAN.scraping.fetch)(function* (monito
     monitor.contentSelector,
     monitor.ignoreRules,
   )
+  yield* logNormalized(contentHash, normalized.length)
 
   return {
     response,

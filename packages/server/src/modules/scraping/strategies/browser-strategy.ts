@@ -3,6 +3,12 @@ import { Clock, Duration, Effect, Redacted } from "effect"
 import { chromium, type Browser, type BrowserContext, type Page } from "playwright-core"
 
 import {
+  logBrowserCaptured,
+  logBrowserConnected,
+  logBrowserNavigated,
+  logBrowserStep,
+} from "../scrape-log.js"
+import {
   DEFAULT_VIEWPORT,
   SCROLL_STEP_PIXELS,
   BROWSER_TOKEN_PARAMETER,
@@ -151,6 +157,7 @@ const runOnPage = (
   timeoutMs: number,
 ) =>
   Effect.gen(function* () {
+    yield* logBrowserConnected(request.url)
     yield* installResourceBlocking(
       page,
       request.browserOptions.blockResources ?? dependencies.blockResources,
@@ -161,10 +168,13 @@ const runOnPage = (
       request.browserOptions.waitUntil ?? "load",
       timeoutMs,
     )
+    yield* logBrowserNavigated(page.url(), navigation.status)
 
-    yield* Effect.forEach(request.browserOptions.steps ?? [], (step) => runStep(page, step), {
-      discard: true,
-    })
+    yield* Effect.forEach(
+      request.browserOptions.steps ?? [],
+      (step) => logBrowserStep(step.kind).pipe(Effect.zipRight(runStep(page, step))),
+      { discard: true },
+    )
 
     const waitForSelector = request.browserOptions.waitForSelector
     if (waitForSelector !== undefined) {
@@ -186,6 +196,7 @@ const runOnPage = (
     const isWantScreenshot =
       dependencies.screenshotsEnabled && (request.browserOptions.screenshot ?? false)
     const captured = yield* capture(page, isWantScreenshot)
+    yield* logBrowserCaptured(captured.screenshot?.byteLength ?? 0)
 
     return { navigation, captured, finalUrl: page.url() }
   })

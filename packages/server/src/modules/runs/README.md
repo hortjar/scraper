@@ -31,6 +31,32 @@ knowing:
 per-extractor diff fan-out, error classification. Split out so the orchestration
 file stays readable and the mapping is testable without a database.
 
+## What a run logs
+
+`run-log.ts` emits one event per stage boundary, annotated with `monitorId` and
+`runId`; the scraping half lives in `scraping/scrape-log.ts`. A single successful run
+reads:
+
+```
+run.started       trigger, attempt, url
+scrape.robots     allowed                            debug
+scrape.strategy   strategy                           debug
+scrape.fetched    strategy, finalUrl, httpStatus, bytes, durationMs
+scrape.extracted  fieldCount, missingCount           debug
+scrape.normalized contentHash, bytes                 debug
+run.unchanged     contentHash          — or —  run.diffed  changeCount
+run.finished      status, durationMs, changed, strategy, httpStatus, bytes
+```
+
+Stage boundaries are `info` and per-stage detail is `debug`, so the default
+`LOG_LEVEL=info` gives one line per phase and `debug` adds the browser's own trace
+(`browser.connected` / `navigated` / `step` / `captured`). The split is deliberate:
+`info` should stay readable at production volume while still answering "which
+strategy ran, how big was the page, did anything change".
+
+Log message strings are `LOG_EVENT` in core telemetry, not literals, so a rename
+cannot silently orphan a dashboard query.
+
 ## Diffing
 
 `diff/field-diff.ts` dispatches on the extractor's `valueType`:
@@ -93,6 +119,16 @@ the server's, and a window whose start equals its end is never quiet.
   `JOB_PREFIX` and the workers did not, so the API wrote to `scraper:scrape` while
   the workers listened on `bull:scrape` and no job was ever processed. Nothing failed
   loudly — jobs simply sat in a queue nobody read.
+- **Every scheduled run failed on its first insert**, for as long as the scheduler
+  existed. `buildScrapeSchedulerPlan` seeded `attempt: 0`, `runs.attempt` is
+  `CHECK (attempt >= 1)`, and so `runs.start` threw before any run row was written —
+  only manual runs, which pass `FIRST_ATTEMPT`, ever produced one. Two tests asserted
+  the `0` and passed, because both sides of the contradiction were mocked away; the
+  live worker log found it in one boot. `ScrapeJobPayload.attempt` now requires
+  `>= FIRST_ATTEMPT` so the queue rejects the payload before Postgres has to.
+  **A scheduler already in Redis keeps its old payload until `reconcile-schedules`
+  re-upserts it** — the fix reaches a running deployment on the next reconcile, not
+  on deploy.
 
 ## Known gaps
 
