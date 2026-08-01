@@ -62,3 +62,22 @@ export const RuleDto = Schema.Struct({
 export type RuleDto = typeof RuleDto.Type
 
 export const RuleListDto = Schema.Struct({ items: Schema.Array(RuleDto) })
+
+export const RulePreviewFieldDto = Schema.Struct({
+  label: Schema.String,
+  value: Schema.String,
+})
+
+export const RulePreviewDto = Schema.Struct({
+  ruleId: RuleId,
+  channelKind: Schema.String,
+  basedOnRunId: Schema.NullOr(Schema.String),
+  payload: Schema.Struct({
+    title: Schema.String,
+    summaryText: Schema.String,
+    summaryMarkdown: Schema.String,
+    fields: Schema.Array(RulePreviewFieldDto),
+    url: Schema.String,
+  }),
+})
+export type RulePreviewDto = typeof RulePreviewDto.Type

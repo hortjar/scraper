@@ -94,11 +94,17 @@ export interface ResponseSink {
 
 const SERVER_FAILURE_LOG = "http.serverFailure"
 
+const asText = (value: unknown): string =>
+  typeof value === "string" ? value : JSON.stringify(value)
+
+const DESCRIBED_FIELDS = ["cause", "entity", "detail", "operation", "reason"] as const
+
 const describeAppError = (error: AppError): string => {
-  const cause = "cause" in error ? error.cause : undefined
-  if (cause === undefined || cause === null) return error._tag
-  const detail = typeof cause === "string" ? cause : JSON.stringify(cause)
-  return `${error._tag} cause=${detail}`
+  const record = error as unknown as Readonly<Record<string, unknown>>
+  const parts = DESCRIBED_FIELDS.filter(
+    (field) => record[field] !== undefined && record[field] !== null,
+  ).map((field) => `${field}=${asText(record[field])}`)
+  return parts.length === 0 ? error._tag : `${error._tag} ${parts.join(" ")}`
 }
 
 const failureResponse = (

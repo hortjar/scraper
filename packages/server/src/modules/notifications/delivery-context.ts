@@ -3,7 +3,7 @@ import { Change, ChannelId, NotificationMessage, UserId } from "@scraper/core/do
 import type { ChangeSummary, DeliveryId } from "@scraper/core/domain"
 import { resolveLocale } from "@scraper/core/i18n"
 import type { Database } from "@scraper/db"
-import { decodeRow, decodeRows, schema } from "@scraper/db"
+import { decodeRow, decodeRows, schema, toDomainChange } from "@scraper/db"
 import { asc, eq, inArray } from "drizzle-orm"
 import { Effect } from "effect"
 
@@ -21,7 +21,7 @@ export interface DeliveryContext {
   readonly customTemplate: string | null
 }
 
-const summaryFor = (change: Change, labels: ReadonlyMap<string, string>): ChangeSummary => ({
+export const summaryFor = (change: Change, labels: ReadonlyMap<string, string>): ChangeSummary => ({
   key: change.extractorKey,
   label:
     change.extractorKey === null ? "" : (labels.get(change.extractorKey) ?? change.extractorKey),
@@ -43,9 +43,9 @@ const loadChanges = (database: Database, changeIds: readonly string[]) =>
             .where(inArray(schema.changes.id, [...changeIds]))
             .orderBy(asc(schema.changes.createdAt)),
         )
-        .pipe(Effect.flatMap((rows) => decodeChanges(rows)))
+        .pipe(Effect.flatMap((rows) => decodeChanges(rows.map((row) => toDomainChange(row)))))
 
-const loadLabels = (database: Database, monitorId: string) =>
+export const loadLabels = (database: Database, monitorId: string) =>
   database
     .query((executor) =>
       executor
@@ -55,7 +55,7 @@ const loadLabels = (database: Database, monitorId: string) =>
     )
     .pipe(Effect.map((rows) => new Map(rows.map((extractor) => [extractor.key, extractor.label]))))
 
-const loadRun = (database: Database, runId: string | null) =>
+export const loadRun = (database: Database, runId: string | null) =>
   runId === null
     ? Effect.succeed(undefined)
     : database

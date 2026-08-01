@@ -1,12 +1,18 @@
+import { AppConfig } from "@scraper/core/config"
 import { SERVICE_TAG, SPAN } from "@scraper/core/constants"
 import type { MonitorId, RuleId, UserId } from "@scraper/core/domain"
-import { MonitorNotFound } from "@scraper/core/errors"
-import { Effect } from "effect"
+import { ChannelNotFound, MonitorNotFound } from "@scraper/core/errors"
+import { resolveLocale } from "@scraper/core/i18n"
+import { Database } from "@scraper/db"
+import { Effect, Option } from "effect"
 
 import { ChannelRepository, ChannelRepositoryLive } from "./channel.repository.js"
+import { ChannelRegistry, ChannelRegistryLive } from "./channels/index.js"
 import type { RuleInsert, RulePatch } from "./rule.repository.crud.js"
 import { RuleRepository, RuleRepositoryLive } from "./rule.repository.js"
+import { makePreviewMessageBuilder } from "./rules.preview.js"
 import type { CreateRuleBody, UpdateRuleBody } from "./rules.schema.js"
+import { TemplateRenderer, TemplateRendererLive } from "./template/template-renderer.service.js"
 
 type RuleColumns = Omit<RuleInsert, "monitorId">
 
@@ -44,6 +50,16 @@ export class Rules extends Effect.Service<Rules>()(SERVICE_TAG.Rules, {
   effect: Effect.gen(function* () {
     const rules = yield* RuleRepository
     const channels = yield* ChannelRepository
+    const registry = yield* ChannelRegistry
+    const renderer = yield* TemplateRenderer
+    const database = yield* Database
+    const config = yield* AppConfig
+
+    const buildPreviewMessage = makePreviewMessageBuilder(
+      database,
+      config.app.appUrl,
+      config.app.defaultLocale,
+    )
 
     const list = Effect.fn(SPAN.rules.list)(function* (userId: UserId, monitorId: MonitorId) {
       return yield* rules.listForMonitor(userId, monitorId)
@@ -73,9 +89,50 @@ export class Rules extends Effect.Service<Rules>()(SERVICE_TAG.Rules, {
       yield* rules.remove(userId, ruleId)
     })
 
-    return { list, create, update, remove } as const
+    const preview = Effect.fn(SPAN.notifications.render)(function* (
+      userId: UserId,
+      ruleId: RuleId,
+    ) {
+      const rule = yield* rules.findById(userId, ruleId)
+      const channel = yield* channels.findById(userId, rule.channelId)
+
+      const descriptor = registry.get(channel.kind)
+      if (Option.isNone(descriptor)) {
+        return yield* Effect.fail(new ChannelNotFound({ id: rule.channelId }))
+      }
+
+      const built = yield* buildPreviewMessage({
+        monitorId: rule.monitorId,
+        ruleId: rule.id,
+        ruleName: rule.name,
+      })
+      if (built === null) return yield* Effect.fail(new MonitorNotFound({ id: rule.monitorId }))
+
+      const payload = yield* renderer.render(
+        built.message,
+        resolveLocale(built.message.locale, null, config.app.defaultLocale),
+        descriptor.value.capabilities,
+        rule.template,
+      )
+
+      return {
+        ruleId: rule.id,
+        channelKind: channel.kind,
+        basedOnRunId: built.basedOnRunId,
+        payload,
+      }
+    })
+
+    return { list, create, update, remove, preview } as const
   }),
-  dependencies: [RuleRepositoryLive, ChannelRepositoryLive],
+  dependencies: [
+    RuleRepositoryLive,
+    ChannelRepositoryLive,
+    ChannelRegistryLive,
+    TemplateRendererLive,
+    Database.Default,
+    AppConfig.Default,
+  ],
 }) {}
 
 export const RulesLive = Rules.Default

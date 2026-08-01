@@ -14,6 +14,7 @@ import {
   RuleDto,
   RuleIdParameters,
   RuleListDto,
+  RulePreviewDto,
   RuleMonitorParameters,
   UpdateRuleBody,
 } from "./rules.schema.js"
@@ -25,6 +26,7 @@ const standardRuleParameters = Schema.standardSchemaV1(RuleIdParameters)
 const standardMonitorParameters = Schema.standardSchemaV1(RuleMonitorParameters)
 const standardRule = Schema.standardSchemaV1(RuleDto)
 const standardList = Schema.standardSchemaV1(RuleListDto)
+const standardPreview = Schema.standardSchemaV1(RulePreviewDto)
 
 export type RuleServices = Rules
 
@@ -98,6 +100,21 @@ const ruleHandlers = (options: AuthPluginOptions<RuleServices>) =>
         detail: {
           summary: "Update a notification rule",
           operationId: NOTIFICATIONS_OPERATION_ID.updateRule,
+          tags: [API_TAG.rules],
+        },
+      },
+    )
+    .post(
+      RULE_PATH.preview,
+      ({ runAuthFx, user, params }) =>
+        runAuthFx(Effect.flatMap(Rules, (rules) => rules.preview(user.userId, params.ruleId))),
+      {
+        auth: { scopes: [CHANNEL_SCOPE.write] },
+        params: standardRuleParameters,
+        response: { ...FAILURES, [HTTP_STATUS.ok]: standardPreview },
+        detail: {
+          summary: "Render this rule's message for the monitor's latest change",
+          operationId: NOTIFICATIONS_OPERATION_ID.previewRule,
           tags: [API_TAG.rules],
         },
       },

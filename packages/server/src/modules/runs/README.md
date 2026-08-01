@@ -149,6 +149,16 @@ the server's, and a window whose start equals its end is never quiet.
   re-upserts it** — the fix reaches a running deployment on the next reconcile, not
   on deploy.
 
+- **Postgres returns `numeric` as a string, and `Change` wants numbers.** Every
+  `decodeChangeRows` call site — the changes list, the activity feed, the
+  `insertChanges` return, the notify runner's message builder — failed with
+  `DataCorruption` the moment a change carried `old_number`. It went unnoticed
+  because no numeric change had ever existed in the database: a price monitor, the
+  flagship use case, would have failed its own run on the first price move.
+  `toDomainChange` in `@scraper/db` now converts at every decode site, and the
+  regression test feeds the row shape the driver actually returns rather than the
+  shape the schema wants.
+
 ## Known gaps
 
 - Quiet-hours holds are written to `REDIS_KEY.digestBucket`, which only drains when a

@@ -8,6 +8,7 @@ import {
   decodeRows,
   schema,
   takePage,
+  toDomainChange,
 } from "@scraper/db"
 import { and, desc, eq, isNotNull, sql } from "drizzle-orm"
 import { Effect } from "effect"
@@ -169,7 +170,7 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
           })
           .returning(),
       )
-      return yield* decodeChangeRows(rows)
+      return yield* decodeChangeRows(rows.map((row) => toDomainChange(row)))
     })
 
     const snapshots = makeSnapshotQueries(database)
@@ -220,7 +221,7 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
           .orderBy(desc(schema.changes.createdAt), desc(schema.changes.id))
           .limit(filter.limit + 1),
       )
-      const decoded = yield* decodeChangeRows(rows.map((row) => row.change))
+      const decoded = yield* decodeChangeRows(rows.map((row) => toDomainChange(row.change)))
       return takePage(decoded, filter.limit, (change) => ({
         at: change.createdAt.toISOString(),
         id: change.id,
@@ -254,7 +255,7 @@ export class RunRepository extends Effect.Service<RunRepository>()(SERVICE_TAG.R
           .orderBy(desc(schema.changes.createdAt), desc(schema.changes.id))
           .limit(filter.limit + 1),
       )
-      const decoded = yield* decodeChangeRows(rows)
+      const decoded = yield* decodeChangeRows(rows.map((row) => toDomainChange(row)))
       return takePage(decoded, filter.limit, (change) => ({
         at: change.createdAt.toISOString(),
         id: change.id,

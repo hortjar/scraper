@@ -10,6 +10,7 @@ export const NOTIFICATIONS_OPERATION_ID = {
   listRules: "listRules",
   createRule: "createRule",
   updateRule: "updateRule",
+  previewRule: "previewRule",
   deleteRule: "deleteRule",
   listDeliveries: "listDeliveries",
   retryDelivery: "retryDelivery",
