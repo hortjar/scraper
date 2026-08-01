@@ -29,6 +29,7 @@ import { Route as AppMonitorsMonitorIdRouteImport } from './routes/_app/monitors
 import { Route as AppMonitorsNewRouteImport } from './routes/_app/monitors.new'
 import { Route as AppRunsRunIdRouteImport } from './routes/_app/runs.$runId'
 import { Route as AppChannelsChannelIdEditRouteImport } from './routes/_app/channels.$channelId.edit'
+import { Route as AppMonitorsMonitorIdIndexRouteImport } from './routes/_app/monitors.$monitorId.index'
 import { Route as AppMonitorsMonitorIdEditRouteImport } from './routes/_app/monitors.$monitorId.edit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -130,6 +131,12 @@ const AppChannelsChannelIdEditRoute =
     path: '/$channelId/edit',
     getParentRoute: () => AppChannelsRoute,
   } as any)
+const AppMonitorsMonitorIdIndexRoute =
+  AppMonitorsMonitorIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppMonitorsMonitorIdRoute,
+  } as any)
 const AppMonitorsMonitorIdEditRoute =
   AppMonitorsMonitorIdEditRouteImport.update({
     id: '/edit',
@@ -157,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/monitors/': typeof AppMonitorsIndexRoute
   '/channels/$channelId/edit': typeof AppChannelsChannelIdEditRoute
   '/monitors/$monitorId/edit': typeof AppMonitorsMonitorIdEditRoute
+  '/monitors/$monitorId/': typeof AppMonitorsMonitorIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -169,13 +177,13 @@ export interface FileRoutesByTo {
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/channels/new': typeof AppChannelsNewRoute
-  '/monitors/$monitorId': typeof AppMonitorsMonitorIdRouteWithChildren
   '/monitors/new': typeof AppMonitorsNewRoute
   '/runs/$runId': typeof AppRunsRunIdRoute
   '/channels': typeof AppChannelsIndexRoute
   '/monitors': typeof AppMonitorsIndexRoute
   '/channels/$channelId/edit': typeof AppChannelsChannelIdEditRoute
   '/monitors/$monitorId/edit': typeof AppMonitorsMonitorIdEditRoute
+  '/monitors/$monitorId': typeof AppMonitorsMonitorIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/_app/monitors/': typeof AppMonitorsIndexRoute
   '/_app/channels/$channelId/edit': typeof AppChannelsChannelIdEditRoute
   '/_app/monitors/$monitorId/edit': typeof AppMonitorsMonitorIdEditRoute
+  '/_app/monitors/$monitorId/': typeof AppMonitorsMonitorIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/monitors/'
     | '/channels/$channelId/edit'
     | '/monitors/$monitorId/edit'
+    | '/monitors/$monitorId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -235,13 +245,13 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/channels/new'
-    | '/monitors/$monitorId'
     | '/monitors/new'
     | '/runs/$runId'
     | '/channels'
     | '/monitors'
     | '/channels/$channelId/edit'
     | '/monitors/$monitorId/edit'
+    | '/monitors/$monitorId'
   id:
     | '__root__'
     | '/'
@@ -265,6 +275,7 @@ export interface FileRouteTypes {
     | '/_app/monitors/'
     | '/_app/channels/$channelId/edit'
     | '/_app/monitors/$monitorId/edit'
+    | '/_app/monitors/$monitorId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -415,6 +426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppChannelsChannelIdEditRouteImport
       parentRoute: typeof AppChannelsRoute
     }
+    '/_app/monitors/$monitorId/': {
+      id: '/_app/monitors/$monitorId/'
+      path: '/'
+      fullPath: '/monitors/$monitorId/'
+      preLoaderRoute: typeof AppMonitorsMonitorIdIndexRouteImport
+      parentRoute: typeof AppMonitorsMonitorIdRoute
+    }
     '/_app/monitors/$monitorId/edit': {
       id: '/_app/monitors/$monitorId/edit'
       path: '/edit'
@@ -443,10 +461,12 @@ const AppChannelsRouteWithChildren = AppChannelsRoute._addFileChildren(
 
 interface AppMonitorsMonitorIdRouteChildren {
   AppMonitorsMonitorIdEditRoute: typeof AppMonitorsMonitorIdEditRoute
+  AppMonitorsMonitorIdIndexRoute: typeof AppMonitorsMonitorIdIndexRoute
 }
 
 const AppMonitorsMonitorIdRouteChildren: AppMonitorsMonitorIdRouteChildren = {
   AppMonitorsMonitorIdEditRoute: AppMonitorsMonitorIdEditRoute,
+  AppMonitorsMonitorIdIndexRoute: AppMonitorsMonitorIdIndexRoute,
 }
 
 const AppMonitorsMonitorIdRouteWithChildren =
