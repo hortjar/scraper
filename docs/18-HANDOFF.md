@@ -111,11 +111,8 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
    Two ways out: run the worker on Node, or drive browserless over its REST API
    instead of CDP. That is a decision to make, not a bug to fix. Screenshots can be
    stored and served today; they just cannot be captured.
-3. **A rule with `deliveryMode: digest` and no `digestCron` still holds forever.**
-   The per-rule cron now drains the bucket, but a rule that never set a cron has no
-   owner to flush it. Either require a cron when the mode is digest, or fall back to
-   a default schedule.
-4. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
+
+3. Deferred and worth knowing: `STORAGE_DRIVER=s3` cannot be configured from
    Portainer — 23 documented variables are absent from the compose
    `x-app-environment` anchor, listed in `deploy/portainer/STACK.md` §3a.
 

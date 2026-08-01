@@ -42,6 +42,8 @@ export const cs: Catalog = {
   "errors.templateInvalid": "Šablonu se nepodařilo zpracovat.",
   "errors.passwordTooShort": "Použijte alespoň {min} znaků.",
   "errors.passwordBreached": "Toto heslo se objevilo v úniku dat. Zvolte jiné.",
+  "errors.digestCronRequired":
+    "Souhrnné pravidlo potřebuje rozvrh, jinak se upozornění nikdy neodešlou.",
   "errors.intervalTooShort": "Nejkratší povolený interval je {seconds} sekund.",
   "errors.channelKindUnknown": "{kind} není typ kanálu, který tato instance podporuje.",
   "errors.channelConfigInvalid": "Zkontrolujte nastavení pro tento typ kanálu.",

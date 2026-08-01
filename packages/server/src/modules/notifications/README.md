@@ -45,3 +45,10 @@ a manually enqueued flush.
 
 The rule's cron timezone comes from its quiet hours when set, and UTC otherwise;
 quiet hours are the only timezone a rule carries.
+
+**A digest rule without a cron is rejected**, not defaulted. `digest` mode with no
+`digestCron` has no owner to flush its bucket, so it holds every alert forever —
+the exact failure the cron was added to fix. `update` validates the _merged_ result
+rather than the patch, because either half can change on its own: switching a rule
+to digest without adding a cron, and clearing the cron on a rule already in digest,
+are the same defect arriving from opposite directions.

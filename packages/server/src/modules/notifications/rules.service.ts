@@ -15,6 +15,7 @@ import { RuleRepository, RuleRepositoryLive } from "./rule.repository.js"
 import { DIGEST_FALLBACK_TIMEZONE } from "./rules.constants.js"
 import { makePreviewMessageBuilder } from "./rules.preview.js"
 import type { CreateRuleBody, UpdateRuleBody } from "./rules.schema.js"
+import { digestCronRejection, mergedDigestShape } from "./rules.validation.js"
 import { TemplateRenderer, TemplateRendererLive } from "./template/template-renderer.service.js"
 
 type RuleColumns = Omit<RuleInsert, "monitorId">
@@ -77,6 +78,10 @@ export class Rules extends Effect.Service<Rules>()(SERVICE_TAG.Rules, {
       const isOwned = yield* rules.ownsMonitor(userId, monitorId)
       if (!isOwned) return yield* Effect.fail(new MonitorNotFound({ id: monitorId }))
       yield* channels.findById(userId, body.channelId)
+
+      const rejection = digestCronRejection(body)
+      if (rejection !== null) return yield* rejection
+
       const created = yield* rules.insert({ monitorId, ...columnsFrom(body) })
       yield* syncDigestSchedule(created)
       return created
@@ -88,6 +93,11 @@ export class Rules extends Effect.Service<Rules>()(SERVICE_TAG.Rules, {
       body: UpdateRuleBody,
     ) {
       if (body.channelId !== undefined) yield* channels.findById(userId, body.channelId)
+
+      const existing = yield* rules.findById(userId, ruleId)
+      const rejection = digestCronRejection(mergedDigestShape(existing, body))
+      if (rejection !== null) return yield* rejection
+
       const updated = yield* rules.update(userId, ruleId, patchFrom(body))
       yield* syncDigestSchedule(updated)
       return updated

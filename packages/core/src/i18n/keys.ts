@@ -40,6 +40,7 @@ export const MSG = {
     passwordTooShort: "errors.passwordTooShort",
     passwordBreached: "errors.passwordBreached",
     intervalTooShort: "errors.intervalTooShort",
+    digestCronRequired: "errors.digestCronRequired",
     channelKindUnknown: "errors.channelKindUnknown",
     channelConfigInvalid: "errors.channelConfigInvalid",
     channelVerificationUnsupported: "errors.channelVerificationUnsupported",

@@ -41,6 +41,7 @@ export const en = {
   "errors.passwordTooShort": "Use at least {min} characters.",
   "errors.passwordBreached": "That password appears in a known breach. Choose another.",
   "errors.intervalTooShort": "The shortest interval allowed is {seconds} seconds.",
+  "errors.digestCronRequired": "A digest rule needs a schedule, or its alerts are never sent.",
   "errors.channelKindUnknown": "{kind} is not a channel type this instance supports.",
   "errors.channelConfigInvalid": "Check the settings for this channel type.",
   "errors.channelVerificationUnsupported": "{kind} channels cannot be tested before use.",
