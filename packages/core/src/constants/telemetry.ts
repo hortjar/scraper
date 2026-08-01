@@ -163,6 +163,10 @@ export const SPAN = {
     pruneRobots: "Maintenance.pruneRobots",
     schedulerHealth: "Maintenance.schedulerHealth",
   },
+  admin: {
+    stats: "Admin.stats",
+    queues: "Admin.queues",
+  },
   storage: {
     put: "ArtifactStore.put",
     get: "ArtifactStore.get",

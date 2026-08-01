@@ -7,6 +7,8 @@ export const SERVICE_TAG = {
   Crypto: "app/Crypto",
   RateLimiter: "app/RateLimiter",
   ObjectStore: "app/ObjectStore",
+  Admin: "app/Admin",
+  AdminRepository: "app/AdminRepository",
 
   Users: "app/Users",
   Sessions: "app/Sessions",

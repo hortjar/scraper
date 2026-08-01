@@ -4,7 +4,7 @@
 that cost real time, and what is left. Where it disagrees with another doc about
 current state, this page is right.
 
-Last verified **2026-08-01** at 0.8.0, workspace green: 0 lint, 0 typecheck, 602 tests, CI
+Last verified **2026-08-01** at 0.8.0, workspace green: 0 lint, 0 typecheck, 618 tests, CI
 passing on `main`.
 
 ## 1. What exists
@@ -100,7 +100,5 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **Remaining API operations.** `docs/09-API.md` specifies 58; 56 are served.
-   Missing: only the two `/admin` routes — there is no admin module yet, and Bull
-   Board brings its own auth and feature-flag story.
+1. **All 58 operations in `docs/09-API.md` are served.**
 2. **Deferred and worth knowing:** `STORAGE_DRIVER=s3` cannot be configured from

@@ -5,12 +5,13 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./modules/admin": "./src/modules/admin/index.ts",
     "./modules/auth": "./src/modules/auth/index.ts",
-    "./modules/monitors": "./src/modules/monitors/index.ts",
-    "./modules/scraping": "./src/modules/scraping/index.ts",
-    "./modules/notifications": "./src/modules/notifications/index.ts",
     "./modules/jobs": "./src/modules/jobs/index.ts",
+    "./modules/monitors": "./src/modules/monitors/index.ts",
+    "./modules/notifications": "./src/modules/notifications/index.ts",
     "./modules/runs": "./src/modules/runs/index.ts",
+    "./modules/scraping": "./src/modules/scraping/index.ts",
     "./modules/storage": "./src/modules/storage/index.ts"
   },
   "scripts": {
@@ -19,6 +20,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@bull-board/api": "^8.5.0",
+    "@bull-board/elysia": "^8.5.0",
     "@node-rs/argon2": "^2.0.2",
     "@scraper/core": "workspace:*",
     "@scraper/db": "workspace:*",

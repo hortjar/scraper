@@ -2,6 +2,7 @@ import { AppConfigLive, appConfig } from "@scraper/core/config"
 import { TranslatorLive } from "@scraper/core/i18n"
 import { loggerLayer } from "@scraper/core/observability"
 import { DatabaseLive } from "@scraper/db"
+import { AdminLayer } from "@scraper/server/modules/admin"
 import { AuthLayer } from "@scraper/server/modules/auth"
 import { JobsLayer } from "@scraper/server/modules/jobs"
 import { MonitorsLayer } from "@scraper/server/modules/monitors"
@@ -19,6 +20,7 @@ const InfrastructureLayer = Layer.mergeAll(AppConfigLive, LoggerLive, Translator
 export const AppLayer = Layer.mergeAll(
   InfrastructureLayer,
   JobsLayer,
+  AdminLayer,
   ScrapingLayer,
   MonitorsLayer,
   NotificationsLayer,

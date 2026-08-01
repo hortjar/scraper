@@ -30,7 +30,8 @@ export { bootstrapAdmin } from "./auth.bootstrap.js"
 
 export { iso, isoOrNull, toApiKeyDto, toSessionDto, toUserDto } from "./auth.dto.js"
 
-export { authBase } from "./auth.http.js"
+export { AUTH_HEADER } from "./auth.constants.js"
+export { authBase, makeRunAuthEither } from "./auth.http.js"
 
 export {
   buildSessionCookie,

@@ -3,7 +3,9 @@ import process from "node:process"
 import { AppConfig, seedAppVersion } from "@scraper/core/config"
 import { LOG_FIELD, TIMEOUT } from "@scraper/core/constants"
 import { runMigrations } from "@scraper/db/migrator"
+import { makeQueueBoard, type BoardQueues } from "@scraper/server/modules/admin"
 import { bootstrapAdmin } from "@scraper/server/modules/auth"
+import { QueueRegistry } from "@scraper/server/modules/jobs"
 import { Cause, Effect, Exit } from "effect"
 
 import { createApp } from "./app.js"
@@ -42,10 +44,21 @@ await runtime.runPromise(bootstrapAdmin)
 
 const redisProbe = makeRedisProbe(config.redis)
 
+const queueBoard = config.http.enableBullBoard
+  ? await runtime.runPromise(
+      Effect.flatMap(QueueRegistry, (queues) =>
+        Effect.promise(() =>
+          makeQueueBoard({ runtime, config, queues: queues as unknown as BoardQueues }),
+        ),
+      ),
+    )
+  : undefined
+
 const app = createApp({
   runtime,
   redisProbe,
   config,
+  queueBoard,
 })
 
 app.listen({ hostname: config.http.host, port: config.http.port }, () => {

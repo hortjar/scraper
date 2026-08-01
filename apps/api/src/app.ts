@@ -1,5 +1,6 @@
 import type { RootConfig } from "@scraper/core/config"
 import { ROUTE } from "@scraper/core/constants"
+import { adminRoutes } from "@scraper/server/modules/admin"
 import { authRoutes } from "@scraper/server/modules/auth"
 import { monitorRoutes } from "@scraper/server/modules/monitors"
 import {
@@ -24,9 +25,10 @@ export interface CreateAppOptions {
   readonly runtime: AppRuntime
   readonly redisProbe: HealthProbe
   readonly config: RootConfig
+  readonly queueBoard?: Elysia | undefined
 }
 
-export const createApiRoutes = ({ runtime, redisProbe, config }: CreateAppOptions) =>
+export const createApiRoutes = ({ runtime, redisProbe, config, queueBoard }: CreateAppOptions) =>
   new Elysia()
     .use(securityPlugin({ corsOrigins: config.http.corsOrigins }))
     .use(observabilityPlugin(runtime))
@@ -41,6 +43,8 @@ export const createApiRoutes = ({ runtime, redisProbe, config }: CreateAppOption
     .use(monitorRuleRoutes({ runtime, config }))
     .use(ruleRoutes({ runtime, config }))
     .use(deliveryRoutes({ runtime, config }))
+    .use(adminRoutes({ runtime, config }))
+    .use(queueBoard ?? new Elysia())
 
 export const createApp = (options: CreateAppOptions) =>
   new Elysia().group(ROUTE.apiBase, (api) => api.use(createApiRoutes(options)))

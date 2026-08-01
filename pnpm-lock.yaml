@@ -307,6 +307,12 @@ importers:
 
   packages/server:
     dependencies:
+      '@bull-board/api':
+        specifier: ^8.5.0
+        version: 8.5.0(@bull-board/ui@8.5.0(bullmq@5.81.2))(bullmq@5.81.2)
+      '@bull-board/elysia':
+        specifier: ^8.5.0
+        version: 8.5.0(bullmq@5.81.2)(elysia@1.4.29(@sinclair/typebox@0.34.52)(@types/bun@1.3.14)(exact-mirror@1.2.2)(file-type@22.0.1)(openapi-types@12.1.3)(typescript@6.0.3))
       '@node-rs/argon2':
         specifier: ^2.0.2
         version: 2.0.2
@@ -471,6 +477,26 @@ packages:
   '@bramus/specificity@2.4.2':
     resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
     hasBin: true
+
+  '@bull-board/api@8.5.0':
+    resolution: {integrity: sha512-Wvf9JA2hrpQdS8xEQz/77ZiSmcmnAUZSJJOtdJf6two9/4Q018mZECSXSuiJBA+xilPZt62Gc1UhSoctkceLLQ==}
+    peerDependencies:
+      '@bull-board/ui': 8.5.0
+      bull: ^4.16.5
+      bullmq: ^5.79.2
+    peerDependenciesMeta:
+      bull:
+        optional: true
+      bullmq:
+        optional: true
+
+  '@bull-board/elysia@8.5.0':
+    resolution: {integrity: sha512-ktoKou+TnZohBxCc1+CeLIDA/peooXAUYaYeOE2K12WQBhyiPOcZYELLBi9Nq43bFnHiLAeUUSgTp2J4zS0akA==}
+    peerDependencies:
+      elysia: ^1.1.0
+
+  '@bull-board/ui@8.5.0':
+    resolution: {integrity: sha512-bTqdKd3cQY8EWFx2yLfg9+SfsxgXtCzT7AB/NyrKHtSj4Wn2+MSs5gYBpEJ9hvxJuxzjD6qfx83m7Sz6npW6eg==}
 
   '@commitlint/cli@21.2.1':
     resolution: {integrity: sha512-blsZGe29hJ72VGEFVl72IVYX+1vsfINpjA9yWQA6i7OKD/McGEOXg08sKIRKjFk4JvzhV/9n0l3i6NooPLTNfg==}
@@ -3007,6 +3033,11 @@ packages:
   effect@3.22.0:
     resolution: {integrity: sha512-jhYFe0zTlIRqYFrKTS+6luhmS/Tm0f+JLo0K9KUxvtFab1SUGEszQi2ehOP6QzAZvy831lDmTwwzvVDZSPNz3g==}
 
+  ejs@6.0.1:
+    resolution: {integrity: sha512-UaaM14yby8U3k02ihS1Bmj5Kz2d7CCQM1scxpgs4Mhkq8F1wR2gl3+Ts4h5Ne4Mnt7M9m4Dw7jsuMr3+xO4vZA==}
+    engines: {node: '>=0.12.18'}
+    hasBin: true
+
   electron-to-chromium@1.5.396:
     resolution: {integrity: sha512-yHiw2Y3C3H9U6TMbOfoWK/BPreiOPXRfTWPBwQBoZG6/8TB6eOPnsy5oaRYuatR7Fw2SJ4kKforgufeo7fq0EQ==}
 
@@ -3687,6 +3718,9 @@ packages:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
 
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
+
   loupe@3.2.1:
     resolution: {integrity: sha512-CdzqowRJCeLU72bHvWqwRBBlLcMEtIvGrlvef74kMnV2AolS9Y8xUv1I0U/MNAWMhBlKIoyuEgoJ0t/bbwHbLQ==}
 
@@ -3725,6 +3759,11 @@ packages:
 
   memoirist@0.4.0:
     resolution: {integrity: sha512-zxTgA0mSYELa66DimuNQDvyLq36AwDlTuVRbnQtB+VuTcKWm5Qc4z3WkSpgsFWHNhexqkIooqpv4hdcqrX5Nmg==}
+
+  mime@4.1.0:
+    resolution: {integrity: sha512-X5ju04+cAzsojXKes0B/S4tcYtFAJ6tTMuSPBEn9CPGlrWr8Fiw7qYeLT0XyH80HSoAoqWCaz+MWKh22P7G1cw==}
+    engines: {node: '>=16'}
+    hasBin: true
 
   min-indent@1.0.1:
     resolution: {integrity: sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==}
@@ -3986,6 +4025,9 @@ packages:
   redis-errors@1.2.0:
     resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==}
     engines: {node: '>=4'}
+
+  redis-info@3.1.0:
+    resolution: {integrity: sha512-ER4L9Sh/vm63DkIE0bkSjxluQlioBiBgf5w1UuldaW/3vPcecdljVDisZhmnCMvsxHNiARTTDDHGg9cGwTfrKg==}
 
   redis-parser@3.0.0:
     resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
@@ -4747,6 +4789,31 @@ snapshots:
   '@bramus/specificity@2.4.2':
     dependencies:
       css-tree: 3.2.1
+
+  '@bull-board/api@8.5.0(@bull-board/ui@8.5.0(bullmq@5.81.2))(bullmq@5.81.2)':
+    dependencies:
+      '@bull-board/ui': 8.5.0(bullmq@5.81.2)
+      redis-info: 3.1.0
+    optionalDependencies:
+      bullmq: 5.81.2
+
+  '@bull-board/elysia@8.5.0(bullmq@5.81.2)(elysia@1.4.29(@sinclair/typebox@0.34.52)(@types/bun@1.3.14)(exact-mirror@1.2.2)(file-type@22.0.1)(openapi-types@12.1.3)(typescript@6.0.3))':
+    dependencies:
+      '@bull-board/api': 8.5.0(@bull-board/ui@8.5.0(bullmq@5.81.2))(bullmq@5.81.2)
+      '@bull-board/ui': 8.5.0(bullmq@5.81.2)
+      ejs: 6.0.1
+      elysia: 1.4.29(@sinclair/typebox@0.34.52)(@types/bun@1.3.14)(exact-mirror@1.2.2)(file-type@22.0.1)(openapi-types@12.1.3)(typescript@6.0.3)
+      mime: 4.1.0
+    transitivePeerDependencies:
+      - bull
+      - bullmq
+
+  '@bull-board/ui@8.5.0(bullmq@5.81.2)':
+    dependencies:
+      '@bull-board/api': 8.5.0(@bull-board/ui@8.5.0(bullmq@5.81.2))(bullmq@5.81.2)
+    transitivePeerDependencies:
+      - bull
+      - bullmq
 
   '@commitlint/cli@21.2.1(@types/node@26.1.1)(conventional-commits-parser@7.1.0)(typescript@6.0.3)':
     dependencies:
@@ -6919,6 +6986,8 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       fast-check: 3.23.2
 
+  ejs@6.0.1: {}
+
   electron-to-chromium@1.5.396: {}
 
   elysia@1.4.29(@sinclair/typebox@0.34.52)(@types/bun@1.3.14)(exact-mirror@1.2.2)(file-type@22.0.1)(openapi-types@12.1.3)(typescript@6.0.3):
@@ -7608,6 +7677,8 @@ snapshots:
     dependencies:
       p-locate: 5.0.0
 
+  lodash@4.18.1: {}
+
   loupe@3.2.1: {}
 
   lru-cache@11.5.2: {}
@@ -7639,6 +7710,8 @@ snapshots:
   mdn-data@2.29.0: {}
 
   memoirist@0.4.0: {}
+
+  mime@4.1.0: {}
 
   min-indent@1.0.1: {}
 
@@ -7905,6 +7978,10 @@ snapshots:
       strip-indent: 3.0.0
 
   redis-errors@1.2.0: {}
+
+  redis-info@3.1.0:
+    dependencies:
+      lodash: 4.18.1
 
   redis-parser@3.0.0:
     dependencies:

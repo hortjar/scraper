@@ -5,6 +5,295 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}/api/v1` | (string & {});
 };
 
+export type GetAdminStatsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/admin/stats';
+};
+
+export type GetAdminStatsErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type GetAdminStatsError = GetAdminStatsErrors[keyof GetAdminStatsErrors];
+
+export type GetAdminStatsResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        deliveries: Array<{
+            status: string;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            total: number;
+        }>;
+        monitors: {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            degraded: number;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            enabled: number;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            total: number;
+        };
+        queues: Array<{
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            active: number;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            delayed: number;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            failed: number;
+            name: string;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            waiting: number;
+        }>;
+        runs: {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            changed: number;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            failed: number;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            total: number;
+        };
+        users: {
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            admins: number;
+            /**
+             * nonNegative
+             *
+             * a non-negative number
+             */
+            total: number;
+        };
+        /**
+         * nonNegative
+         *
+         * a non-negative number
+         */
+        windowHours: number;
+    };
+};
+
+export type GetAdminStatsResponse = GetAdminStatsResponses[keyof GetAdminStatsResponses];
+
 export type ListApiKeysData = {
     body?: never;
     path?: never;
