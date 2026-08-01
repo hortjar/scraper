@@ -4,7 +4,7 @@
 that cost real time, and what is left. Where it disagrees with another doc about
 current state, this page is right.
 
-Last verified **2026-08-01** at 0.8.0, workspace green: 0 lint, 0 typecheck, 597 tests, CI
+Last verified **2026-08-01** at 0.8.0, workspace green: 0 lint, 0 typecheck, 602 tests, CI
 passing on `main`.
 
 ## 1. What exists
@@ -100,10 +100,9 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **Remaining API operations.** `docs/09-API.md` specifies 58; 52 are served.
-   Missing: monitor export/import, `GET /monitors/:id/series`,
-   `POST /rules/:id/preview`, and the two `/admin` routes — there is no admin module
-   yet.
+1. **Remaining API operations.** `docs/09-API.md` specifies 58; 55 are served.
+   Missing: monitor export/import and the two `/admin` routes — there is no admin
+   module yet, and Bull Board brings its own auth and feature-flag story.
 2. **The browser strategy does not work under Bun.** Playwright's WebSocket client
    waits for `node:http`'s `'upgrade'` event; Bun emits `'response'` for the 101, so
    `connectOverCDP` hangs until the 45s timeout. Every `engine: browser` run fails
