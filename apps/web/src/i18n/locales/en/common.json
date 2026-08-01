@@ -31,13 +31,14 @@
     "label": "Main",
     "dashboard": "Dashboard",
     "monitors": "Monitors",
-    "runs": "Runs",
     "channels": "Channels",
     "settings": "Settings",
     "docs": "Docs",
     "product": "Product",
     "pricing": "Pricing",
-    "github": "GitHub"
+    "github": "GitHub",
+    "changes": "Activity",
+    "deliveries": "Deliveries"
   },
   "status": {
     "label": "Status",

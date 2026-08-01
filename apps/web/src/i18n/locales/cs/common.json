@@ -31,13 +31,14 @@
     "label": "Hlavní",
     "dashboard": "Přehled",
     "monitors": "Monitory",
-    "runs": "Kontroly",
     "channels": "Kanály",
     "settings": "Nastavení",
     "docs": "Dokumentace",
     "product": "Produkt",
     "pricing": "Ceník",
-    "github": "GitHub"
+    "github": "GitHub",
+    "changes": "Aktivita",
+    "deliveries": "Odeslání"
   },
   "status": {
     "label": "Stav",

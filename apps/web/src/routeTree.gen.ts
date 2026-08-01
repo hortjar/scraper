@@ -13,17 +13,22 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppChangesRouteImport } from './routes/_app/changes'
+import { Route as AppChannelsRouteImport } from './routes/_app/channels'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppDeliveriesRouteImport } from './routes/_app/deliveries'
 import { Route as AppMonitorsRouteImport } from './routes/_app/monitors'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
+import { Route as AppChannelsIndexRouteImport } from './routes/_app/channels.index'
+import { Route as AppChannelsNewRouteImport } from './routes/_app/channels.new'
 import { Route as AppMonitorsIndexRouteImport } from './routes/_app/monitors.index'
 import { Route as AppMonitorsMonitorIdRouteImport } from './routes/_app/monitors.$monitorId'
 import { Route as AppMonitorsNewRouteImport } from './routes/_app/monitors.new'
 import { Route as AppRunsRunIdRouteImport } from './routes/_app/runs.$runId'
+import { Route as AppChannelsChannelIdEditRouteImport } from './routes/_app/channels.$channelId.edit'
 import { Route as AppMonitorsMonitorIdEditRouteImport } from './routes/_app/monitors.$monitorId.edit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -44,9 +49,19 @@ const AppChangesRoute = AppChangesRouteImport.update({
   path: '/changes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppChannelsRoute = AppChannelsRouteImport.update({
+  id: '/channels',
+  path: '/channels',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDeliveriesRoute = AppDeliveriesRouteImport.update({
+  id: '/deliveries',
+  path: '/deliveries',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMonitorsRoute = AppMonitorsRouteImport.update({
@@ -79,6 +94,16 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AppChannelsIndexRoute = AppChannelsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppChannelsRoute,
+} as any)
+const AppChannelsNewRoute = AppChannelsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppChannelsRoute,
+} as any)
 const AppMonitorsIndexRoute = AppMonitorsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -99,6 +124,12 @@ const AppRunsRunIdRoute = AppRunsRunIdRouteImport.update({
   path: '/runs/$runId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppChannelsChannelIdEditRoute =
+  AppChannelsChannelIdEditRouteImport.update({
+    id: '/$channelId/edit',
+    path: '/$channelId/edit',
+    getParentRoute: () => AppChannelsRoute,
+  } as any)
 const AppMonitorsMonitorIdEditRoute =
   AppMonitorsMonitorIdEditRouteImport.update({
     id: '/edit',
@@ -109,32 +140,41 @@ const AppMonitorsMonitorIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/changes': typeof AppChangesRoute
+  '/channels': typeof AppChannelsRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
+  '/deliveries': typeof AppDeliveriesRoute
   '/monitors': typeof AppMonitorsRouteWithChildren
   '/settings': typeof AppSettingsRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/channels/new': typeof AppChannelsNewRoute
   '/monitors/$monitorId': typeof AppMonitorsMonitorIdRouteWithChildren
   '/monitors/new': typeof AppMonitorsNewRoute
   '/runs/$runId': typeof AppRunsRunIdRoute
+  '/channels/': typeof AppChannelsIndexRoute
   '/monitors/': typeof AppMonitorsIndexRoute
+  '/channels/$channelId/edit': typeof AppChannelsChannelIdEditRoute
   '/monitors/$monitorId/edit': typeof AppMonitorsMonitorIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/changes': typeof AppChangesRoute
   '/dashboard': typeof AppDashboardRoute
+  '/deliveries': typeof AppDeliveriesRoute
   '/settings': typeof AppSettingsRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/channels/new': typeof AppChannelsNewRoute
   '/monitors/$monitorId': typeof AppMonitorsMonitorIdRouteWithChildren
   '/monitors/new': typeof AppMonitorsNewRoute
   '/runs/$runId': typeof AppRunsRunIdRoute
+  '/channels': typeof AppChannelsIndexRoute
   '/monitors': typeof AppMonitorsIndexRoute
+  '/channels/$channelId/edit': typeof AppChannelsChannelIdEditRoute
   '/monitors/$monitorId/edit': typeof AppMonitorsMonitorIdEditRoute
 }
 export interface FileRoutesById {
@@ -143,17 +183,22 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
   '/_app/changes': typeof AppChangesRoute
+  '/_app/channels': typeof AppChannelsRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/deliveries': typeof AppDeliveriesRoute
   '/_app/monitors': typeof AppMonitorsRouteWithChildren
   '/_app/settings': typeof AppSettingsRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
+  '/_app/channels/new': typeof AppChannelsNewRoute
   '/_app/monitors/$monitorId': typeof AppMonitorsMonitorIdRouteWithChildren
   '/_app/monitors/new': typeof AppMonitorsNewRoute
   '/_app/runs/$runId': typeof AppRunsRunIdRoute
+  '/_app/channels/': typeof AppChannelsIndexRoute
   '/_app/monitors/': typeof AppMonitorsIndexRoute
+  '/_app/channels/$channelId/edit': typeof AppChannelsChannelIdEditRoute
   '/_app/monitors/$monitorId/edit': typeof AppMonitorsMonitorIdEditRoute
 }
 export interface FileRouteTypes {
@@ -161,32 +206,41 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/changes'
+    | '/channels'
     | '/dashboard'
+    | '/deliveries'
     | '/monitors'
     | '/settings'
     | '/forgot-password'
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/channels/new'
     | '/monitors/$monitorId'
     | '/monitors/new'
     | '/runs/$runId'
+    | '/channels/'
     | '/monitors/'
+    | '/channels/$channelId/edit'
     | '/monitors/$monitorId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/changes'
     | '/dashboard'
+    | '/deliveries'
     | '/settings'
     | '/forgot-password'
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/channels/new'
     | '/monitors/$monitorId'
     | '/monitors/new'
     | '/runs/$runId'
+    | '/channels'
     | '/monitors'
+    | '/channels/$channelId/edit'
     | '/monitors/$monitorId/edit'
   id:
     | '__root__'
@@ -194,17 +248,22 @@ export interface FileRouteTypes {
     | '/_app'
     | '/_auth'
     | '/_app/changes'
+    | '/_app/channels'
     | '/_app/dashboard'
+    | '/_app/deliveries'
     | '/_app/monitors'
     | '/_app/settings'
     | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/register'
     | '/_auth/reset-password'
+    | '/_app/channels/new'
     | '/_app/monitors/$monitorId'
     | '/_app/monitors/new'
     | '/_app/runs/$runId'
+    | '/_app/channels/'
     | '/_app/monitors/'
+    | '/_app/channels/$channelId/edit'
     | '/_app/monitors/$monitorId/edit'
   fileRoutesById: FileRoutesById
 }
@@ -244,11 +303,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppChangesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/channels': {
+      id: '/_app/channels'
+      path: '/channels'
+      fullPath: '/channels'
+      preLoaderRoute: typeof AppChannelsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/deliveries': {
+      id: '/_app/deliveries'
+      path: '/deliveries'
+      fullPath: '/deliveries'
+      preLoaderRoute: typeof AppDeliveriesRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/monitors': {
@@ -293,6 +366,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_app/channels/': {
+      id: '/_app/channels/'
+      path: '/'
+      fullPath: '/channels/'
+      preLoaderRoute: typeof AppChannelsIndexRouteImport
+      parentRoute: typeof AppChannelsRoute
+    }
+    '/_app/channels/new': {
+      id: '/_app/channels/new'
+      path: '/new'
+      fullPath: '/channels/new'
+      preLoaderRoute: typeof AppChannelsNewRouteImport
+      parentRoute: typeof AppChannelsRoute
+    }
     '/_app/monitors/': {
       id: '/_app/monitors/'
       path: '/'
@@ -321,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRunsRunIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/channels/$channelId/edit': {
+      id: '/_app/channels/$channelId/edit'
+      path: '/$channelId/edit'
+      fullPath: '/channels/$channelId/edit'
+      preLoaderRoute: typeof AppChannelsChannelIdEditRouteImport
+      parentRoute: typeof AppChannelsRoute
+    }
     '/_app/monitors/$monitorId/edit': {
       id: '/_app/monitors/$monitorId/edit'
       path: '/edit'
@@ -330,6 +424,22 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AppChannelsRouteChildren {
+  AppChannelsNewRoute: typeof AppChannelsNewRoute
+  AppChannelsIndexRoute: typeof AppChannelsIndexRoute
+  AppChannelsChannelIdEditRoute: typeof AppChannelsChannelIdEditRoute
+}
+
+const AppChannelsRouteChildren: AppChannelsRouteChildren = {
+  AppChannelsNewRoute: AppChannelsNewRoute,
+  AppChannelsIndexRoute: AppChannelsIndexRoute,
+  AppChannelsChannelIdEditRoute: AppChannelsChannelIdEditRoute,
+}
+
+const AppChannelsRouteWithChildren = AppChannelsRoute._addFileChildren(
+  AppChannelsRouteChildren,
+)
 
 interface AppMonitorsMonitorIdRouteChildren {
   AppMonitorsMonitorIdEditRoute: typeof AppMonitorsMonitorIdEditRoute
@@ -360,7 +470,9 @@ const AppMonitorsRouteWithChildren = AppMonitorsRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppChangesRoute: typeof AppChangesRoute
+  AppChannelsRoute: typeof AppChannelsRouteWithChildren
   AppDashboardRoute: typeof AppDashboardRoute
+  AppDeliveriesRoute: typeof AppDeliveriesRoute
   AppMonitorsRoute: typeof AppMonitorsRouteWithChildren
   AppSettingsRoute: typeof AppSettingsRoute
   AppRunsRunIdRoute: typeof AppRunsRunIdRoute
@@ -368,7 +480,9 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppChangesRoute: AppChangesRoute,
+  AppChannelsRoute: AppChannelsRouteWithChildren,
   AppDashboardRoute: AppDashboardRoute,
+  AppDeliveriesRoute: AppDeliveriesRoute,
   AppMonitorsRoute: AppMonitorsRouteWithChildren,
   AppSettingsRoute: AppSettingsRoute,
   AppRunsRunIdRoute: AppRunsRunIdRoute,

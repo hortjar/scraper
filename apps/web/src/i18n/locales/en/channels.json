@@ -4,16 +4,110 @@
   "list": {
     "emptyTitle": "No channels yet",
     "emptyDescription": "Add an email address, a webhook, or a chat channel so a change can reach you.",
-    "errorTitle": "Channels did not load"
+    "errorTitle": "Channels did not load",
+    "caption": "Notification channels"
   },
   "columns": {
     "name": "Channel",
     "kind": "Kind",
     "status": "Status",
-    "lastDelivery": "Last delivery"
+    "verifiedAt": "Verified",
+    "lastDelivery": "Last delivery",
+    "actions": "Actions"
+  },
+  "status": {
+    "disabled": "Disabled",
+    "unverified": "Unverified",
+    "verified": "Verified",
+    "failing": "{{count}} failures"
   },
   "actions": {
     "create": "New channel",
+    "save": "Save channel",
     "test": "Send test"
+  },
+  "form": {
+    "createTitle": "New channel",
+    "createSubtitle": "Pick a kind, fill in its settings, and send a test before you rely on it.",
+    "editTitle": "Edit channel",
+    "editSubtitle": "Leave a secret blank to keep the one already stored.",
+    "basicsTitle": "Basics",
+    "nameLabel": "Name",
+    "kindLabel": "Kind",
+    "kindPlaceholder": "Choose a channel kind",
+    "kindLocked": "A channel's kind cannot change after it is created.",
+    "enabledLabel": "Enabled",
+    "secretStored": "A secret is stored. Leave this blank to keep it.",
+    "kindsErrorTitle": "Channel kinds did not load",
+    "saveErrorTitle": "The channel was not saved"
+  },
+  "fields": {
+    "to": "Recipient address",
+    "url": "Endpoint URL",
+    "method": "HTTP method",
+    "secret": "Signing secret",
+    "headers": "Extra headers",
+    "webhookUrl": "Webhook URL",
+    "botToken": "Bot token",
+    "chatId": "Chat ID",
+    "unknown": "Setting"
+  },
+  "deliveries": {
+    "title": "Deliveries",
+    "subtitle": "Every notification this account tried to send, and what happened to it.",
+    "caption": "Notification deliveries",
+    "emptyTitle": "No deliveries yet",
+    "emptyDescription": "A delivery appears once a rule matches a change.",
+    "errorTitle": "Deliveries did not load",
+    "columns": {
+      "createdAt": "When",
+      "status": "Status",
+      "reason": "Detail",
+      "attempts": "Attempts",
+      "actions": "Actions"
+    },
+    "actions": {
+      "retry": "Retry"
+    },
+    "status": {
+      "pending": "Pending",
+      "sent": "Sent",
+      "failed": "Failed",
+      "suppressed": "Suppressed"
+    },
+    "suppressedReason": {
+      "throttled": "Throttled",
+      "quietHours": "Quiet hours",
+      "duplicate": "Duplicate",
+      "channelDisabled": "Channel disabled",
+      "channelUnverified": "Channel unverified",
+      "belowThreshold": "Below threshold",
+      "digestPending": "Held for digest",
+      "unknown": "Suppressed"
+    }
+  },
+  "rules": {
+    "title": "Notification rules",
+    "subtitle": "Which changes on this monitor reach which channel.",
+    "caption": "Notification rules",
+    "emptyTitle": "No rules yet",
+    "emptyDescription": "Add a rule to say which changes are worth a notification.",
+    "errorTitle": "Rules did not load",
+    "columns": {
+      "name": "Rule",
+      "trigger": "Trigger",
+      "channel": "Channel",
+      "mode": "Mode",
+      "status": "Status"
+    },
+    "mode": {
+      "immediate": "Immediate",
+      "digest": "Digest"
+    },
+    "status": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "unknownChannel": "Unknown channel"
   }
 }

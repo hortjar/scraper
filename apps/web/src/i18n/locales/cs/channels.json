@@ -1,19 +1,113 @@
 {
   "title": "Kanály",
-  "subtitle": "Kam mají upozornění dorazit, když změna stojí za odeslání.",
+  "subtitle": "Kam míří upozornění, když změna stojí za odeslání.",
   "list": {
     "emptyTitle": "Zatím žádné kanály",
-    "emptyDescription": "Přidejte e-mailovou adresu, webhook nebo chatovací kanál, aby se k vám změna dostala.",
-    "errorTitle": "Kanály se nenačetly"
+    "emptyDescription": "Přidejte e-mail, webhook nebo chat, aby se k vám změna dostala.",
+    "errorTitle": "Kanály se nenačetly",
+    "caption": "Kanály upozornění"
   },
   "columns": {
     "name": "Kanál",
     "kind": "Typ",
     "status": "Stav",
-    "lastDelivery": "Poslední doručení"
+    "verifiedAt": "Ověřeno",
+    "lastDelivery": "Poslední odeslání",
+    "actions": "Akce"
+  },
+  "status": {
+    "disabled": "Vypnuto",
+    "unverified": "Neověřeno",
+    "verified": "Ověřeno",
+    "failing": "{{count}} selhání"
   },
   "actions": {
     "create": "Nový kanál",
+    "save": "Uložit kanál",
     "test": "Odeslat test"
+  },
+  "form": {
+    "createTitle": "Nový kanál",
+    "createSubtitle": "Vyberte typ, vyplňte nastavení a před spoléháním pošlete test.",
+    "editTitle": "Upravit kanál",
+    "editSubtitle": "Necháte-li tajemství prázdné, zůstane uložené to původní.",
+    "basicsTitle": "Základy",
+    "nameLabel": "Název",
+    "kindLabel": "Typ",
+    "kindPlaceholder": "Vyberte typ kanálu",
+    "kindLocked": "Typ kanálu po vytvoření nelze změnit.",
+    "enabledLabel": "Zapnuto",
+    "secretStored": "Tajemství je uložené. Ponechte prázdné, aby zůstalo.",
+    "kindsErrorTitle": "Typy kanálů se nenačetly",
+    "saveErrorTitle": "Kanál se neuložil"
+  },
+  "fields": {
+    "to": "Adresa příjemce",
+    "url": "URL koncového bodu",
+    "method": "HTTP metoda",
+    "secret": "Podpisové tajemství",
+    "headers": "Další hlavičky",
+    "webhookUrl": "URL webhooku",
+    "botToken": "Token bota",
+    "chatId": "ID chatu",
+    "unknown": "Nastavení"
+  },
+  "deliveries": {
+    "title": "Odeslání",
+    "subtitle": "Každé upozornění, které se tento účet pokusil odeslat, a jak dopadlo.",
+    "caption": "Odeslaná upozornění",
+    "emptyTitle": "Zatím žádná odeslání",
+    "emptyDescription": "Odeslání se objeví, jakmile pravidlo odpovídá změně.",
+    "errorTitle": "Odeslání se nenačetla",
+    "columns": {
+      "createdAt": "Kdy",
+      "status": "Stav",
+      "reason": "Detail",
+      "attempts": "Pokusů",
+      "actions": "Akce"
+    },
+    "actions": {
+      "retry": "Zkusit znovu"
+    },
+    "status": {
+      "pending": "Čeká",
+      "sent": "Odesláno",
+      "failed": "Selhalo",
+      "suppressed": "Potlačeno"
+    },
+    "suppressedReason": {
+      "throttled": "Omezeno frekvencí",
+      "quietHours": "Tichý režim",
+      "duplicate": "Duplicita",
+      "channelDisabled": "Kanál vypnutý",
+      "channelUnverified": "Kanál neověřený",
+      "belowThreshold": "Pod prahem",
+      "digestPending": "Odloženo do souhrnu",
+      "unknown": "Potlačeno"
+    }
+  },
+  "rules": {
+    "title": "Pravidla upozornění",
+    "subtitle": "Které změny tohoto monitoru míří do kterého kanálu.",
+    "caption": "Pravidla upozornění",
+    "emptyTitle": "Zatím žádná pravidla",
+    "emptyDescription": "Přidejte pravidlo, které řekne, které změny stojí za upozornění.",
+    "errorTitle": "Pravidla se nenačetla",
+    "columns": {
+      "name": "Pravidlo",
+      "trigger": "Spouštěč",
+      "channel": "Kanál",
+      "mode": "Režim",
+      "status": "Stav"
+    },
+    "mode": {
+      "immediate": "Okamžitě",
+      "digest": "Souhrn"
+    },
+    "status": {
+      "enabled": "Zapnuto",
+      "disabled": "Vypnuto"
+    },
+    "unknownChannel": "Neznámý kanál"
   }
 }

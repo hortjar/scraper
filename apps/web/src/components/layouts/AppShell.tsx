@@ -1,4 +1,12 @@
-import { BellIcon, GaugeIcon, HistoryIcon, RadarIcon, SearchIcon, SettingsIcon } from "lucide-react"
+import {
+  BellIcon,
+  GaugeIcon,
+  HistoryIcon,
+  RadarIcon,
+  SearchIcon,
+  SendIcon,
+  SettingsIcon,
+} from "lucide-react"
 import { type ReactNode, useState } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -31,8 +39,9 @@ export const AppShell = ({ title, description, actions, children }: AppShellProp
   const items: readonly SidebarNavItem[] = [
     { to: "/dashboard", label: t("nav.dashboard"), icon: GaugeIcon },
     { to: "/monitors", label: t("nav.monitors"), icon: RadarIcon },
-    { to: "/runs", label: t("nav.runs"), icon: HistoryIcon },
+    { to: "/changes", label: t("nav.changes"), icon: HistoryIcon },
     { to: "/channels", label: t("nav.channels"), icon: BellIcon },
+    { to: "/deliveries", label: t("nav.deliveries"), icon: SendIcon },
     { to: "/settings", label: t("nav.settings"), icon: SettingsIcon },
   ]
 
