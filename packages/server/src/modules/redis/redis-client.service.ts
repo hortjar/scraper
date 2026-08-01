@@ -4,7 +4,7 @@ import { QueueUnavailable } from "@scraper/core/errors"
 import { Effect, Redacted } from "effect"
 import Redis, { type RedisOptions } from "ioredis"
 
-import { REDIS_INFRA_LABEL, REDIS_SCAN_COUNT } from "./jobs.constants.js"
+import { REDIS_INFRA_LABEL, REDIS_SCAN_COUNT } from "./redis.constants.js"
 
 export const BULLMQ_CONNECTION_OPTIONS = {
   maxRetriesPerRequest: null,

@@ -8,8 +8,10 @@
     "./modules/admin": "./src/modules/admin/index.ts",
     "./modules/auth": "./src/modules/auth/index.ts",
     "./modules/jobs": "./src/modules/jobs/index.ts",
+    "./modules/logs": "./src/modules/logs/index.ts",
     "./modules/monitors": "./src/modules/monitors/index.ts",
     "./modules/notifications": "./src/modules/notifications/index.ts",
+    "./modules/redis": "./src/modules/redis/index.ts",
     "./modules/runs": "./src/modules/runs/index.ts",
     "./modules/scraping": "./src/modules/scraping/index.ts",
     "./modules/storage": "./src/modules/storage/index.ts"

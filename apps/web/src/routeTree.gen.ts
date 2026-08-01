@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppChangesRouteImport } from './routes/_app/changes'
 import { Route as AppChannelsRouteImport } from './routes/_app/channels'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
@@ -44,6 +45,11 @@ const AppRoute = AppRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppChangesRoute = AppChangesRouteImport.update({
   id: '/changes',
@@ -146,6 +152,7 @@ const AppMonitorsMonitorIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AppAdminRoute
   '/changes': typeof AppChangesRoute
   '/channels': typeof AppChannelsRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AppAdminRoute
   '/changes': typeof AppChangesRoute
   '/dashboard': typeof AppDashboardRoute
   '/deliveries': typeof AppDeliveriesRoute
@@ -190,6 +198,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
+  '/_app/admin': typeof AppAdminRoute
   '/_app/changes': typeof AppChangesRoute
   '/_app/channels': typeof AppChannelsRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/changes'
     | '/channels'
     | '/dashboard'
@@ -236,6 +246,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/changes'
     | '/dashboard'
     | '/deliveries'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/_auth'
+    | '/_app/admin'
     | '/_app/changes'
     | '/_app/channels'
     | '/_app/dashboard'
@@ -306,6 +318,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/changes': {
       id: '/_app/changes'
@@ -489,6 +508,7 @@ const AppMonitorsRouteWithChildren = AppMonitorsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAdminRoute: typeof AppAdminRoute
   AppChangesRoute: typeof AppChangesRoute
   AppChannelsRoute: typeof AppChannelsRouteWithChildren
   AppDashboardRoute: typeof AppDashboardRoute
@@ -499,6 +519,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAdminRoute: AppAdminRoute,
   AppChangesRoute: AppChangesRoute,
   AppChannelsRoute: AppChannelsRouteWithChildren,
   AppDashboardRoute: AppDashboardRoute,

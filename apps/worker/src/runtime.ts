@@ -1,8 +1,10 @@
 import { AppConfigLive, appConfig } from "@scraper/core/config"
+import { SERVICE_NAME } from "@scraper/core/constants"
 import { TranslatorLive } from "@scraper/core/i18n"
 import { loggerLayer } from "@scraper/core/observability"
 import { DatabaseLive } from "@scraper/db"
 import { JobProducer, QueueRegistry, RateLimiter, RedisClient } from "@scraper/server/modules/jobs"
+import { LogsLayer, logShipperLayer } from "@scraper/server/modules/logs"
 import { MonitorsLayer } from "@scraper/server/modules/monitors"
 import {
   NotificationsLayer,
@@ -17,9 +19,14 @@ const LoggerLive = Layer.unwrapEffect(
   Effect.map(appConfig, (config) => loggerLayer(config.logFormat, config.logLevel)),
 )
 
+const LogShipperLive = Layer.unwrapEffect(
+  Effect.map(RedisClient, (redis) => logShipperLayer(redis.client, SERVICE_NAME.worker)),
+).pipe(Layer.provide(RedisClient.Default))
+
 const WorkerBaseLayer = Layer.mergeAll(
   AppConfigLive,
   LoggerLive,
+  LogShipperLive,
   TranslatorLive,
   DatabaseLive,
   RedisClient.Default,
@@ -29,6 +36,7 @@ const WorkerBaseLayer = Layer.mergeAll(
   ScrapingLayer,
   MonitorsLayer,
   NotificationsLayer,
+  LogsLayer,
   RunsLayer,
   ArtifactStore.Default,
 )

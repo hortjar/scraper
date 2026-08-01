@@ -38,7 +38,8 @@
     "pricing": "Pricing",
     "github": "GitHub",
     "changes": "Activity",
-    "deliveries": "Deliveries"
+    "deliveries": "Deliveries",
+    "admin": "Admin"
   },
   "status": {
     "label": "Status",

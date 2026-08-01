@@ -2,7 +2,7 @@ import { QUEUE, REDIS_KEY, SPAN, type QueueName } from "@scraper/core/constants"
 import { metrics } from "@scraper/core/observability"
 import { Clock, Effect, Metric } from "effect"
 
-import { RedisClient } from "../redis-client.service.js"
+import { RedisClient } from "../../redis/index.js"
 
 const MONITORED_QUEUES = Object.values(QUEUE) as QueueName[]
 const MS_PER_SECOND = 1000

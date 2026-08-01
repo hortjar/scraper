@@ -33,6 +33,7 @@ describe("sortMigrationFiles", () => {
       "0000_init.sql",
       "0001_monitor_stats.sql",
       "0002_change_dedupe.sql",
+      "0003_app_logs.sql",
     ])
   })
 })

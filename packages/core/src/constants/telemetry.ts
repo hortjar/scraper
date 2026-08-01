@@ -163,6 +163,11 @@ export const SPAN = {
     pruneRobots: "Maintenance.pruneRobots",
     schedulerHealth: "Maintenance.schedulerHealth",
   },
+  logs: {
+    tail: "Logs.tail",
+    persisted: "Logs.persisted",
+    drain: "Logs.drain",
+  },
   admin: {
     stats: "Admin.stats",
     queues: "Admin.queues",
@@ -194,6 +199,12 @@ export const METRIC = {
 } as const
 
 export const LOG_EVENT = {
+  job: {
+    received: "job.received",
+    completed: "job.completed",
+    retrying: "job.retrying",
+    failed: "job.failed",
+  },
   run: {
     started: "run.started",
     resumed: "run.resumed",
@@ -244,6 +255,7 @@ export const LOG_FIELD = {
   migrationsApplied: "migrationsApplied",
   trigger: "trigger",
   attempt: "attempt",
+  maxAttempts: "maxAttempts",
   url: "url",
   finalUrl: "finalUrl",
   httpStatus: "httpStatus",
@@ -260,6 +272,8 @@ export const LOG_FIELD = {
   reason: "reason",
   stepKind: "stepKind",
   screenshotRef: "screenshotRef",
+  drained: "drained",
+  persisted: "persisted",
 } as const
 
 export const REDACTED_KEYS = [

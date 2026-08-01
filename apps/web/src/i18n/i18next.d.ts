@@ -1,3 +1,4 @@
+import type admin from "./locales/en/admin.json"
 import type auth from "./locales/en/auth.json"
 import type channels from "./locales/en/channels.json"
 import type common from "./locales/en/common.json"
@@ -12,6 +13,7 @@ declare module "i18next" {
     defaultNS: "common"
     returnNull: false
     resources: {
+      admin: typeof admin
       auth: typeof auth
       channels: typeof channels
       common: typeof common

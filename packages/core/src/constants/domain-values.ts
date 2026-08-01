@@ -1,3 +1,17 @@
+export const LOG_LEVEL = {
+  debug: "debug",
+  info: "info",
+  warn: "warn",
+  error: "error",
+  fatal: "fatal",
+} as const
+
+export type LogLevelName = (typeof LOG_LEVEL)[keyof typeof LOG_LEVEL]
+
+export const PERSISTED_LOG_LEVELS = [LOG_LEVEL.warn, LOG_LEVEL.error, LOG_LEVEL.fatal] as const
+
+export const SERVICE_NAME = { api: "api", worker: "worker" } as const
+
 export const USER_ROLE = { user: "user", admin: "admin" } as const
 export const USER_STATUS = { active: "active", suspended: "suspended" } as const
 

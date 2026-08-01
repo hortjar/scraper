@@ -1,7 +1,7 @@
 import { REDIS_KEY, SPAN } from "@scraper/core/constants"
 import { Effect } from "effect"
 
-import { RedisClient } from "../redis-client.service.js"
+import { RedisClient } from "../../redis/index.js"
 
 export const pruneRobots = Effect.fn(SPAN.maintenance.pruneRobots)(function* () {
   const redis = yield* RedisClient

@@ -100,5 +100,6 @@ auth knowing about them. Declare `export type XServices = X` and pass it:
 
 ## 4. What is left
 
-1. **All 58 operations in `docs/09-API.md` are served.**
+1. **All 58 operations in `docs/09-API.md` are served**, plus `GET /admin/logs`,
+   which is not in that spec — it backs the admin log viewer.
 2. **Deferred and worth knowing:** `STORAGE_DRIVER=s3` cannot be configured from

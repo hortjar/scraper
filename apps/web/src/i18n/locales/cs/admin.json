@@ -1,0 +1,59 @@
+{
+  "title": "Správa",
+  "subtitle": "Systémové počty, hloubka front a co obě služby logují.",
+  "errorTitle": "Data správy se nenačetla",
+  "stats": {
+    "title": "Systém",
+    "users": "Uživatelé",
+    "admins": "Správci",
+    "monitors": "Monitory",
+    "enabled": "Zapnuté",
+    "degraded": "Zhoršené",
+    "runs": "Kontroly ({{hours}} h)",
+    "failed": "Selhaly",
+    "changed": "Se změnou",
+    "deliveries": "Odeslání",
+    "queues": "Fronty",
+    "queueColumns": {
+      "name": "Fronta",
+      "waiting": "Čeká",
+      "active": "Aktivní",
+      "delayed": "Odloženo",
+      "failed": "Selhalo"
+    },
+    "queueCaption": "Hloubka front podle stavu"
+  },
+  "logs": {
+    "title": "Logy",
+    "caption": "Poslední záznamy logů ze všech služeb",
+    "emptyTitle": "Žádné záznamy",
+    "emptyDescription": "Od posledního ořezání streamu se nic nezalogovalo.",
+    "errorTitle": "Logy se nenačetly",
+    "columns": {
+      "at": "Čas",
+      "level": "Úroveň",
+      "service": "Služba",
+      "message": "Událost",
+      "annotations": "Detail"
+    },
+    "level": {
+      "debug": "Ladění",
+      "info": "Info",
+      "warn": "Varování",
+      "error": "Chyba",
+      "fatal": "Fatální"
+    },
+    "filters": {
+      "level": "Úroveň",
+      "service": "Služba",
+      "all": "Vše",
+      "source": "Zdroj",
+      "stream": "Živý výpis",
+      "persisted": "Uložená varování a chyby"
+    },
+    "sourceNote": {
+      "stream": "Živý výpis je omezený Redis stream — starší záznamy se ořezávají.",
+      "persisted": "Varování a chyby se kopírují do databáze a přežijí restart."
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import { REDIS_KEY } from "@scraper/core/constants"
 import { Clock, Effect } from "effect"
 
-import { RedisClient } from "./redis-client.service.js"
+import { RedisClient } from "../redis/index.js"
 
 export const recordQueueFire = (queue: string) =>
   Effect.gen(function* () {

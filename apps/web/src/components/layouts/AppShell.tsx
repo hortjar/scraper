@@ -5,6 +5,7 @@ import {
   RadarIcon,
   SearchIcon,
   SendIcon,
+  ShieldIcon,
   SettingsIcon,
 } from "lucide-react"
 import { type ReactNode, useState } from "react"
@@ -42,6 +43,7 @@ export const AppShell = ({ title, description, actions, children }: AppShellProp
     { to: "/changes", label: t("nav.changes"), icon: HistoryIcon },
     { to: "/channels", label: t("nav.channels"), icon: BellIcon },
     { to: "/deliveries", label: t("nav.deliveries"), icon: SendIcon },
+    { to: "/admin", label: t("nav.admin"), icon: ShieldIcon },
     { to: "/settings", label: t("nav.settings"), icon: SettingsIcon },
   ]
 

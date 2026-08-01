@@ -5,6 +5,209 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}/api/v1` | (string & {});
 };
 
+export type ListLogsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/admin/logs';
+};
+
+export type ListLogsErrors = {
+    /**
+     * Response for status 400
+     */
+    400: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 401
+     */
+    401: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 403
+     */
+    403: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 404
+     */
+    404: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 409
+     */
+    409: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 422
+     */
+    422: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 429
+     */
+    429: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 500
+     */
+    500: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+    /**
+     * Response for status 503
+     */
+    503: {
+        code: string;
+        issues?: Array<{
+            messageKey: string;
+            params?: {
+                [key: string]: string | number;
+            };
+            path: Array<string>;
+        }>;
+        message: string;
+        messageKey: string;
+        messageParams?: {
+            [key: string]: string | number;
+        };
+        requestId: string;
+    };
+};
+
+export type ListLogsError = ListLogsErrors[keyof ListLogsErrors];
+
+export type ListLogsResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        items: Array<{
+            annotations: {
+                [key: string]: unknown;
+            };
+            at: string;
+            level: string;
+            message: string;
+            service: string;
+        }>;
+        source: 'stream' | 'persisted';
+    };
+};
+
+export type ListLogsResponse = ListLogsResponses[keyof ListLogsResponses];
+
 export type GetAdminStatsData = {
     body?: never;
     path?: never;

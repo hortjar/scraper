@@ -4,13 +4,14 @@ import { Queue } from "bullmq"
 import { Effect } from "effect"
 import type Redis from "ioredis"
 
+import { RedisClient } from "../redis/index.js"
+
 import type {
   DigestJobPayload,
   MaintenanceJobPayload,
   NotifyJobPayload,
   ScrapeJobPayload,
 } from "./jobs.schema.js"
-import { RedisClient } from "./redis-client.service.js"
 
 const makeQueue = <Data>(name: string, prefix: string, connection: Redis) =>
   Effect.acquireRelease(

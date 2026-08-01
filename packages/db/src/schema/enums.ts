@@ -4,6 +4,7 @@ import {
   DELIVERY_MODE,
   DELIVERY_STATUS,
   ENGINE,
+  LOG_LEVEL,
   MONITOR_STATUS,
   OCCURRENCE,
   RUN_STATUS,
@@ -27,6 +28,7 @@ export const userRoleEnum = pgEnum("user_role", values(USER_ROLE))
 export const userStatusEnum = pgEnum("user_status", values(USER_STATUS))
 export const tokenPurposeEnum = pgEnum("token_purpose", values(TOKEN_PURPOSE))
 export const actorKindEnum = pgEnum("actor_kind", values(ACTOR_KIND))
+export const logLevelEnum = pgEnum("log_level", values(LOG_LEVEL))
 
 export const engineEnum = pgEnum("engine", values(ENGINE))
 export const strategyEnum = pgEnum("strategy", values(STRATEGY))

@@ -1,9 +1,10 @@
 import { Layer } from "effect"
 
+import { RedisClient } from "../redis/index.js"
+
 import { JobProducer } from "./job-producer.service.js"
 import { QueueRegistry } from "./queue-registry.service.js"
 import { RateLimiter } from "./rate-limiter.service.js"
-import { RedisClient } from "./redis-client.service.js"
 
 export { isRetryableFailure, describeFailure } from "./failure-classification.js"
 export {
@@ -34,7 +35,7 @@ export { runMaintenanceTask } from "./maintenance/run-maintenance-task.js"
 export { QueueRegistry } from "./queue-registry.service.js"
 export { RateLimiter } from "./rate-limiter.service.js"
 export { recordQueueFire } from "./record-queue-fire.js"
-export { BULLMQ_CONNECTION_OPTIONS, RedisClient } from "./redis-client.service.js"
+export { BULLMQ_CONNECTION_OPTIONS, RedisClient } from "../redis/index.js"
 export { type MonitorScheduleInput, type ScrapeSchedulerSource } from "./schedule-plan.js"
 export { slidingWindowDecision, type SlidingWindowDecision } from "./sliding-window.js"
 

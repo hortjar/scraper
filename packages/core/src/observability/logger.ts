@@ -4,13 +4,13 @@ import { REDACTED_KEYS } from "../constants/telemetry.js"
 
 const redactedSet = new Set<string>(REDACTED_KEYS.map((key) => key.toLowerCase()))
 
-const redact = (value: unknown, depth = 0): unknown => {
+export const redactValue = (value: unknown, depth = 0): unknown => {
   if (depth > 4) return "[deep]"
   if (value === null || typeof value !== "object") return value
-  if (Array.isArray(value)) return value.map((item) => redact(item, depth + 1))
+  if (Array.isArray(value)) return value.map((item) => redactValue(item, depth + 1))
   const output: Record<string, unknown> = {}
   for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
-    output[key] = redactedSet.has(key.toLowerCase()) ? "[redacted]" : redact(item, depth + 1)
+    output[key] = redactedSet.has(key.toLowerCase()) ? "[redacted]" : redactValue(item, depth + 1)
   }
   return output
 }
@@ -22,7 +22,7 @@ export const jsonLogger = Logger.make(({ logLevel, message, annotations, spans, 
     message: Array.isArray(message) ? message.map(String).join(" ") : String(message),
   }
   for (const [key, value] of HashMap.toEntries(annotations)) {
-    entry[key] = redact(value)
+    entry[key] = redactValue(value)
   }
   const spanNames = List.toArray(spans).map((span) => span.label)
   if (spanNames.length > 0) entry.spans = spanNames

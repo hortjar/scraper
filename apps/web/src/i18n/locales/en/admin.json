@@ -1,0 +1,59 @@
+{
+  "title": "Admin",
+  "subtitle": "System counts, queue depth, and what both services are logging.",
+  "errorTitle": "Admin data did not load",
+  "stats": {
+    "title": "System",
+    "users": "Users",
+    "admins": "Admins",
+    "monitors": "Monitors",
+    "enabled": "Enabled",
+    "degraded": "Degraded",
+    "runs": "Runs ({{hours}}h)",
+    "failed": "Failed",
+    "changed": "Changed",
+    "deliveries": "Deliveries",
+    "queues": "Queues",
+    "queueColumns": {
+      "name": "Queue",
+      "waiting": "Waiting",
+      "active": "Active",
+      "delayed": "Delayed",
+      "failed": "Failed"
+    },
+    "queueCaption": "Queue depth by state"
+  },
+  "logs": {
+    "title": "Logs",
+    "caption": "Recent log records from every service",
+    "emptyTitle": "No log records",
+    "emptyDescription": "Nothing has been logged since the stream was last trimmed.",
+    "errorTitle": "Logs did not load",
+    "columns": {
+      "at": "Time",
+      "level": "Level",
+      "service": "Service",
+      "message": "Event",
+      "annotations": "Detail"
+    },
+    "level": {
+      "debug": "Debug",
+      "info": "Info",
+      "warn": "Warn",
+      "error": "Error",
+      "fatal": "Fatal"
+    },
+    "filters": {
+      "level": "Level",
+      "service": "Service",
+      "all": "All",
+      "source": "Source",
+      "stream": "Live tail",
+      "persisted": "Stored warnings and errors"
+    },
+    "sourceNote": {
+      "stream": "The live tail is a capped Redis stream — older records are trimmed away.",
+      "persisted": "Warnings and errors are copied to the database and survive a restart."
+    }
+  }
+}

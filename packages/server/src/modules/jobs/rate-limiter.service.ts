@@ -3,8 +3,9 @@ import { REDIS_KEY, SERVICE_TAG, SPAN } from "@scraper/core/constants"
 import { RateLimited, type QueueUnavailable } from "@scraper/core/errors"
 import { Clock, Effect } from "effect"
 
+import { RedisClient } from "../redis/index.js"
+
 import { RATE_LIMIT_WINDOW_MS } from "./jobs.constants.js"
-import { RedisClient } from "./redis-client.service.js"
 import { slidingWindowDecision } from "./sliding-window.js"
 
 export class RateLimiter extends Effect.Service<RateLimiter>()(SERVICE_TAG.RateLimiter, {

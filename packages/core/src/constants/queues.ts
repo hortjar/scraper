@@ -16,6 +16,7 @@ export const JOB_NAME = {
   sweepSessions: "sweep-sessions",
   refreshStats: "refresh-stats",
   pruneRobots: "prune-robots",
+  drainLogs: "drain-logs",
   heartbeat: "heartbeat",
 } as const
 
@@ -27,6 +28,7 @@ export const MAINTENANCE_TASK = {
   sweepSessions: JOB_NAME.sweepSessions,
   refreshStats: JOB_NAME.refreshStats,
   pruneRobots: JOB_NAME.pruneRobots,
+  drainLogs: JOB_NAME.drainLogs,
   heartbeat: JOB_NAME.heartbeat,
 } as const
 

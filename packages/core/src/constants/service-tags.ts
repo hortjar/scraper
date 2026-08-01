@@ -9,6 +9,8 @@ export const SERVICE_TAG = {
   ObjectStore: "app/ObjectStore",
   Admin: "app/Admin",
   AdminRepository: "app/AdminRepository",
+  Logs: "app/Logs",
+  LogRepository: "app/LogRepository",
 
   Users: "app/Users",
   Sessions: "app/Sessions",

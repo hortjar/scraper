@@ -33,6 +33,7 @@ export const MaintenanceJobPayload = Schema.Struct({
     MAINTENANCE_TASK.sweepSessions,
     MAINTENANCE_TASK.refreshStats,
     MAINTENANCE_TASK.pruneRobots,
+    MAINTENANCE_TASK.drainLogs,
     MAINTENANCE_TASK.heartbeat,
   ),
 })

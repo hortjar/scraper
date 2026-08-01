@@ -2,9 +2,9 @@ import { REDIS_KEY, SPAN } from "@scraper/core/constants"
 import { DeliveryId } from "@scraper/core/domain"
 import { Effect, Either, Schema } from "effect"
 
+import { RedisClient } from "../../redis/index.js"
 import { JobProducer } from "../job-producer.service.js"
 import type { DigestJobPayload } from "../jobs.schema.js"
-import { RedisClient } from "../redis-client.service.js"
 
 export const flushDigest = Effect.fn(SPAN.digest.flush)(function* (payload: DigestJobPayload) {
   const redis = yield* RedisClient

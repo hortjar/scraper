@@ -1,3 +1,4 @@
+import adminCs from "./locales/cs/admin.json"
 import authCs from "./locales/cs/auth.json"
 import channelsCs from "./locales/cs/channels.json"
 import commonCs from "./locales/cs/common.json"
@@ -6,6 +7,7 @@ import landingCs from "./locales/cs/landing.json"
 import monitorsCs from "./locales/cs/monitors.json"
 import runsCs from "./locales/cs/runs.json"
 import settingsCs from "./locales/cs/settings.json"
+import adminEn from "./locales/en/admin.json"
 import authEn from "./locales/en/auth.json"
 import channelsEn from "./locales/en/channels.json"
 import commonEn from "./locales/en/common.json"
@@ -24,6 +26,7 @@ export const NAMESPACES = [
   "channels",
   "settings",
   "landing",
+  "admin",
 ] as const
 
 export type Namespace = (typeof NAMESPACES)[number]
@@ -49,6 +52,7 @@ export const resources = {
     channels: channelsEn,
     settings: settingsEn,
     landing: landingEn,
+    admin: adminEn,
   },
   cs: {
     common: commonCs,
@@ -59,5 +63,6 @@ export const resources = {
     channels: channelsCs,
     settings: settingsCs,
     landing: landingCs,
+    admin: adminCs,
   },
 } as const

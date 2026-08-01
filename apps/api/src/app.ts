@@ -2,6 +2,7 @@ import type { RootConfig } from "@scraper/core/config"
 import { ROUTE } from "@scraper/core/constants"
 import { adminRoutes } from "@scraper/server/modules/admin"
 import { authRoutes } from "@scraper/server/modules/auth"
+import { logRoutes } from "@scraper/server/modules/logs"
 import { monitorRoutes } from "@scraper/server/modules/monitors"
 import {
   channelRoutes,
@@ -44,6 +45,7 @@ export const createApiRoutes = ({ runtime, redisProbe, config, queueBoard }: Cre
     .use(ruleRoutes({ runtime, config }))
     .use(deliveryRoutes({ runtime, config }))
     .use(adminRoutes({ runtime, config }))
+    .use(logRoutes({ runtime, config }))
     .use(queueBoard ?? new Elysia())
 
 export const createApp = (options: CreateAppOptions) =>
